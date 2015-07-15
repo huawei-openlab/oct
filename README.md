@@ -1,2 +1,1 @@
-# ocp-testing
-ocp-testing
+# Open Container Testing Cases And Framework
