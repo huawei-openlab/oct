@@ -1,0 +1,100 @@
+{
+    "root": {
+        "name": "Network-Test_002",
+        "summary": "network bandwidth",
+        "version": 0.1,
+        "owner": "chengtiesheng@huawei.com",
+        "description": "Test network bandwidth between different containers",
+        "group": "Cases/Network",
+        "license": "Apache 2.0",
+        "source": [
+            "docker_run.sh",
+            "network_config.sh"
+        ],
+        "Requires": [
+            {
+                "operationOS": {
+                    "type": "os",
+                    "distribution": "Ubuntu14.02",
+                    "resource": {
+                        "CPU": 1,
+                        "Memory": "2GB",
+                        "Disk": "100G"
+                    }
+                }
+            },
+            {
+                "ImageA": {
+                    "type": "container",
+                    "version": "dockerV1.0"
+                }
+            }
+        ],
+        "Deploy": [
+            {
+                "hostA": {
+                    "class": "OperationOS",
+                    "setup": "null",
+                    "containers": [
+                        {
+                            "name": "DockerA",
+                            "class": "ImageA",
+                            "deploy": {
+                                "type": "script",
+                                "name": "docker_run.sh"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "hostB": {
+                    "class": "OperationOS",
+                    "containers": [
+                        {
+                            "name": "DockerB",
+                            "class": "ImageA",
+                            "deploy": {
+                                "type": "script",
+                                "name": "network_config.sh"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "Run": [
+            {
+                "hostA": {
+                    "run": "null"
+                }
+            },
+            {
+                "DockerA": {
+                    "run": {
+                        "type": "cmd",
+                        "value": "iperf -c 192.168.10.10 -i 1 -t 10 -w 10K"
+                    }
+                }
+            },
+            {
+                "DockerB": {
+                    "run": {
+                        "type": "cmd",
+                        "value": "iperf -s  > ~/iperf_tcp.txt"
+                    }
+                }
+            }
+        ],
+        "Collect": [
+            {
+                "DockerB": {
+                    "collect": {
+                        "type": "cmd",
+                        "value": "octf_cli -f ~/iperf_tcp.txt"
+                    }
+                }
+            }
+        ]
+    }
+}
