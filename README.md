@@ -2,17 +2,17 @@
 
 The ocp-testing project aims to promote the open container project by providing a universal testing framewrk for all the container projects. The testing includes: ocp specification, container function and container performance.
 
-## Framework
+## The framework architecture
 
-  * *Open Container Pool* :  
+  * `Open Container Pool` :  
     The open contaner Pool provides restful API for user who want to query/build/get a container image. 
     The Open Container Pool acts as an agent to deliver requests to different container hubs.
     
-  * *Open Testing Server* : 
-    The Open Testing Server provides restful API for use who want to use a certain operation system on a certain architect.
+  * `Open Testing Server` :  
+    The Open Testing Server provides restful API for use who want to use a certain operation system on a certain architecture. 
     The Open Testing Server acts as an agent to deliver requests to different cluster or IASS platform.
-
-  * *TestCase Scheduler* :  
+    
+  * `TestCase Scheduler` :  
     As the main scheduler, the Test Case Scheduler will:
     1) Parse the testing request
     2) Apply hardware resources from the Open Testing Server
