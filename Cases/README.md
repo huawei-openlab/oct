@@ -4,7 +4,7 @@ The testcase should be written in JSON format, including five parts:
 {"Description": {}, "Requires": {}, "Deploy":{}, "Run": {}, "Collect": {}}
 ```
 
-## "Descritption"
+### "Description"
 The case developer should fill in the following informations:
   "Name", "Owner", "Version", "Summary", "Licence", "Group", "URL", "Description", "Source". 
 (Yes, looks like rpm spec)
@@ -23,7 +23,7 @@ The case developer should fill in the following informations:
 }
 ```
 
-## "Requires"
+### "Requires"
 The case developer should define the type, the hardware requirements and the ammount of the host opertation systems.
 Also, he/she should define the container image (by dockerfile for example), so the backend server will find/build an image.
 ```
@@ -48,7 +48,7 @@ Also, he/she should define the container image (by dockerfile for example), so t
         ],
 ```
 
-## "Deploy"
+### "Deploy"
 The case developer should tell the host operation systems and the containers 
 which commands should be used to deploy the test.
 The commands could be used directly or wrapped by a script. 
@@ -88,9 +88,9 @@ If the developer want to install extra package, he/she can put the related comma
                 }
             }
         ],
-```         {
+```         
 
-## "Run"
+### "Run"
 The case developer should tell the host operation systems and the containers
 which commands should be used to run the test. The commands could be used 
 directly or wrapped by a script. By default, after ruuning all the command, the test 
@@ -113,7 +113,7 @@ system will continue to the 'Collect' part.
         ]
 ```
 
-## "Collect"
+### "Collect"
 The case developer should tell the host operation systems and/or the containers 
 if there was any output file.
 ```
