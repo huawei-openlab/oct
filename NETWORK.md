@@ -10,7 +10,7 @@ helping users to get a comparative analysis and choose the proper container netw
 
 ## Test case design
 
-Container network test case will be designed from two dimensions, test methods and container network model.
+Container network test case will be designed from two dimensions, test methods and container network model. In different container network circumstance, different test methods will be used to mensurate the network performance. For example, we can test weave network performance through iperf.
 
 ### Test methods
 
