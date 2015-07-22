@@ -1,0 +1,79 @@
+{
+    "root": {
+        "Name": "Benchmark-Test-sysbench-docker",
+        "Summary": "test with sysbench tool",
+        "Owner": "wangqilin2@huawei.com",
+        "Details": "Test cpu,file i/o,memory performance of container",
+        "Group": "Performance/Benchmark/sysbench",
+        "License": "Apache 2.0",
+        "Source": [
+            "sysbenchdocker.dockerfile",
+	    "testrun.sh"
+        ],
+        "Requires": [
+            {
+                
+		"class":"operationOS", 
+	        "type": "os",
+	        "distribution": "Ubuntu14.04",
+	        "resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "class": "ImageA",
+                "type": "container",
+                "version": "dockerV1.0",
+                "file": [
+		   "sysbenchdocker.dockerfile",
+		   "testrun.sh"
+		]
+                
+            }
+        ],
+        "Deploy": [
+            {
+                "object": "hostA",
+                "class": "OperationOS",
+                "setup": "null",
+                "containers": [
+                    {
+                        "name": "DockerA",
+                        "class": "ImageA",
+                        "deploy": {
+                            "type": "script",
+                            "name": "docker_run.sh"
+                        }
+                    }
+                ]
+            }         
+        ],
+        "Run": [
+            {
+                "hostA": {
+                    "run": null
+                }
+            },
+            {
+                "DockerA": {
+                    "run": null
+                }
+            }
+        ],
+        "Collect": [
+            {
+                "DockerA": {
+                    "collect": {
+                        "type": "cmd",
+                        "value": "octf_cli -f ~/iperf_udp.txt"
+                    }
+                }
+            }
+        ]
+    }
+}
+
