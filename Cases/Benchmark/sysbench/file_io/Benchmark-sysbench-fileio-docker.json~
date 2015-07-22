@@ -1,0 +1,76 @@
+{
+    "root": {
+        "Name": "Benchmark-Test-sysbench-docker",
+        "Summary": "test with sysbench tool",
+        "Owner": "wangqilin2@huawei.com",
+        "Details": "Test cpu performance via caculate the max prime number of a given number",
+        "Group": "Performance/Benchmark/sysbench/cpu_load",
+        "License": "Apache 2.0",
+        "Source": [
+            "./source/Dockerfile",
+	    "fileio.sh"
+        ],
+        "Requires": [
+            {
+                
+		"class":"operationOS", 
+	        "type": "os",
+	        "distribution": "Ubuntu14.04",
+	        "resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "class": "ImageA",
+                "type": "container",
+                "version": "dockerV1.0",
+                "file": [
+		   "./source/Dockerfile",
+		   "fileio.sh"
+		]
+                
+            }
+        ],
+        "Deploy": [
+            {
+                "object": "hostA",
+                "class": "OperationOS",
+                "setup": "null",
+                "containers": [
+                    {
+                        "name": "DockerA",
+                        "class": "ImageA",
+                        "deploy": null
+                    }
+                ]
+            }         
+        ],
+        "Run": [
+            {
+                "hostA": {
+                    "run": null
+                }
+            },
+            {
+                "DockerA": {
+                    "run": null
+                }
+            }
+        ],
+        "Collect": [
+            {
+                "DockerA": {
+                    "collect": {
+                        "type": "cmd",
+                        "value": "octf_cli"
+                    }
+                }
+            }
+        ]
+    }
+}
+
