@@ -3,12 +3,12 @@
         "Name": "Benchmark-Test-sysbench-docker",
         "Summary": "test with sysbench tool",
         "Owner": "wangqilin2@huawei.com",
-        "Details": "Test cpu,file i/o,memory performance of container",
-        "Group": "Performance/Benchmark/sysbench",
+        "Details": "Test cpu performance via caculate the max prime number of a given number",
+        "Group": "Performance/Benchmark/sysbench/cpu_load",
         "License": "Apache 2.0",
         "Source": [
             "sysbenchdocker.dockerfile",
-	    "testrun.sh"
+	    "cpuload.sh"
         ],
         "Requires": [
             {
@@ -44,10 +44,7 @@
                     {
                         "name": "DockerA",
                         "class": "ImageA",
-                        "deploy": {
-                            "type": "script",
-                            "name": "docker_run.sh"
-                        }
+                        "deploy": null
                     }
                 ]
             }         

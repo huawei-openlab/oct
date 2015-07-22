@@ -10,7 +10,7 @@ RUN sudo apt-get install sysbench -y
 VOLUME /data
 
 #Config and Run sysbench test shell
-ADD testrun.sh /testrun.sh
-RUN chmod 755 /testrun.sh
-CMD ["/testrun.sh"]
+ADD cpuload.sh /cpuload.sh
+RUN chmod 755 /cpuload.sh
+CMD ["/cpuload.sh"]
 
