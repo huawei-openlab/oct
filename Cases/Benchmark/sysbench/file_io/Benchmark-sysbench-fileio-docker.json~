@@ -8,7 +8,7 @@
         "License": "Apache 2.0",
         "Source": [
             "./source/Dockerfile",
-	    "cpuload.sh"
+	    "fileio.sh"
         ],
         "Requires": [
             {
@@ -30,7 +30,7 @@
                 "version": "dockerV1.0",
                 "file": [
 		   "./source/Dockerfile",
-		   "cpuload.sh"
+		   "fileio.sh"
 		]
                 
             }
@@ -66,7 +66,7 @@
                 "DockerA": {
                     "collect": {
                         "type": "cmd",
-                        "value": "octf_cli -f ~/cpuload.txt"
+                        "value": "octf_cli"
                     }
                 }
             }

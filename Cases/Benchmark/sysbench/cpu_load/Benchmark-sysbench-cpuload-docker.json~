@@ -7,7 +7,7 @@
         "Group": "Performance/Benchmark/sysbench/cpu_load",
         "License": "Apache 2.0",
         "Source": [
-            "./source/Dockerfile",
+            "cpudockerfile",
 	    "cpuload.sh"
         ],
         "Requires": [
@@ -29,7 +29,7 @@
                 "type": "container",
                 "version": "dockerV1.0",
                 "file": [
-		   "./source/Dockerfile",
+		   "cpudockerfile",
 		   "cpuload.sh"
 		]
                 
@@ -66,7 +66,7 @@
                 "DockerA": {
                     "collect": {
                         "type": "cmd",
-                        "value": "octf_cli -f ~/cpuload.txt"
+                        "value": "octf_cli -f ~/iperf_udp.txt"
                     }
                 }
             }
