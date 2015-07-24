@@ -14,12 +14,12 @@ The ocp-testing project aims to promote the open container project by providing 
     
   * `TestCase Scheduler` :  
     As the main scheduler, the Test Case Scheduler will:
-    1) Parse the testing request
-    2) Apply hardware resources from the Open Test Server
-    3) Regist container images from the Open Container Pool
-    4) Deploy the tesing enviornment
-    5) Run the test
-    6) Collect and publish the testing report
+    1. Parse the testing request
+    2. Apply hardware resources from the Open Test Server
+    3. Regist container images from the Open Container Pool
+    4. Deploy the tesing enviornment
+    5. Run the test
+    6. Collect and publish the testing report
     
 ## Testcase specification
 Refers to [Cases/README](Cases/README.md) 
