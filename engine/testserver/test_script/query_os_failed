@@ -1,0 +1,1 @@
+curl localhost:8080/os?Distribution=Ubuntu&Arch=arm64

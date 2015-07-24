@@ -1,0 +1,1 @@
+curl -i -H 'Content-Type: application/json' -d '{"Version": "10", "Arch": "x86_64", "Distribution": "SUSE"}' http://localhost:8080/os
