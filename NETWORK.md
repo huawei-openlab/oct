@@ -25,9 +25,7 @@ We will test the performance of these network solutions, to get a comparative an
 To test the container network, we will develop some performance testing tools. At first, we can choose existing open source tools, such as iperf. Along with the evolution of container network, corresponding test tools will be developed to statisfy the particular circumstances.
 
 ## Future
-Please refer to roadmap for more information.
-    
-## Contributing
+Please refer to [roadmap](ROADMAP.md) for more information.
 
 ## Copyright and license
 Code and documentation copyright Huawei Technologies Co., Ltd. Code released under the Apache 2.0 license. Docs released under Creative commons.
