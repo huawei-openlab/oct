@@ -62,7 +62,7 @@ func cpuPerCoreUsage() {
 		//get interval time duration between the two sample
 		f := float64((cur.Timestamp).Sub(prev.Timestamp).Nanoseconds())
 		for j := 1; j < mInfo.NumCores; j++ {
-			fmt.Println("Container percore cpu usag :  core %v", j, float64(cur.Cpu.Usage.PerCpu[j]-prev.Cpu.Usage.PerCpu[j])/f)
+			fmt.Printf("Container percore cpu usag :  core %v, %.02f\n", j, float64(cur.Cpu.Usage.PerCpu[j]-prev.Cpu.Usage.PerCpu[j])/f)
 		}
 
 	}
