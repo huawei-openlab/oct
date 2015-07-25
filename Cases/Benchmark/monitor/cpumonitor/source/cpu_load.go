@@ -51,7 +51,7 @@ func cpuTotalUsage() {
 
 	for i := 1; i < len(cInfo.Stats); i++ {
 		cur := cInfo.Stats[i]
-		fmt.Println("Container cpu load : ", float64(cur.Cpu.LoadAverage)/1000)
+		fmt.Printf("Container cpu load : %.02f \n", float64(cur.Cpu.LoadAverage)/1000)
 	}
 }
 

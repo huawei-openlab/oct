@@ -54,7 +54,7 @@ func cpuTotalUsage() {
 		prev := cInfo.Stats[i-1]
 		//get interval time duration between the two sample
 		f := float64((cur.Timestamp).Sub(prev.Timestamp).Nanoseconds())
-		fmt.Println("Container total usag : ", float64(cur.Cpu.Usage.Total-prev.Cpu.Usage.Total)/f)
+		fmt.Printf("Container total usag : %.02f\n", float64(cur.Cpu.Usage.Total-prev.Cpu.Usage.Total)/f)
 	}
 }
 
