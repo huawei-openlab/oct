@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/golang/glog"
 	"github.com/google/cadvisor/client"
 	info "github.com/google/cadvisor/info/v1"
 )
@@ -17,7 +15,6 @@ func GetAllContainer(client *client.Client) ([]info.ContainerInfo, error) {
 
 //container memory usage is current memory usage, this includes all memory regardless of when it was accessed.
 // Units: Bytes.
-
 func GetContainerMemoryUsage(cinfos []info.ContainerInfo) {
 
 	fmt.Printf("container memeory usage:\n")
@@ -31,7 +28,6 @@ func GetContainerMemoryUsage(cinfos []info.ContainerInfo) {
 // container memory working set  is the amount of working set memory, this includes recently accessed memory,
 // dirty memory, and kernel memory. Working set is <= "usage".
 // Units: Bytes.
-
 func GetContainerMemoryWorkingSet(cinfos []info.ContainerInfo) {
 	fmt.Printf("container memeory  working set:\n")
 	for _, cinfo := range cinfos {
@@ -44,13 +40,13 @@ func GetContainerMemoryWorkingSet(cinfos []info.ContainerInfo) {
 func main() {
 	client, err := client.NewClient("http://localhost:8080/")
 	if err != nil {
-		glog.Errorf("tried to make client and got error %v", err)
+		fmt.Printf("tried to make client and got error %v", err)
 		return
 	}
 
 	cinfos, err := GetAllContainer(client)
 	if err != nil {
-		glog.Errorf("tried to SubcontainersInfo and got error %v", err)
+		fmt.Printf("tried to SubcontainersInfo and got error %v", err)
 		return
 	}
 	GetContainerMemoryUsage(cinfos)
