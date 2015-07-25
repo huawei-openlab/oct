@@ -10,8 +10,4 @@ VOLUME /data
 #Add test script
 ADD deadloop.sh /deadloop.sh
 RUN chmod 755 /deadloop.sh
-RUN /deadloop.sh
-
-
-
 
