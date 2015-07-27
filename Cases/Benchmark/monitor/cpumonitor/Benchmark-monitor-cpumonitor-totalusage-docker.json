@@ -30,9 +30,7 @@
                 "type": "container",
                 "version": "dockerV1.0",
                 "file": [
-		   "./source/Dockerfile",
-		   "cpu_total_usage.go",
-                             "./source/deadloop.sh"
+		   "./source/Dockerfile"
 		]
                 
             }
@@ -41,12 +39,26 @@
             {
                 "object": "hostA",
                 "class": "OperationOS",
-                "setup": "null",
+                "setup": {
+                    "type": "cmd",
+                    "value": "cd /tmp",
+                    "type": "cmd",
+                    "value": "git clone https://github.com/google/cadvisor.git",
+                    "type": "cmd",
+                    "value": "godep go build .",
+                    "type": "cmd",
+                    "value": "echo hostpasswd | sudo -S ./cadvisor"
+                },
                 "containers": [
                     {
                         "name": "DockerA",
                         "class": "ImageA",
-                        "deploy": null
+                        "setup": {
+                            "type": "cmd",
+                            "value": "cd /",
+                            "type": "cmd",
+                            "value": "./deadloop.sh"
+                        }
                     }
                 ]
             }         
@@ -55,8 +67,12 @@
             {
                 "hostA": {
                     "run": {
-                         "type": "cmd",
-                        "value": "echo "hostpasswd" | sudo -S ./cadvisor"
+                        "type": "cmd",
+                        "value": "cd ./source/",
+                        "type": "cmd",
+                        "value": "go build cpu_total_usage.go",
+                        "cmd": "cmd",
+                        "type": "sudo ./cpu_total_usage"
                     }
                     
                 }
