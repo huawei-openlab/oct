@@ -4,21 +4,43 @@ import (
 	"fmt"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"io/ioutil"
+	"bytes"
+	"os"
+	"strconv"
 )
 
 type Require struct {
-	Rtype string
-	Rname string
+	Class string
+	Type string
+	Distribution string
 	Version int
 }
 
+type Container struct {
+	Object string
+	Class string
+	Cmd string
+}
+
+type Deploy struct {
+	Object string
+	Class string
+	Cmd string
+	Containers []Container
+
+	ResourceID string
+}
+
 type Resource struct {
-	Req Require
 //TODO: put following to a struct and make a hash?
 	ID  string	//returned 
 	Status bool	//whether it is available
 	Msg string	//return value from server
+
+	Req Require
+	_used bool
 }
 
 type TestCase struct {
@@ -26,11 +48,17 @@ type TestCase struct {
 	License string
 	Group string
 	Requires []Require
+	Deploys []Deploy
 }
 
-const test_json_str = `{"Name": "Network-performance", "License": "GPL",
-"Requires": [{"Rtype": "os", "Rname": "CentOS", "Version": 7}, {"Rtype": "container", "Rname": "Docker", "Version": 1}
-]}`
+type ServerConfig struct {
+	TSurl string
+	CPurl string
+}
+//public variable
+var pub_conf ServerConfig
+
+var pub_debug bool
 
 func parse(ts_str string) (ts_demo TestCase) {
 	json.Unmarshal([]byte(ts_str), &ts_demo)
@@ -54,16 +82,59 @@ func ts_validation(ts_demo TestCase) (validate bool, err_string string){
 }
 
 func debug_ts(ts_demo TestCase) {
+	if !pub_debug {
+		return
+	}
 	fmt.Println(ts_demo.Name)
 	fmt.Println(ts_demo.Group)
 	fmt.Println(ts_demo.Requires)
 }
 
-func apply_os(req Require) (resource Resource){
-	var default_url string
+func read_conf()(config ServerConfig) {
+	config_file := "./scheduler.conf"
+	file, err := os.Open(config_file)
+	defer file.Close()
+	if err != nil {
+	        fmt.Println(config_file, err)
+	        return
+	}
+	buf := bytes.NewBufferString("")
+	buf.ReadFrom(file)
+	json.Unmarshal([]byte(buf.String()), &config)
+//	fmt.Println(config.TSurl, " ", config.CPurl)
 
-	default_url = "http://localhost:8080/os?Distribution=Ubuntu"
-	resp, err := http.Get(default_url)
+	return config
+}
+
+func get_url(req Require, path string) (apiurl string) {
+	var apiuri string
+	data := url.Values{}
+	if req.Type == "os" {
+		apiuri = pub_conf.TSurl
+	} else {
+		apiuri = pub_conf.CPurl
+	}
+	if len(req.Distribution) > 1 {
+		data.Add("Distribution", req.Distribution)
+	}
+	data.Add("Version", strconv.Itoa(req.Version))
+
+        u, _:= url.ParseRequestURI(apiuri)
+        u.Path = path
+        u.RawQuery = data.Encode()
+        apiurl = fmt.Sprintf("%v", u)
+
+	return apiurl
+}
+
+func apply_os(req Require) (resource Resource){
+	var apiurl string
+
+	apiurl = get_url(req, "/os")
+	if pub_debug {
+		fmt.Println("get url: ", apiurl)
+	}
+	resp, err := http.Get(apiurl)
 	defer resp.Body.Close()
 	if err != nil {
 		// handle error
@@ -78,12 +149,8 @@ func apply_os(req Require) (resource Resource){
 			resource.Msg = "err in read os"
 			resource.Status = false
 		} else {
-			fmt.Println("return the os id from server " + string(body))
-//			json.Unmarshal([]byte(body), &resource)
+			json.Unmarshal([]byte(body), &resource)
 			resource.Req = req
-			resource.ID = string(body)
-			resource.Msg = "ok"
-			resource.Status = true
 			fmt.Println(resource)
 		}	
 	}
@@ -96,13 +163,14 @@ func apply_container(req Require) (resource Resource){
 }
 
 func apply_resource(req Require) (resource Resource){
-	if req.Rtype == "os" {
+	if req.Type == "os" {
 		resource = apply_os(req)
-	} else if req.Rtype == "container" {
+	} else if req.Type == "container" {
 		resource = apply_container(req)
 	} else {
 		fmt.Println("What is the new type? How can it pass the validation test")
 	}
+	resource._used = false
 	return resource
 }
 
@@ -124,14 +192,84 @@ func ar_validation(ar_demo []Resource) (validate bool, err_string string){
 }
 
 func debug_ar(ar_demo []Resource) {
+	if !pub_debug {
+		return
+	}
+
 	fmt.Println(ar_demo)
+}
+
+func read_testcase(ts_file string) (testcase string) {
+	file, err := os.Open(ts_file)
+	defer file.Close()
+	if err != nil {
+	        fmt.Println(ts_file, err)
+	        return
+	}
+	buf := bytes.NewBufferString("")
+	buf.ReadFrom(file)
+	testcase = buf.String()
+	
+	if pub_debug {
+		fmt.Println(testcase)
+	}
+
+	return testcase
+}
+
+func debug_deploy(deploys []Deploy) {
+	if pub_debug {
+		fmt.Println("Debug deploys ", deploys)
+	}
+}
+
+//send deploy to the testserver and the server will do the deploy work
+func send_deploy(deploy Deploy) {
+	var apiurl string
+
+	apiurl = pub_conf.TSurl + "/deploy"
+	if pub_debug {
+		fmt.Println("get url: ", apiurl)
+	}
+	b, jerr := json.Marshal(deploy)
+	if jerr != nil {
+		fmt.Println("Failed to marshal json:", jerr)
+		return
+	}
+fmt.Println(deploy)
+	body := bytes.NewBuffer([]byte(b))
+	resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
+	defer resp.Body.Close()
+	if perr != nil {
+		// handle error
+		fmt.Println("err in post:", perr)
+		return
+	} else {
+		result, berr := ioutil.ReadAll(resp.Body)
+		if berr != nil {
+		} else {
+//TODO: finish the result check
+			if pub_debug {
+				fmt.Println(result)
+			}
+		}	
+	}
 }
 
 func main() {
 	var ts_demo TestCase
 	var validate bool
 	var msg string
-        ts_demo = parse(test_json_str)
+	var test_json_str string
+
+	pub_debug = false
+
+	pub_conf = read_conf()
+	test_json_str = read_testcase("./democase.json")
+	ts_demo = parse(test_json_str)
+	if pub_debug {
+		fmt.Println(ts_demo)
+	}
 	validate, msg = ts_validation(ts_demo)
 	if !validate {
 		fmt.Println(msg)
@@ -139,6 +277,7 @@ func main() {
 	}
 	debug_ts(ts_demo)
 
+//Require Session
 	var resources []Resource
 //TODO: async in the future
 	resources = apply_resources(ts_demo)
@@ -148,5 +287,36 @@ func main() {
 		return
 	}
 	debug_ar(resources)
+
+//Deploy Session
+
+// Prepare deploys
+	for index :=0; index < len(ts_demo.Deploys); index++ {
+		var deploy Deploy
+		deploy = ts_demo.Deploys[index]
+		for r_index := 0; r_index < len(resources); r_index++ {
+			var resource Resource
+			resource = resources[r_index]
+			if resource._used {
+				continue
+			}
+			if resource.Req.Class == deploy.Class {
+				ts_demo.Deploys[index].ResourceID = resource.ID
+				resources[r_index]._used = true
+				continue
+			}
+// TODO should do it after apply resource
+			fmt.Println("Cannot get here, failed to get enough resource")
+		}
+	}
+	debug_deploy(ts_demo.Deploys)
+
+// Send deploys
+	for index :=0; index < len(ts_demo.Deploys); index++ {
+		if len(ts_demo.Deploys[index].ResourceID) > 0 {
+			send_deploy(ts_demo.Deploys[index])
+		}
+	}
+
 }
 

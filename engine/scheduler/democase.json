@@ -1,0 +1,32 @@
+{"Name": "Network-performance", "License": "GPL",
+"Requires": 
+	[
+		{"Class": "operationOS",
+		 "Type": "os", 
+		 "Distribution": "CentOS",
+		 "Version": 7
+		}, 
+		{"Class": "ImageA",
+		 "Type": "container",
+		 "Distribution": "Docker",
+		 "Version": 1,
+		 "file": "./source/Dockerfile"
+		}
+	],
+"Deploys": 
+	[
+		{
+                "Object": "hostA",
+		"Class": "operationOS",
+		"Cmd": "touch /tmp/dliang",
+		"Containers": [
+				{"Object": "DockerA",
+				 "Class": "ImageA",
+				 "Cmd": "touch /tmp/dliang_d1"
+				}
+			]
+          	}
+	]
+}
+
+

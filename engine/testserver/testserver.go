@@ -6,9 +6,37 @@ import (
 	"net/http"
 	"sync"
 	"strconv"
+	"os"
+	"bytes"
+	"fmt"
+	"encoding/json"
 )
 
+type TestServerConfig struct{
+	Port int
+	Debug bool
+}
+
+func read_conf()(config TestServerConfig) {
+        config_file := "./testserver.conf"
+        file, err := os.Open(config_file)
+        defer file.Close()
+        if err != nil {
+                fmt.Println(config_file, err)
+                return
+        }
+        buf := bytes.NewBufferString("")
+        buf.ReadFrom(file)
+        json.Unmarshal([]byte(buf.String()), &config)
+
+        return config
+}
+
 func main() {
+	var config TestServerConfig
+
+	config = read_conf()
+//	pub_debug = config.Debug
 	init_db ()
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
@@ -16,12 +44,16 @@ func main() {
 		rest.Get("/os", GetOS),
 		rest.Post("/os", PostOS),
 		rest.Delete("/os/:distribution", DeleteOS),
+		rest.Post("/deploy", DeployOS),
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	api.SetApp(router)
-	log.Fatal(http.ListenAndServe(":8080", api.MakeHandler()))
+	var port string
+	port = fmt.Sprintf(":%d", config.Port)
+//        fmt.Println(port)
+	log.Fatal(http.ListenAndServe(port, api.MakeHandler()))
 }
 
 type OS struct {
@@ -124,7 +156,18 @@ func GetOS(w rest.ResponseWriter, r *rest.Request) {
 		rest.NotFound(w, r)
 		return
 	}
-	w.WriteJson(ID)
+
+//FIXME, the struct like Resource should be in the lib
+	type Resource struct {
+		ID string
+		Msg string
+		Status bool
+	}
+	var resource Resource
+	resource.ID = ID
+	resource.Msg = "ok, good resource"
+	resource.Status = true
+	w.WriteJson(resource)
 }
 
 func GetAllOS(w rest.ResponseWriter, r *rest.Request) {
@@ -172,6 +215,54 @@ func DeleteOS(w rest.ResponseWriter, r *rest.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+type Container struct {
+        Object string
+        Class string
+        Cmd string
+}
+
+type Deploy struct {
+        Object string
+        Class string
+        Cmd string
+        Containers []Container
+
+        ResourceID string
+}
+
+func sendCommand(ID string, CMD string) {
+	fmt.Println(ID, CMD)
+}
+
+func deployRequest(deploy Deploy) {
+	os := *(store[deploy.ResourceID])
+	fmt.Println("the deploy request is: ", os)
+	if len(deploy.Cmd) > 0 {
+		sendCommand(deploy.ResourceID, deploy.Cmd)
+	}
+}
+
+func DeployOS(w rest.ResponseWriter, r *rest.Request) {
+
+	deploy := Deploy{}
+	err := r.DecodeJsonPayload(&deploy)
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if deploy.ResourceID == "" {
+		rest.Error(w, "the wrong resource id", 400)
+		return
+	} else {
+		fmt.Println("The deploy resource id is : ", deploy)
+	}
+	lock.Lock()
+	deployRequest(deploy)
+	lock.Unlock()
+//TODO: make a good feedback
+	w.WriteJson("ok")
+}
+
 // Will use DB in the future, (mongodb for example)
 // for now, just two demo hosts
 func init_db () {
@@ -192,7 +283,8 @@ func init_db () {
 	os[1].ID = "0002"
 	os[1].CPU = 1
 	os[1].Memory = 3
-	os[1].IP = "192.168.0.2"
+	os[1].IP = "127.0.0.1"
+//TODO, change the locked status when it is assigned
 	os[1].locked = false
 	store[os[1].ID] = &os[1]
 }
