@@ -7,8 +7,8 @@
         "Group": "Performance/Benchmark/sysbench/cpu_load",
         "License": "Apache 2.0",
         "Source": [
-            "./source/Dockerfile",
-	    "fileio.sh"
+            "./source/dockerfile/Dockerfile",
+	    "./source/dockerfile/fileio.sh"
         ],
         "Requires": [
             {
@@ -29,8 +29,8 @@
                 "type": "container",
                 "version": "dockerV1.0",
                 "file": [
-		   "./source/Dockerfile",
-		   "fileio.sh"
+		   "./source/dockerfile/Dockerfile",
+		   "./source/dockerfile/fileio.sh"
 		]
                 
             }
