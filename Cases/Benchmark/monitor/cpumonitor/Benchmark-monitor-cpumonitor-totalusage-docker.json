@@ -1,0 +1,82 @@
+{
+    "root": {
+        "Name": "Benchmark-Test-Monitor-docker",
+        "Summary": "test with cadvisor tool",
+        "Owner": "linzhinan@huawei.com",
+        "Details": "Monitor cpu totalusage via cadvisor",
+        "Group": "Performance/Benchmark/monitor/cpumonitor/",
+        "License": "Apache 2.0",
+        "Source": [
+                    "./source/Dockerfile",
+	       "./source/cpu_total_usage.go",
+                    "./source/deadloop.sh"
+        ],
+        "Requires": [
+            {
+                
+	       "class":"operationOS", 
+	        "type": "os",
+	        "distribution": "Ubuntu14.04",
+	        "resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "class": "ImageA",
+                "type": "container",
+                "version": "dockerV1.0",
+                "file": [
+		   "./source/Dockerfile",
+		   "cpu_total_usage.go",
+                             "./source/deadloop.sh"
+		]
+                
+            }
+        ],
+        "Deploy": [
+            {
+                "object": "hostA",
+                "class": "OperationOS",
+                "setup": "null",
+                "containers": [
+                    {
+                        "name": "DockerA",
+                        "class": "ImageA",
+                        "deploy": null
+                    }
+                ]
+            }         
+        ],
+        "Run": [
+            {
+                "hostA": {
+                    "run": {
+                         "type": "cmd",
+                        "value": "echo "hostpasswd" | sudo -S ./cadvisor"
+                    }
+                    
+                }
+            },
+            {
+                "DockerA": {
+                    "run": null
+                }
+            }
+        ],
+        "Collect": [
+            {
+                "DockerA": {
+                    "collect": {
+                        "type": "cmd",
+                        "value": "octf_cli -f ~/cpu_total_usage.txt"
+                    }
+                }
+            }
+        ]
+    }
+}
+
