@@ -7,9 +7,11 @@ import (
 	"sync"
 	"strconv"
 	"os"
+	"io"
 	"bytes"
 	"fmt"
 	"encoding/json"
+	"path"
 )
 
 type TestServerConfig struct{
@@ -32,28 +34,78 @@ func read_conf()(config TestServerConfig) {
         return config
 }
 
+
+func ManageOS(w http.ResponseWriter, r *http.Request){
+        if "GET" == r.Method {
+		GetOS(w, r)
+        } else if "POST" == r.Method {
+		PostOS(w,r)
+	}
+}
+
+func preparePath(filename string) (realurl string) {
+//TODO: should add the 'testcase name'
+        pre_uri := "/tmp/testcase_db_cache/"
+        realurl = path.Join(pre_uri, filename)
+        dir := path.Dir(realurl)
+        p, err:= os.Stat(dir)
+        if err!= nil {
+                if !os.IsExist(err) {
+                        os.MkdirAll(dir, 0777)
+                }
+        } else {
+                if p.IsDir() {
+                        return realurl
+                } else {
+                        os.Remove(dir)
+                        os.MkdirAll(dir, 0777)
+                }
+        }
+        return realurl
+}
+
+
+func UploadFile(w http.ResponseWriter, r *http.Request){
+	fmt.Println("Upload")
+        if "POST" == r.Method {
+                r.ParseMultipartForm(32 << 20)
+                file, handler, err := r.FormFile("tsfile")
+                fmt.Println(handler.Filename)
+                if err != nil {
+                        http.Error(w, err.Error(), 500)
+                        return
+                }
+                defer file.Close()
+                real_url := preparePath(handler.Filename)
+                f,err:=os.Create(real_url)
+                if err != nil {
+//TODO: better system error
+                        http.Error(w, err.Error(), 500)
+                        return
+                }
+                defer f.Close()
+                io.Copy(f,file)
+                return
+        }
+
+}
+
 func main() {
 	var config TestServerConfig
 
 	config = read_conf()
-//	pub_debug = config.Debug
-	init_db ()
-	api := rest.NewApi()
-	api.Use(rest.DefaultDevStack...)
-	router, err := rest.MakeRouter(
-		rest.Get("/os", GetOS),
-		rest.Post("/os", PostOS),
-		rest.Delete("/os/:distribution", DeleteOS),
-		rest.Post("/deploy", DeployOS),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	api.SetApp(router)
 	var port string
 	port = fmt.Sprintf(":%d", config.Port)
-//        fmt.Println(port)
-	log.Fatal(http.ListenAndServe(port, api.MakeHandler()))
+//	pub_debug = config.Debug
+	init_db ()
+
+        http.HandleFunc("/os", ManageOS)
+        http.HandleFunc("/upload", UploadFile)
+        err := http.ListenAndServe(port, nil)
+        if err != nil {
+                log.Fatal("ListenAndServe: ", err)
+        }
+
 }
 
 type OS struct {
@@ -71,7 +123,7 @@ var store = map[string]*OS{}
 
 var lock = sync.RWMutex{}
 
-func GetOSQuery(r *rest.Request) (os OS) {
+func GetOSQuery(r *http.Request) (os OS) {
 	os.Distribution = r.URL.Query().Get("Distribution")
 	os.Version = r.URL.Query().Get("Version")
 	os.Arch = r.URL.Query().Get("Arch")
@@ -138,7 +190,7 @@ func GetAvaliableResource(os_query OS) (ID string) {
 	return ""
 }
 
-func GetOS(w rest.ResponseWriter, r *rest.Request) {
+func GetOS(w http.ResponseWriter, r *http.Request){
 	var os_query OS
 	os_query = GetOSQuery (r)
 	if len(os_query.Distribution) < 1 {
@@ -153,7 +205,6 @@ func GetOS(w rest.ResponseWriter, r *rest.Request) {
 
 	log.Println(ID)
 	if len(ID) < 1 {
-		rest.NotFound(w, r)
 		return
 	}
 
@@ -167,10 +218,11 @@ func GetOS(w rest.ResponseWriter, r *rest.Request) {
 	resource.ID = ID
 	resource.Msg = "ok, good resource"
 	resource.Status = true
-	w.WriteJson(resource)
+	body, _:= json.Marshal(resource)
+	w.Write([]byte(body))
 }
 
-func GetAllOS(w rest.ResponseWriter, r *rest.Request) {
+func GetAllOS(w http.ResponseWriter, r *http.Request){
 	lock.RLock()
 	os_list := make([]OS, len(store))
 	i := 0
@@ -179,36 +231,36 @@ func GetAllOS(w rest.ResponseWriter, r *rest.Request) {
 		i++
 	}
 	lock.RUnlock()
-	w.WriteJson(&os_list)
+	w.Write([]byte("FIXME: all the os"))
 }
 
-func PostOS(w rest.ResponseWriter, r *rest.Request) {
+func PostOS(w http.ResponseWriter, r *http.Request){
 	os := OS{}
-	err := r.DecodeJsonPayload(&os)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+//FIXME: something unknown in this part, leave it non-work..
+//	err := r.DecodeJsonPayload(&os)
+	//if err != nil {
+	//	rest.Error(w, err.Error(), http.StatusInternalServerError)
+	//	return
+	//}
 	if os.Distribution == "" {
-		rest.Error(w, "os distribution required", 400)
+	//	rest.Error(w, "os distribution required", 400)
 		return
 	}
 	if os.Version == "" {
-		rest.Error(w, "os version required", 400)
+	//	rest.Error(w, "os version required", 400)
 		return
 	}
 	if os.Arch == "" {
-		rest.Error(w, "os arch required", 400)
+	//	rest.Error(w, "os arch required", 400)
 		return
 	}
 	lock.Lock()
 	store[os.Distribution] = &os
 	lock.Unlock()
-	w.WriteJson(&os)
 }
 
-func DeleteOS(w rest.ResponseWriter, r *rest.Request) {
-	Distribution := r.PathParam("Distribution")
+func DeleteOS(w http.ResponseWriter, r *http.Request){
+	Distribution := r.URL.Query().Get("Distribution")
 	lock.Lock()
 	delete(store, Distribution)
 	lock.Unlock()
@@ -238,6 +290,7 @@ func deployRequest(deploy Deploy) {
 	os := *(store[deploy.ResourceID])
 	fmt.Println("the deploy request is: ", os)
 	if len(deploy.Cmd) > 0 {
+	//	deployTestCase
 		sendCommand(deploy.ResourceID, deploy.Cmd)
 	}
 }
@@ -260,7 +313,6 @@ func DeployOS(w rest.ResponseWriter, r *rest.Request) {
 	deployRequest(deploy)
 	lock.Unlock()
 //TODO: make a good feedback
-	w.WriteJson("ok")
 }
 
 // Will use DB in the future, (mongodb for example)

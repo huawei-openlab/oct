@@ -1,4 +1,5 @@
 {"Name": "Network-performance", "License": "GPL",
+"Sources": ["./source/Dockerfile", "running.sh"],
 "Requires": 
 	[
 		{"Class": "operationOS",
@@ -10,7 +11,7 @@
 		 "Type": "container",
 		 "Distribution": "Docker",
 		 "Version": 1,
-		 "file": "./source/Dockerfile"
+		 "Files": ["./source/Dockerfile"]
 		}
 	],
 "Deploys": 
@@ -18,11 +19,13 @@
 		{
                 "Object": "hostA",
 		"Class": "operationOS",
+		"Files": ["running.sh"],
 		"Cmd": "touch /tmp/dliang",
 		"Containers": [
 				{"Object": "DockerA",
 				 "Class": "ImageA",
-				 "Cmd": "touch /tmp/dliang_d1"
+				 "Cmd": "touch /tmp/dliang_d1",
+				 "Files": ["./source/Dockerfile"]
 				}
 			]
           	}
