@@ -13,7 +13,7 @@ import (
 
 func preparePath(filename string) (realurl string) {
 //TODO: should add the 'testcase name'
-	pre_uri := "/tmp/testcase_cache/"
+	pre_uri := "/tmp/testcase_ocitd_cache/"
 	realurl = path.Join(pre_uri, filename)
 	dir := path.Dir(realurl)
 	p, err:= os.Stat(dir)

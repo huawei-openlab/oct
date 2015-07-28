@@ -240,7 +240,6 @@ func debug_deploy(deploys []Deploy) {
 }
 
 func send_deploy_file(deploy Deploy, filename string) {
-	fmt.Println("Send deploy file ", filename)
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 	fileWriter, err := bodyWriter.CreateFormFile("tsfile", filename)
@@ -259,7 +258,9 @@ func send_deploy_file(deploy Deploy, filename string) {
 	}
 	contentType := bodyWriter.FormDataContentType()
 	bodyWriter.Close()
-	resp, err := http.Post(pub_conf.TSurl + "/upload", contentType, bodyBuf)
+	post_url := pub_conf.TSurl + "/upload/" + deploy.ResourceID
+	fmt.Println(post_url)
+	resp, err := http.Post(post_url, contentType, bodyBuf)
 	if err != nil {
 		return
 	}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/drones/routes"
 	"log"
 	"net/http"
 	"sync"
@@ -11,6 +11,8 @@ import (
 	"bytes"
 	"fmt"
 	"encoding/json"
+	"mime/multipart"
+	"io/ioutil"
 	"path"
 )
 
@@ -20,74 +22,102 @@ type TestServerConfig struct{
 }
 
 func read_conf()(config TestServerConfig) {
-        config_file := "./testserver.conf"
-        file, err := os.Open(config_file)
-        defer file.Close()
-        if err != nil {
-                fmt.Println(config_file, err)
-                return
-        }
-        buf := bytes.NewBufferString("")
-        buf.ReadFrom(file)
-        json.Unmarshal([]byte(buf.String()), &config)
-
-        return config
-}
-
-
-func ManageOS(w http.ResponseWriter, r *http.Request){
-        if "GET" == r.Method {
-		GetOS(w, r)
-        } else if "POST" == r.Method {
-		PostOS(w,r)
+	config_file := "./testserver.conf"
+	file, err := os.Open(config_file)
+	defer file.Close()
+	if err != nil {
+		fmt.Println(config_file, err)
+		return
 	}
+	buf := bytes.NewBufferString("")
+	buf.ReadFrom(file)
+	json.Unmarshal([]byte(buf.String()), &config)
+
+	return config
 }
 
 func preparePath(filename string) (realurl string) {
 //TODO: should add the 'testcase name'
-        pre_uri := "/tmp/testcase_db_cache/"
-        realurl = path.Join(pre_uri, filename)
-        dir := path.Dir(realurl)
-        p, err:= os.Stat(dir)
-        if err!= nil {
-                if !os.IsExist(err) {
-                        os.MkdirAll(dir, 0777)
-                }
-        } else {
-                if p.IsDir() {
-                        return realurl
-                } else {
-                        os.Remove(dir)
-                        os.MkdirAll(dir, 0777)
-                }
-        }
-        return realurl
+	pre_uri := "/tmp/testserver_cache/"
+	realurl = path.Join(pre_uri, filename)
+	dir := path.Dir(realurl)
+	p, err:= os.Stat(dir)
+	if err!= nil {
+		if !os.IsExist(err) {
+			os.MkdirAll(dir, 0777)
+		}
+	} else {
+		if p.IsDir() {
+			return realurl
+		} else {
+			os.Remove(dir)
+			os.MkdirAll(dir, 0777)
+		}
+	}
+	return realurl
 }
 
+func send_deploy_file(id string, realurl string, filename string) {
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+	fileWriter, err := bodyWriter.CreateFormFile("tsfile", filename)
+	if err != nil {
+		fmt.Println("error writing to buffer")
+		return
+	}
+	fh, err := os.Open(realurl)
+	if err != nil {
+		fmt.Println("error opening file")
+		return
+	}
+	_, err = io.Copy(fileWriter, fh)
+	if err != nil {
+		return
+	}
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.Close()
+
+	os := *(store[id])
+
+//FIXME: better org
+	post_url := "http://" + os.IP + ":9001/upload"
+	fmt.Println(post_url)
+	resp, err := http.Post(post_url, contentType, bodyBuf)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+        fmt.Println(resp.Status)
+        fmt.Println(string(resp_body))
+}
 
 func UploadFile(w http.ResponseWriter, r *http.Request){
-	fmt.Println("Upload")
-        if "POST" == r.Method {
-                r.ParseMultipartForm(32 << 20)
-                file, handler, err := r.FormFile("tsfile")
-                fmt.Println(handler.Filename)
-                if err != nil {
-                        http.Error(w, err.Error(), 500)
-                        return
-                }
-                defer file.Close()
-                real_url := preparePath(handler.Filename)
-                f,err:=os.Create(real_url)
-                if err != nil {
+	r.ParseMultipartForm(32 << 20)
+	file, handler, err := r.FormFile("tsfile")
+	fmt.Println(handler.Filename)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer file.Close()
+	real_url := preparePath(handler.Filename)
+	f,err:=os.Create(real_url)
+	if err != nil {
 //TODO: better system error
-                        http.Error(w, err.Error(), 500)
-                        return
-                }
-                defer f.Close()
-                io.Copy(f,file)
-                return
-        }
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer f.Close()
+	io.Copy(f,file)
+	id := r.URL.Query().Get(":ID")
 
+//TS act as the agent
+	send_deploy_file(id, real_url, handler.Filename)
+	w.Write([]byte(id))
 }
 
 func main() {
@@ -99,12 +129,15 @@ func main() {
 //	pub_debug = config.Debug
 	init_db ()
 
-        http.HandleFunc("/os", ManageOS)
-        http.HandleFunc("/upload", UploadFile)
-        err := http.ListenAndServe(port, nil)
-        if err != nil {
-                log.Fatal("ListenAndServe: ", err)
-        }
+	mux := routes.New()
+	mux.Get("/os", GetOS)
+	mux.Post("/os", PostOS)
+	mux.Post("/upload/:ID", UploadFile)
+	http.Handle("/", mux)
+	err := http.ListenAndServe(port, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+	}
 
 }
 
@@ -131,26 +164,26 @@ func GetOSQuery(r *http.Request) (os OS) {
 	var cpu string
 	cpu = r.URL.Query().Get("CPU")
 	if len(cpu) > 0 {
-        	cpu_count, cpu_err := strconv.ParseInt(cpu, 10, 64)
- 	        if cpu_err != nil {
-                	//TODO, should report the err
+		cpu_count, cpu_err := strconv.ParseInt(cpu, 10, 64)
+ 		if cpu_err != nil {
+			//TODO, should report the err
 		} else {
 			os.CPU = cpu_count
 		}
-        } else {
+	} else {
 		os.CPU = 0
 	}
 
 	var memory string
 	memory = r.URL.Query().Get("Memory")
 	if len(memory) > 0 {
-        	memory_count, memory_err := strconv.ParseInt(cpu, 10, 64)
- 	        if memory_err != nil {
-                	//TODO, should report the err
+		memory_count, memory_err := strconv.ParseInt(cpu, 10, 64)
+ 		if memory_err != nil {
+			//TODO, should report the err
 		} else {
 			os.Memory = memory_count
 		}
-        } else {
+	} else {
 		os.Memory = 0
 	}
 
@@ -268,18 +301,18 @@ func DeleteOS(w http.ResponseWriter, r *http.Request){
 }
 
 type Container struct {
-        Object string
-        Class string
-        Cmd string
+	Object string
+	Class string
+	Cmd string
 }
 
 type Deploy struct {
-        Object string
-        Class string
-        Cmd string
-        Containers []Container
+	Object string
+	Class string
+	Cmd string
+	Containers []Container
 
-        ResourceID string
+	ResourceID string
 }
 
 func sendCommand(ID string, CMD string) {
@@ -295,16 +328,16 @@ func deployRequest(deploy Deploy) {
 	}
 }
 
-func DeployOS(w rest.ResponseWriter, r *rest.Request) {
+func DeployOS(w http.ResponseWriter, r *http.Request) {
 
 	deploy := Deploy{}
-	err := r.DecodeJsonPayload(&deploy)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+//	err := r.DecodeJsonPayload(&deploy)
+//	if err != nil {
+//		rest.Error(w, err.Error(), http.StatusInternalServerError)
+//		return
+//	}
 	if deploy.ResourceID == "" {
-		rest.Error(w, "the wrong resource id", 400)
+//		rest.Error(w, "the wrong resource id", 400)
 		return
 	} else {
 		fmt.Println("The deploy resource id is : ", deploy)
