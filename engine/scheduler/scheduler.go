@@ -28,6 +28,8 @@ type Container struct {
 	Class string
 	Cmd string
 	Files []string
+	Distribution string
+	Version int
 }
 
 type Deploy struct {
@@ -176,24 +178,31 @@ func apply_container(req Require) (resource Resource){
 	return resource
 }
 
-func apply_resource(req Require) (resource Resource){
-	if req.Type == "os" {
-		resource = apply_os(req)
-	} else if req.Type == "container" {
-		resource = apply_container(req)
-	} else {
-		fmt.Println("What is the new type? How can it pass the validation test")
+func setContainerClass(deploys []Deploy, req Require) {
+	for index := 0; index < len(deploys); index++ {
+		deploy := deploys[index]
+		for c_index := 0; c_index < len(deploy.Containers); c_index++ {
+			if deploy.Containers[c_index].Class == req.Class {
+				deploy.Containers[c_index].Distribution = req.Distribution
+				deploy.Containers[c_index].Version = req.Version
+			}
+		}
 	}
-	resource._used = false
-	return resource
 }
 
 func apply_resources(ts_demo TestCase) (resources []Resource){
 	for index :=0; index < len(ts_demo.Requires); index++ {
 		var resource Resource
-		var req Require
-		req = ts_demo.Requires[index]
-		resource = apply_resource(req)
+		req := ts_demo.Requires[index]
+		if req.Type == "os" {
+			resource = apply_os(req)
+		} else if req.Type == "container" {
+			resource = apply_container(req)
+			setContainerClass(ts_demo.Deploys, req)
+		} else { 
+			fmt.Println("What is the new type? How can it pass the validation test")
+		}
+		resource._used = false
 		if len(resource.ID) > 1 {
 			resources = append(resources, resource)	
 		}
@@ -281,12 +290,12 @@ func send_deploy_cmd(deploy Deploy) {
 	if pub_debug {
 		fmt.Println("get url: ", apiurl)
 	}
+//FIXME: we should also send the 'Container' type
 	b, jerr := json.Marshal(deploy)
 	if jerr != nil {
 		fmt.Println("Failed to marshal json:", jerr)
 		return
 	}
-fmt.Println(deploy)
 	body := bytes.NewBuffer([]byte(b))
 	resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
 	defer resp.Body.Close()
@@ -298,7 +307,6 @@ fmt.Println(deploy)
 		result, berr := ioutil.ReadAll(resp.Body)
 		if berr != nil {
 		} else {
-//TODO: finish the result check
 			if pub_debug {
 				fmt.Println(result)
 			}
@@ -311,11 +319,18 @@ func main() {
 	var validate bool
 	var msg string
 	var test_json_str string
-
+	var case_file string
 
 	pub_conf = read_conf()
 	pub_debug = pub_conf.Debug
-	test_json_str = read_testcase("./democase/democase.json")
+	arg_num := len(os.Args)
+	if arg_num <  2 {
+		case_file = "./democase/democase.json"
+	} else {
+		case_file = os.Args[1]
+	}
+	fmt.Println(case_file)
+	test_json_str = read_testcase(case_file)
 	ts_demo = parse(test_json_str)
 	if pub_debug {
 		fmt.Println(ts_demo)
@@ -366,6 +381,7 @@ func main() {
 		if len(ts_demo.Deploys[index].ResourceID) > 0 {
 			tar_url := tarDeployFiles(ts_demo.Deploys[index], "./democase")
 			send_deploy_file(ts_demo.Deploys[index], tar_url)
+			send_deploy_cmd(ts_demo.Deploys[index])
 		}
 	}
 

@@ -11,7 +11,7 @@
 		 "Type": "container",
 		 "Distribution": "Docker",
 		 "Version": 1,
-		 "Files": ["./source/Dockerfile"]
+		 "Files": ["./source/Dockerfile", "iperftest.go"]
 		}
 	],
 "Deploys": 
@@ -19,16 +19,27 @@
 		{
                 "Object": "hostA",
 		"Class": "operationOS",
-		"Files": ["running.sh"],
-		"Cmd": "touch /tmp/dliang",
+		"Files": ["./iperftest.go"],
+		"Cmd": "go run iperftest.go",
 		"Containers": [
-				{"Object": "DockerA",
+				{"Object": "iperf3-S",
 				 "Class": "ImageA",
-				 "Cmd": "touch /tmp/dliang_d1",
-				 "Files": ["./source/Dockerfile"]
+				 "Cmd": "-s -J > result.json",
+		 		 "Files": ["./source/Dockerfile"]
+				},
+				{"Object": "iperf3-C",
+				 "Class": "ImageA",
+				 "Cmd": "-c `echo \"127.0.0.1\"`"
 				}
 			]
           	}
+	],
+"Collect":
+	[
+		{
+		"Object": "hostA",
+		"Files": ["/tmp/iperftest/result.json"]
+		}
 	]
 }
 

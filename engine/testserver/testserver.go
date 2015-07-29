@@ -18,6 +18,7 @@ import (
 
 type TestServerConfig struct{
 	Port int
+	ServerListFile string
 	Debug bool
 }
 
@@ -95,6 +96,45 @@ func send_deploy_file(id string, realurl string, filename string) {
         fmt.Println(string(resp_body))
 }
 
+//send deploy to the ocitd and the client will do the deploy work
+func SendDeployCommand(deploy Deploy) {
+        var apiurl string
+	os := *(store[deploy.ResourceID])
+	deploy.ResourceID = ""
+	apiurl = "http://" + os.IP + ":9001/deploy"
+        b, jerr := json.Marshal(deploy)
+        if jerr != nil {
+                fmt.Println("Failed to marshal json:", jerr)
+                return
+        }
+
+        body := bytes.NewBuffer([]byte(b))
+        resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
+        defer resp.Body.Close()
+        if perr != nil {
+                // handle error
+                fmt.Println("err in post:", perr)
+                return
+        } else {
+                result, berr := ioutil.ReadAll(resp.Body)
+                if berr != nil {
+                } else {
+                                fmt.Println(result)
+                }
+        }
+}
+
+func DeployCommand(w http.ResponseWriter, r *http.Request){
+	result, _:= ioutil.ReadAll(r.Body)
+	r.Body.Close()
+
+	var deploy Deploy
+	json.Unmarshal([]byte(result), &deploy)
+	
+	SendDeployCommand(deploy)
+//FIXME: write back to the scheduler
+}
+
 func UploadFile(w http.ResponseWriter, r *http.Request){
 	r.ParseMultipartForm(32 << 20)
 	file, handler, err := r.FormFile("tsfile")
@@ -127,18 +167,18 @@ func main() {
 	var port string
 	port = fmt.Sprintf(":%d", config.Port)
 //	pub_debug = config.Debug
-	init_db ()
+	init_db (config.ServerListFile)
 
 	mux := routes.New()
 	mux.Get("/os", GetOS)
 	mux.Post("/os", PostOS)
 	mux.Post("/upload/:ID", UploadFile)
+	mux.Post("/deploy", DeployCommand)
 	http.Handle("/", mux)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-
 }
 
 type OS struct {
@@ -268,23 +308,21 @@ func GetAllOS(w http.ResponseWriter, r *http.Request){
 }
 
 func PostOS(w http.ResponseWriter, r *http.Request){
-	os := OS{}
-//FIXME: something unknown in this part, leave it non-work..
-//	err := r.DecodeJsonPayload(&os)
-	//if err != nil {
-	//	rest.Error(w, err.Error(), http.StatusInternalServerError)
-	//	return
-	//}
+	var os OS
+	result, _:= ioutil.ReadAll(r.Body)
+	r.Body.Close()
+
+	json.Unmarshal([]byte(result), &os)
 	if os.Distribution == "" {
-	//	rest.Error(w, "os distribution required", 400)
+		w.Write([]byte("os distribution required"))
 		return
 	}
 	if os.Version == "" {
-	//	rest.Error(w, "os version required", 400)
+		w.Write([]byte("os version required"))
 		return
 	}
 	if os.Arch == "" {
-	//	rest.Error(w, "os arch required", 400)
+		w.Write([]byte("os arch required"))
 		return
 	}
 	lock.Lock()
@@ -304,12 +342,17 @@ type Container struct {
 	Object string
 	Class string
 	Cmd string
+	Files []string
+	Distribution string
+	Version int
 }
 
+//TODO add a 'casename' ?
 type Deploy struct {
 	Object string
 	Class string
 	Cmd string
+	Files []string
 	Containers []Container
 
 	ResourceID string
@@ -323,53 +366,33 @@ func deployRequest(deploy Deploy) {
 	os := *(store[deploy.ResourceID])
 	fmt.Println("the deploy request is: ", os)
 	if len(deploy.Cmd) > 0 {
-	//	deployTestCase
 		sendCommand(deploy.ResourceID, deploy.Cmd)
 	}
 }
 
-func DeployOS(w http.ResponseWriter, r *http.Request) {
-
-	deploy := Deploy{}
-//	err := r.DecodeJsonPayload(&deploy)
-//	if err != nil {
-//		rest.Error(w, err.Error(), http.StatusInternalServerError)
-//		return
-//	}
-	if deploy.ResourceID == "" {
-//		rest.Error(w, "the wrong resource id", 400)
-		return
-	} else {
-		fmt.Println("The deploy resource id is : ", deploy)
-	}
-	lock.Lock()
-	deployRequest(deploy)
-	lock.Unlock()
-//TODO: make a good feedback
-}
-
 // Will use DB in the future, (mongodb for example)
-// for now, just two demo hosts
-func init_db () {
-	var os [2]OS
-	os[0].Distribution = "Ubuntu"
-	os[0].Version = "12.04"
-	os[0].Arch = "x86_64"
-	os[0].ID = "0001"
-	os[0].CPU = 2
-	os[0].Memory = 4
-	os[0].IP = "192.168.0.1"
-	os[0].locked = false
-	store[os[0].ID] = &os[0]
+func init_db (filename string) {
+	file, err := os.Open(filename)
+	defer file.Close()
+	if err != nil {
+		fmt.Println(filename, err)
+		return
+	}
 
-	os[1].Distribution = "CentOS"
-	os[1].Version = "7"
-	os[1].Arch = "x86_64"
-	os[1].ID = "0002"
-	os[1].CPU = 1
-	os[1].Memory = 3
-	os[1].IP = "127.0.0.1"
-//TODO, change the locked status when it is assigned
-	os[1].locked = false
-	store[os[1].ID] = &os[1]
+	type _Servers struct{
+		Servers []OS
+	}
+	var _servers _Servers
+	
+	buf := bytes.NewBufferString("")
+	buf.ReadFrom(file)
+	json.Unmarshal([]byte(buf.String()), &_servers)
+
+	for index := 0; index < len(_servers.Servers); index++ {
+		os := _servers.Servers[index]
+		os.locked = false
+		store[os.ID] = &os
+	}
+
+	fmt.Println(store)
 }
