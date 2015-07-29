@@ -21,6 +21,7 @@ type Require struct {
 	Type string
 	Distribution string
 	Version int
+	Files []string
 }
 
 type Container struct {
@@ -68,7 +69,7 @@ type ServerConfig struct {
 }
 //public variable
 var pub_conf ServerConfig
-
+var pub_casename string
 var pub_debug bool
 
 func parse(ts_str string) (ts_demo TestCase) {
@@ -175,6 +176,17 @@ func apply_os(req Require) (resource Resource){
 }
 
 func apply_container(req Require) (resource Resource){
+	tar_url := TarFilelist(req.Files, "./democase", req.Class)
+	post_url := pub_conf.CPurl + "/upload"
+	SendFile(post_url, tar_url)
+
+	apiurl  := pub_conf.CPurl + "/build"
+	b, jerr := json.Marshal(req)
+	if jerr != nil {
+		fmt.Println("Failed to marshal json:", jerr)
+		return
+	}
+	SendCommand(apiurl, []byte(b))
 	return resource
 }
 
@@ -197,6 +209,7 @@ func apply_resources(ts_demo TestCase) (resources []Resource){
 		if req.Type == "os" {
 			resource = apply_os(req)
 		} else if req.Type == "container" {
+//FIXME: change the democase
 			resource = apply_container(req)
 			setContainerClass(ts_demo.Deploys, req)
 		} else { 
@@ -248,7 +261,7 @@ func debug_deploy(deploys []Deploy) {
 	}
 }
 
-func send_deploy_file(deploy Deploy, filename string) {
+func SendFile(post_url string, filename string) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 	fileWriter, err := bodyWriter.CreateFormFile("tsfile", filename)
@@ -267,8 +280,6 @@ func send_deploy_file(deploy Deploy, filename string) {
 	}
 	contentType := bodyWriter.FormDataContentType()
 	bodyWriter.Close()
-	post_url := pub_conf.TSurl + "/upload/" + deploy.ResourceID
-	fmt.Println(post_url)
 	resp, err := http.Post(post_url, contentType, bodyBuf)
 	if err != nil {
 		return
@@ -282,21 +293,8 @@ func send_deploy_file(deploy Deploy, filename string) {
 	fmt.Println(string(resp_body))
 }
 
-//send deploy to the testserver and the server will do the deploy work
-func send_deploy_cmd(deploy Deploy) {
-	var apiurl string
-
-	apiurl = pub_conf.TSurl + "/deploy"
-	if pub_debug {
-		fmt.Println("get url: ", apiurl)
-	}
-//FIXME: we should also send the 'Container' type
-	b, jerr := json.Marshal(deploy)
-	if jerr != nil {
-		fmt.Println("Failed to marshal json:", jerr)
-		return
-	}
-	body := bytes.NewBuffer([]byte(b))
+func SendCommand(apiurl string, b []byte) {
+	body := bytes.NewBuffer(b)
 	resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
 	defer resp.Body.Close()
 	if perr != nil {
@@ -379,19 +377,38 @@ func main() {
 // Send deploys
 	for index :=0; index < len(ts_demo.Deploys); index++ {
 		if len(ts_demo.Deploys[index].ResourceID) > 0 {
-			tar_url := tarDeployFiles(ts_demo.Deploys[index], "./democase")
-			send_deploy_file(ts_demo.Deploys[index], tar_url)
-			send_deploy_cmd(ts_demo.Deploys[index])
+			filelist := GetDeployFiles(ts_demo.Deploys[index])
+//FIXME: change the democase
+			tar_url := TarFilelist(filelist, "./democase", ts_demo.Deploys[index].Object)
+			post_url := pub_conf.TSurl + "/upload/" + ts_demo.Deploys[index].ResourceID
+			SendFile(post_url, tar_url)
+
+			apiurl  := pub_conf.TSurl + "/deploy"
+			b, jerr := json.Marshal(ts_demo.Deploys[index])
+			if jerr != nil {
+				fmt.Println("Failed to marshal json:", jerr)
+				return
+			}
+			SendCommand(apiurl, []byte(b))
 		}
 	}
-
 }
 
-//NOTE: no need to put case.json to the tar file
-//FIXME: destroy the tar file maybe?
-// if the case files were not in tar.gz format, tar it!
-func tarDeployFiles(deploy Deploy, case_dir string) (tar_url string){
-	tar_url = path.Join(case_dir, deploy.Object) + ".tar.gz"
+func GetDeployFiles(deploy Deploy) (filelist []string) {
+	for index := 0; index < len(deploy.Files); index++ {
+		filelist = append(filelist, deploy.Files[index])
+        }
+	for index := 0; index < len(deploy.Containers); index++ {
+		container := deploy.Containers[index]
+		for c_index := 0; c_index < len(container.Files); c_index ++ {
+			filelist = append(filelist, container.Files[c_index])
+		}
+	}
+	return filelist
+}
+
+func TarFilelist(filelist []string, case_dir string, object_name string) (tar_url string) {
+	tar_url = path.Join(case_dir, object_name) + ".tar.gz"
  	fw, err := os.Create(tar_url)
 	if err != nil {
 		fmt.Println("Failed in create tar file ", err)
@@ -403,8 +420,8 @@ func tarDeployFiles(deploy Deploy, case_dir string) (tar_url string){
         tw := tar.NewWriter(gw)
         defer tw.Close()
 
-	for index := 0; index < len(deploy.Files); index++ {
-		source_file := deploy.Files[index]
+	for index := 0; index < len(filelist); index++ {
+		source_file := filelist[index]
 		fi, err := os.Stat(path.Join(case_dir, source_file))
 		if err != nil {
                         fmt.Println(err)
@@ -423,29 +440,6 @@ func tarDeployFiles(deploy Deploy, case_dir string) (tar_url string){
                 err = tw.WriteHeader(h)
                 _, err = io.Copy(tw, fr)
         }
-	for index := 0; index < len(deploy.Containers); index++ {
-		container := deploy.Containers[index]
-		for c_index := 0; c_index < len(container.Files); c_index ++ {
-			source_file := container.Files[c_index]
-			fi, err := os.Stat(path.Join(case_dir, source_file))
-			if err != nil {
-        	                fmt.Println(err)
-                	        continue
-			}
-			fr, err := os.Open(path.Join(case_dir, source_file))
-        	        if err != nil {
-                	        fmt.Println(err)
-                        	continue
-	                }
-        	        h := new(tar.Header)
-                	h.Name = source_file
-			h.Size = fi.Size()
-			h.Mode = int64(fi.Mode())
-			h.ModTime = fi.ModTime()
-	                err = tw.WriteHeader(h)
-        	        _, err = io.Copy(tw, fr)
-		}
-	}
-        fmt.Println("OK")
 	return tar_url
 }
+
