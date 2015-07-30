@@ -103,6 +103,7 @@ func wirteConfig(filePath string, linuxspec *specs.LinuxSpec) error {
 	if err1 != nil {
 		fmt.Println(" open file err, %v", err1)
 	}
+	defer fd.Close()
 	_, err = fd.Write(stream)
 	if err != nil {
 		fmt.Println(" write file err, %v", err)
