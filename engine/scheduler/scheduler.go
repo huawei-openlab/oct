@@ -176,7 +176,7 @@ func apply_os(req Require) (resource Resource){
 }
 
 func apply_container(req Require) (resource Resource){
-	tar_url := TarFilelist(req.Files, "./democase", req.Class)
+	tar_url := TarFilelist(req.Files, "./case01", req.Class)
 	post_url := pub_conf.CPurl + "/upload"
 	SendFile(post_url, tar_url)
 
@@ -379,7 +379,7 @@ func main() {
 		if len(ts_demo.Deploys[index].ResourceID) > 0 {
 			filelist := GetDeployFiles(ts_demo.Deploys[index])
 //FIXME: change the democase
-			tar_url := TarFilelist(filelist, "./democase", ts_demo.Deploys[index].Object)
+			tar_url := TarFilelist(filelist, "./case01", ts_demo.Deploys[index].Object)
 			post_url := pub_conf.TSurl + "/upload/" + ts_demo.Deploys[index].ResourceID
 			SendFile(post_url, tar_url)
 

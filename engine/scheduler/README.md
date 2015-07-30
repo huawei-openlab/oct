@@ -1,5 +1,7 @@
 TODO-List (by seqence)
 
+case001 --- the first running case
+
 1. testcase server
 1.1 parse & validation
     find the mandatory area

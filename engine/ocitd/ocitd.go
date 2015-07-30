@@ -18,7 +18,7 @@ import (
 
 func preparePath(filename string) (realurl string) {
 //TODO: should add the 'testcase name'
-	pre_uri := "/tmp/testcase_ocitd_cache/"
+	pre_uri := "/tmp/testcase_ocitd_cache"
 	realurl = path.Join(pre_uri, filename)
 	dir := path.Dir(realurl)
 	p, err:= os.Stat(dir)
@@ -35,10 +35,6 @@ func preparePath(filename string) (realurl string) {
 		}
 	}
 	return realurl
-}
-
-func testOS(w http.ResponseWriter, r *http.Request){
-	fmt.Println(r.URL.Query().Get("Distribution"))
 }
 
 func untarFiles(filename string) {
@@ -146,13 +142,18 @@ type Deploy struct {
 }
 
 func RunCommand(cmd string) {
-	pre_uri := "/tmp/testcase_ocitd_cache/"
+	pre_uri := "/tmp/testcase_ocitd_cache/source"
 	os.Chdir(pre_uri)
+
+	fmt.Println("Run the command ", cmd)
 	c := exec.Command("/bin/sh", "-c", cmd)
 	c.Run()
+	fmt.Println("After run the command ", cmd)
 }
 
 func PullImage(container Container) {
+//FIXME: no need to do this!
+	return
 	if container.Distribution == "Docker" {
 		cmd := "docker pull " + container.Class
 		c := exec.Command("/bin/sh", "-c", cmd)
@@ -186,6 +187,19 @@ func DeployCommand(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func CollectFiles(w http.ResponseWriter, r *http.Request){
+        result, _:= ioutil.ReadAll(r.Body)
+        r.Body.Close()
+
+        var filelist []string
+        json.Unmarshal([]byte(result), &filelist)
+
+        for index := 0; index < len(filelist); index++ {
+		fmt.Println(filelist[index])
+	}
+
+}
+
 func main() {
 	var config OCITDConfig
 	config = read_conf()
@@ -195,7 +209,7 @@ func main() {
 	mux := routes.New()
         mux.Post("/upload", UploadFile)
         mux.Post("/deploy", DeployCommand)
-	mux.Get("/os", testOS)
+	mux.Post("/collect", CollectFiles)
         http.Handle("/", mux)
         err := http.ListenAndServe(port, nil)
         if err != nil {
