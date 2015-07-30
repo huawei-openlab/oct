@@ -9,10 +9,10 @@ For more information, refers to [ocp-testing/README.md](./../../README.md).
 
 ### How to Test Specs
 It conclude the next steps,
-A. uses the Specs in [opencontainers/specs](github.com/opencontainers/specs) as a benchmark, 
+A. uses the Specs in [opencontainers/specs](https://github.com/opencontainers/specs) as a benchmark, 
 LinuxSpec is the the full specification for linux containers in the project.
 
-B. Convert  [config.json](./source/config.json) file to the obj LinuxSPec on the [opencontainers/specs](github.com/opencontainers/specs).
+B. Convert  [config.json](./source/config.json) file to the obj LinuxSPec on the [opencontainers/specs](https://github.com/opencontainers/specs).
 example:
 ```
 var linuxspec *specs.LinuxSpec
