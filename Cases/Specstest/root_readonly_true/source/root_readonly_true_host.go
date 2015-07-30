@@ -15,12 +15,10 @@
 package main
 
 import (
-	"encoding/json"
+	configconvert "./../../source/configconvert"
 	"fmt"
 	specs "github.com/opencontainers/specs"
-	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 )
 
@@ -62,55 +60,19 @@ func testRootReadonlyTrue() {
 	filePath = "config.json"
 
 	var linuxspec *specs.LinuxSpec
-	linuxspec, err = readConfig(filePath)
+	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
 	if err != nil {
 		log.Fatalf("Specstestroot readonly test: readconfig error, %v", err)
 	}
 
 	linuxspec.Spec.Root.Path = "rootfs_rootconfig"
 	linuxspec.Spec.Root.Readonly = true
-
-	err = wirteConfig(filePath, linuxspec)
+	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
+	//err = wirteConfig(filePath, linuxspec)
 	if err != nil {
 		log.Fatalf("Specstest root readonly test: writeconfig error, %v", err)
 	}
 	fmt.Println("Host enviroment for runc is already!")
-}
-
-//read config.json to specs.LinuxSpec
-func readConfig(filePath string) (*specs.LinuxSpec, error) {
-	out, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return nil, err
-	}
-	var linuxspec specs.LinuxSpec
-	err = json.Unmarshal(out, &linuxspec)
-	if err != nil {
-		return nil, err
-	}
-
-	return &linuxspec, nil
-}
-
-//write specs.LinuxSpec to config.json
-func wirteConfig(filePath string, linuxspec *specs.LinuxSpec) error {
-	stream, err := json.Marshal(linuxspec)
-	if err != nil {
-		return err
-	}
-	//var fd os.File
-	fd, err1 := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC, 0777)
-	if err1 != nil {
-		fmt.Println(" open file err, %v", err1)
-	}
-	defer fd.Close()
-	_, err = fd.Write(stream)
-	if err != nil {
-		fmt.Println(" write file err, %v", err)
-	}
-
-	return err
-
 }
 
 func main() {
