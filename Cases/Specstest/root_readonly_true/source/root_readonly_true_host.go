@@ -101,11 +101,11 @@ func wirteConfig(filePath string, linuxspec *specs.LinuxSpec) error {
 	//var fd os.File
 	fd, err1 := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC, 0777)
 	if err1 != nil {
-		fmt.Println(" open file err, %V", err1)
+		fmt.Println(" open file err, %v", err1)
 	}
 	_, err = fd.Write(stream)
 	if err != nil {
-		fmt.Println(" write file err, %V", err)
+		fmt.Println(" write file err, %v", err)
 	}
 
 	return err

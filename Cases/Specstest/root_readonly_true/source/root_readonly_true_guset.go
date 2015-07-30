@@ -26,9 +26,9 @@ func testRootReadonlyTrue() {
 	cmd := exec.Command("/bin/sh", "-c", "mkdir -p /testFolder")
 	_, err := cmd.Output()
 	if err != nil {
-		fmt.Println("[YES]	Linuxspec.Spec.Root.Readonly == ture   passed")
+		fmt.Println("[YES]        Linuxspec.Spec.Root.Readonly == ture   passed")
 	} else {
-		log.Fatalf("[NO]		Linuxspec.Spec.Root.Readonly == ture   failed")
+		log.Fatalf("[NO]        Linuxspec.Spec.Root.Readonly == ture   failed")
 	}
 
 }
