@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/drones/routes"
+	"../lib/routes"
 	"log"
 	"net/http"
 	"sync"
