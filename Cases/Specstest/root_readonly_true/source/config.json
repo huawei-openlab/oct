@@ -22,7 +22,7 @@
   },
   "root": {
     "path": "rootfs_rootconfig",
-    "readonly": true
+    "readonly": false
   },
   "hostname": "shell",
   "mounts": [
@@ -65,7 +65,7 @@
     {
       "type": "sysfs",
       "source": "sysfs",
-      "destination": "/sys",
+      "destination": "/sys", 
       "options": "nosuid,noexec,nodev"
     },
     {

@@ -15,17 +15,27 @@
 package main
 
 import (
+	//"bytes"
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 )
 
 func testRootReadonlyTrue() {
 
 	//exec shell in host machine to get docker container id
-	cmd := exec.Command("/bin/sh", "-c", "mkdir -p /testFolder")
-	_, err := cmd.Output()
+	rootString := " / "
+	cmd := exec.Command("/bin/sh", "-c", "mount |grep "+rootString)
+	outBytes, err := cmd.Output()
 	if err != nil {
+		log.Fatalf("Specs test testRootReadonlyTrue grep mount string err, %v", err)
+	}
+
+	outString := string(outBytes)
+	fmt.Println(outString)
+
+	if strings.Contains(outString, "ro") {
 		fmt.Println("[YES]        Linuxspec.Spec.Root.Readonly == ture   passed")
 	} else {
 		log.Fatalf("[NO]        Linuxspec.Spec.Root.Readonly == ture   failed")
