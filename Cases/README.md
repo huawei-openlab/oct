@@ -1,7 +1,7 @@
 The testcase should be written in JSON format, including five parts:
   "Description", "Requires", "Deploy", "Run" and "Collect". 
 ```
-{"Description": {}, "Requires": {}, "Deploy":{}, "Run": {}, "Collect": {}}
+{"Description": {}, "Requires": {}, "Deploys":{}, "Run": {}, "Collect": {}}
 ```
 
 ### "Description"
@@ -48,14 +48,14 @@ Also, he/she should define the container image (by dockerfile for example), so t
         ],
 ```
 
-### "Deploy"
+### "Deploys"
 The case developer should tell the host operation systems and the containers 
 which commands should be used to deploy the test.
 The commands could be used directly or wrapped by a script. 
 By default, after runing all the command, the test system will continue to the 'Run' part.
 If the developer want to install extra package, he/she can put the related commands here. 
 ```
-  "Deploy": [
+  "Deploys": [
             {
                 "object": "hostA",
                 "class": "OperationOS",
