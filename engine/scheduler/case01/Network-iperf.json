@@ -6,6 +6,7 @@
         "Description": "Test network bandwidth between different containers",
         "Group": "Performance/Network",
         "License": "Apache 2.0",
+        "Explains": "The Sources here is useless"
         "Sources": [
             "./source/Dockerfile",
             "./source/iperf_test.sh"
