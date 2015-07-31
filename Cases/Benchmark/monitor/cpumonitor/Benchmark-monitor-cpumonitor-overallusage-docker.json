@@ -28,7 +28,7 @@
             }
             {
                 
-                "Class": "cpu_overall_usage",
+                "Class": "cpuusage",
                 "Type": "container",
                 "Version": "dockerV1.0",
                 "Files": [
