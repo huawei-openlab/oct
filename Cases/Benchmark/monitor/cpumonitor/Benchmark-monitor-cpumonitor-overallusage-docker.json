@@ -46,7 +46,7 @@
                 "Containers": [
                     {
                         "Object": "cpu",
-                        "Class": "cpu_overall_usage"
+                        "Class": "cpuusage"
                     }
                 ]
             }         
