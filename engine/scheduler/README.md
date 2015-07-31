@@ -1,12 +1,15 @@
+Finish --
+1. case001 the first working case
+2. parse
+3. communicate with ts and container pool
+4. config file
+
 TODO-List (by seqence)
 
-case001 --- the first running case
 
 1. testcase server
-1.1 parse & validation
+1.1 validation
     find the mandatory area
-1.2 send request to test-server and container-server
-1.3 add config file to tell the test-server daemon and container pool daemon address
 
 2. test-server-daemon
 2.1 monitor the request from testcase server
@@ -21,5 +24,3 @@ case001 --- the first running case
 4. testcase server send new testcase order (with both id/id-list) to test-server-daemon
     to deploy the test
 
-# go-hack
-start to use golang
