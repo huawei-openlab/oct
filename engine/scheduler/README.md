@@ -6,11 +6,11 @@ Finish --
 
 TODO-List (by seqence)
 
+Plan to work on the report-markdown auto-generator
 
 1. testcase server
 1.1 validation
     find the mandatory area
-
 2. test-server-daemon
 2.1 monitor the request from testcase server
 2.2 deliver to the underling HA/openStack...
