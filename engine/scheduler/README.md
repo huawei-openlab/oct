@@ -6,6 +6,7 @@ Finish --
 
 TODO-List (by seqence)
 
+Plan to work on the report-markdown auto-generator
 
 1. testcase server
 1.1 validation
