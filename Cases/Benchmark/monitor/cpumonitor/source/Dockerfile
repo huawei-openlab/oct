@@ -11,3 +11,5 @@ VOLUME /data
 ADD deadloop.sh /deadloop.sh
 RUN chmod 755 /deadloop.sh
 
+ENTRYPOINT ["/deadloop.sh"]
+
