@@ -49,7 +49,7 @@
 		"Cmd": "./iperf_test.sh"
             }
 	],
-        "Collect": [
+        "Collects": [
             {
                 "Object": "hostA",
 		"Files": ["./source/iperf-tcp-result.json", "./source/iperf-udp-result.json"]
