@@ -24,7 +24,7 @@ import (
 
 func testRootReadonlyTrue() {
 
-	cmd := exec.Command("/bin/sh", "-c", " sudo -u zenlin go build root_readonly_true_guest.go")
+	cmd := exec.Command("/bin/sh", "-c", "go build root_readonly_true_guest.go")
 	_, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("Specstest root readonly test: build guest programme error, %v", err)
