@@ -16,8 +16,9 @@ package main
 
 import (
 	//"bytes"
-	"fmt"
+	//"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -33,14 +34,22 @@ func testRootReadonlyTrue() {
 	}
 
 	outString := string(outBytes)
-	fmt.Println(outString)
-
-	if strings.Contains(outString, "ro") {
-		fmt.Println("[YES]        Linuxspec.Spec.Root.Readonly == ture   passed")
+	var resultString string
+	if strings.Contains(outString, "(ro,") {
+		resultString = "[YES]        Linuxspec.Spec.Root.Readonly == ture   passed"
 	} else {
-		log.Fatalf("[NO]        Linuxspec.Spec.Root.Readonly == ture   failed")
+		resultString = "[NO]        Linuxspec.Spec.Root.Readonly == ture   failed"
 	}
 
+	foutfile := "/testtool/readonly_true_out.txt"
+	fout, err := os.Create(foutfile)
+	defer fout.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		fout.WriteString(resultString)
+	}
 }
 
 func main() {

@@ -12,7 +12,7 @@
       "additionalGids": null
     },
     "args": [
-      "bash"
+      "./root_readonly_true_guest"
     ],
     "env": [
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
@@ -21,10 +21,10 @@
     "cwd": "/testtool"
   },
   "root": {
-    "path": "rootfs_rootconfig",
-    "readonly": false
+    "path": "./../../source/rootfs_rootconfig",
+    "readonly": true
   },
-  "hostname": "shell",
+  "hostname": "bash",
   "mounts": [
     {
       "type": "bind",
@@ -65,7 +65,7 @@
     {
       "type": "sysfs",
       "source": "sysfs",
-      "destination": "/sys", 
+      "destination": "/sys",
       "options": "nosuid,noexec,nodev"
     },
     {
