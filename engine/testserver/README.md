@@ -32,7 +32,8 @@ List all the available OS for the specified parameters.
 
 **Response**
 
-```[
+```
+[
   {
     "ID": "1000",
     "Distribution": "CentOS",
