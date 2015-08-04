@@ -9,10 +9,13 @@ Following these steps:
 git clone https://github.com/huawei-openlab/ocp-testing.git
 cd ocp-testing/engine
 make
-./testserver/testserver &
-./iocitd/iocitd &
-./containerpool/containerpool &
-cd scheduler
+cd testserver
+./testserver &
+cd ../iocitd
+./iocitd &
+cd ../containerpool
+./containerpool &
+cd ../scheduler
 
 # choose a testcase.
 ./scheduler case01/Network-iperf.json
