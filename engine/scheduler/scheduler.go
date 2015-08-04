@@ -33,7 +33,7 @@ func ts_validation(ts_demo libocit.TestCase) (validate bool, err_string string) 
 
 	if len(ts_demo.Requires) > 0 {
 	} else {
-		err_string = "Cannot find the libocit.Required resource"
+		err_string = "Cannot find the libocit.Requires resource"
 		return false, err_string
 	}
 	return true, "OK"
