@@ -11,8 +11,8 @@ cd ocp-testing/engine
 make
 cd testserver
 ./testserver &
-cd ../iocitd
-./iocitd &
+cd ../ocitd
+./ocitd &
 cd ../containerpool
 ./containerpool &
 cd ../scheduler
