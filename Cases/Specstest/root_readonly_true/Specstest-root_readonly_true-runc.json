@@ -30,7 +30,7 @@
                 "Type": "container",
                 "Version": "runc V0.2",
                 "Files": [
-		   "./source/Dockerfile"
+		   "./source/config.json"
 		]
                 
             }
