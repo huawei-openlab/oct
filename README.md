@@ -82,7 +82,8 @@ By making a contribution to this project, I certify that:
     this project or the open source license(s) involved.
 ```
 
-### Email and Chat
+### How to involve
+- Mailing list [Join](https://groups.google.com/forum/#!forum/oci-testing)
 
 ### Getting Started
 
