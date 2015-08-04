@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strconv"
 )
 
@@ -21,6 +22,7 @@ type ServerConfig struct {
 var pub_conf ServerConfig
 var pub_casename string
 var pub_debug bool
+var pub_casedir string
 
 func ts_validation(ts_demo libocit.TestCase) (validate bool, err_string string) {
 	if len(ts_demo.Name) > 0 {
@@ -94,7 +96,7 @@ func apply_os(req libocit.Require) (resource libocit.Resource) {
 }
 
 func apply_container(req libocit.Require) (resource libocit.Resource) {
-	tar_url := libocit.TarFilelist(req.Files, "./case01", req.Class)
+	tar_url := libocit.TarFilelist(req.Files, pub_casedir, req.Class)
 	post_url := pub_conf.CPurl + "/upload"
 	libocit.SendFile(post_url, tar_url, tar_url)
 
@@ -157,10 +159,11 @@ func main() {
 	pub_debug = pub_conf.Debug
 	arg_num := len(os.Args)
 	if arg_num < 2 {
-		case_file = "./democase/democase.json"
+		case_file = "./case01/Network-iperf.json"
 	} else {
 		case_file = os.Args[1]
 	}
+	pub_casedir = path.Dir(case_file)
 	fmt.Println(case_file)
 	test_json_str := libocit.ReadFile(case_file)
 	json.Unmarshal([]byte(test_json_str), &ts_demo)
@@ -216,7 +219,7 @@ func main() {
 		if len(ts_demo.Deploys[index].ResourceID) > 0 {
 			filelist := GetDeployFiles(ts_demo.Deploys[index])
 			//FIXME: change the democase
-			tar_url := libocit.TarFilelist(filelist, "./case01", ts_demo.Deploys[index].Object)
+			tar_url := libocit.TarFilelist(filelist, pub_casedir, ts_demo.Deploys[index].Object)
 			post_url := pub_conf.TSurl + "/casefile/" + ts_demo.Deploys[index].ResourceID
 			fmt.Println("Send file  -- ", post_url, tar_url)
 			libocit.SendFile(post_url, tar_url, tar_url)
