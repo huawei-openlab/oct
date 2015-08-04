@@ -14,6 +14,14 @@ import (
 	"path"
 )
 
+/*
+#include <stdio.h>
+void CSystem(char *cmd){
+	system (cmd);
+}
+*/
+import "C"
+
 type OCITDConfig struct {
 	TSurl string
 	Port  int
@@ -54,6 +62,8 @@ func RunCommand(cmd string) {
 	pre_uri := "/tmp/testcase_ocitd_cache/source"
 	os.Chdir(pre_uri)
 
+	C.CSystem(C.CString(cmd))
+	return
 	fmt.Println("Run the command ", cmd)
 	c := exec.Command("/bin/sh", "-c", cmd)
 	c.Run()
