@@ -1,7 +1,7 @@
 {
         "Name": "Network-Test_002",
         "Summary": "network bandwidth",
-        "Version": 0.1,
+        "Version": "0.1",
         "Owner": "chengtiesheng@huawei.com",
         "Description": "Test network bandwidth between different containers",
         "Group": "Performance/Network",
