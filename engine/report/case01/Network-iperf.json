@@ -7,12 +7,16 @@
         "Group": "Performance/Network",
         "License": "Apache 2.0",
         "Explains": "The Sources here is useless",
+        "Sources": [
+            "./source/Dockerfile",
+            "./source/iperf_test.sh"
+        ],
         "Requires": [
             {
                     "Class": "operOS",
                     "Type": "os",
-		    "Distribution": "CentOS",
-		    "Version": 7,
+            		    "Distribution": "CentOS",
+		                "Version": 7,
                     "Resource": {
                         "CPU": 1,
                         "Memory": "2GB",

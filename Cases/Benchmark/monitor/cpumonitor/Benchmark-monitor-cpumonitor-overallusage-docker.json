@@ -5,12 +5,12 @@
         "Description": "Monitor cpu totalusage via cadvisor",
         "Group": "Performance/Benchmark/monitor/cpumonitor/",
         "License": "Apache 2.0",
-        "Explains" ""
+        "Explains": "",
         "Source": [
                     "./source/Dockerfile",
 	       "./source/cpu_overall_usage.go",
-                    "./source/deadloop.sh"
-                    "./host_deploy.sh"
+                    "./source/deadloop.sh",
+                    "./host_deploy.sh",
                     "./docker_deploy.sh"
         ],
         "Requires": [
@@ -25,7 +25,7 @@
 	            "Disk": "200G"
 	        }
                 
-            }
+            },
             {
                 
                 "Class": "cpuusage",
@@ -59,7 +59,7 @@
                 "Cmd": "./cpu_overall_usage > cpu_overall_usage.txt"
             }
         ],
-        "Collect": [
+        "Collects": [
             {
                 "Object": "hostA",
                 "Files": ["./source/cpu_overall_usage.txt"]

@@ -35,11 +35,19 @@ type Deploy struct {
 	ResourceID string
 }
 
+//FIXME: the type is not consistent
+type OSResource struct {
+	CPU int
+	Memory string
+	Disk string
+}
+
 type Require struct {
 	Class        string
 	Type         string
 	Distribution string
 	Version      int
+	Resource     OSResource
 	Files        []string
 }
 
@@ -71,8 +79,11 @@ type Resource struct {
 
 type TestCase struct {
 	Name     string
+	Version  string
 	License  string
 	Group    string
+	Owner    string
+	Description string
 	Sources  []string
 	Requires []Require
 	Deploys  []Deploy
