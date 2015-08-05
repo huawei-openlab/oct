@@ -1,15 +1,16 @@
 {
-        "Name": "Specstest-root_readonly_true-runc",
+        "Name": "Specstest-process-runc",
         "Summary": "test based opencontainers/specs",
         "Owner": "linzhinan@huawei.com",
-        "Description": "Test runc when spec root:readonly == true",
-        "Group": "Specstest/root_readonly_true/",
+        "Description": "Test runc when spec process",
+        "Group": "Specstest/process/",
         "License": "Apache 2.0",
-        "Explains" "Test runc when spec root:readonly == true"
+        "Explains" "Test runc when spec process"
         "Source": [
                     "./source/config.json",
-	       "./source/root_readonly_true_host.go",
-                    "./source/root_readonly_true_guest.go"
+	       "./source/process_host.go",
+                    "./source/process_guest.go"
+                    "./source/test_process.sh"
         ],
         "Requires": [
             {
@@ -39,7 +40,10 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/ ; go build root_readonly_true_host.go ; ./root_readonly_true_host",
+                "Cmd": "cd ./source/",
+                "Cmd": "go build process_host.go",
+                "Cmd": "./process_host",
+                "Cmd": "./test_process.sh > /tmp/testtool/process_out.txt",
                 "Containers": [
                     {
                         "Object": "specs",
@@ -48,18 +52,10 @@
                 ]
             }         
         ],
-          "Run": [
-            {
-                "Object": "hostA",
-                "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "runc"
-            }
-        ],
         "Collect": [
             {
                 "Object": "hostA",
-                "Files": ["/tmp/testtool/readonly_true_out.txt"]
+                "Files": ["/tmp/testtool/process_out.txt"]
             }
         ]
     
