@@ -1,100 +1,50 @@
 {
-    "root": {
-        "name": "Network-Test_001",
-        "summary": "network connectivity",
-        "version": 0.1,
-        "owner": "chengtiesheng@huawei.com",
-        "description": "Test network connectivity between different containers",
-        "group": "Cases/Network",
-        "license": "Apache 2.0",
-        "source": [
-            "docker_run.sh",
-            "network_config.sh"
+        "Name": "Network-Test-ping",
+        "Summary": "network connectivity",
+        "Version": "0.1",
+        "Owner": "chengtiesheng@huawei.com",
+        "Description": "Test network connectivity between different containers",
+        "Group": "Performance/Network",
+        "License": "Apache 2.0",
+        "Explains": "The Sources here is useless",
+        "Sources": [
+            "./source/ping_test.sh"
         ],
         "Requires": [
             {
-                "operationOS": {
-                    "type": "os",
-                    "distribution": "Ubuntu14.02",
-                    "resource": {
+                    "Class": "operOS",
+                    "Type": "os",
+            		    "Distribution": "CentOS",
+		                "Version": 7,
+                    "Resource": {
                         "CPU": 1,
                         "Memory": "2GB",
                         "Disk": "100G"
                     }
-                }
-            },
-            {
-                "ImageA": {
-                    "type": "container",
-                    "version": "dockerV1.0"
-                }
             }
         ],
-        "Deploy": [
+        "Deploys": [
             {
-                "hostA": {
-                    "class": "OperationOS",
-                    "setup": "null",
-                    "containers": [
+                "Object": "hostA",
+                "class": "operOS",
+		        "Files": ["./source/ping_test.sh"],
+                "Containers": [
                         {
-                            "name": "DockerA",
-                            "class": "ImageA",
-                            "deploy": {
-                                "type": "script",
-                                "name": "docker_run.sh"
-                            }
-                        }
-                    ]
-                }
-            },
-            {
-                "hostB": {
-                    "class": "OperationOS",
-                    "containers": [
+                            "Object": "ContainerA",
+                            "Class": "ping"
+                        },
                         {
-                            "name": "DockerB",
-                            "class": "ImageA",
-                            "deploy": {
-                                "type": "script",
-                                "name": "network_config.sh"
-                            }
+                            "Object": "ContainerB",
+                            "Class": "ping"
                         }
-                    ]
-                }
+                    ],
+		            "Cmd": "./ping_test.sh"
             }
-        ],
-        "Run": [
+	],
+        "Collects": [
             {
-                "hostA": {
-                    "run": null
-                }
-            },
-            {
-                "DockerA": {
-                    "run": {
-                        "type": "cmd",
-                        "value": "ping -c 1 -s 1500 192.168.10.10"
-                    }
-                }
-            },
-            {
-                "DockerB": {
-                    "run": {
-                        "type": "cmd",
-                        "value": "ping -c 1 -s 1500 192.168.10.8 > ~/ping_result.txt"
-                    }
-                }
-            }
-        ],
-        "Collect": [
-            {
-                "DockerB": {
-                    "collect": {
-                        "type": "cmd",
-                        "value": "octf_cli -f ~/ping_result.txt"
-                    }
-                }
+                "Object": "hostA",
+		        "Files": ["./source/ping-result"]
             }
         ]
-    }
 }
