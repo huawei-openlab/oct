@@ -35,7 +35,7 @@ func testRootReadonlyTrue() {
 	fmt.Println("Host enviroment setting up for runc is already!")
 
 	var filePath string
-	filePath = "config.json"
+	filePath = "./../../config.json"
 
 	var linuxspec *specs.LinuxSpec
 	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
@@ -43,7 +43,7 @@ func testRootReadonlyTrue() {
 		log.Fatalf("Specstestroot readonly test: readconfig error, %v", err)
 	}
 
-	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
+	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Root.Readonly = true
 	linuxspec.Spec.Process.Args[0] = "./root_readonly_true_guest"
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)

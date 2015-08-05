@@ -31,7 +31,7 @@ func testVersion() {
 	}
 	fmt.Println("Host enviroment setting up for runc is already!")
 	var filePath string
-	filePath = "config.json"
+	filePath = "./../../source/config.json"
 
 	oriSpecVersion := specs.Version
 	var linuxspec *specs.LinuxSpec
