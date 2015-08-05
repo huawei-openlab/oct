@@ -23,7 +23,7 @@ import (
 )
 
 func testVersion() {
-	programmeString := "demo"
+	programmeString := "process_guest"
 	outputFile := ""
 	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
@@ -40,9 +40,16 @@ func testVersion() {
 		log.Fatalf("Specstest version test: readconfig error, %v", err)
 	}
 
-	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
+	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Version = oriSpecVersion
-	linuxspec.Spec.Process.Args[0] = "./" + programmeString
+	linuxspec.Spec.Process.Terminal = true
+	linuxspec.Spec.Process.User.Uid = 1
+	linuxspec.Spec.Process.User.Gid = 1
+	linuxspec.Spec.Process.User.AdditionalGids = nil
+	linuxspec.Spec.Process.Env[0] = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+	linuxspec.Spec.Process.Env[1] = "TERM=xterm"
+	linuxspec.Spec.Process.Cwd = "/testtool"
+
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
 
 	if err != nil {

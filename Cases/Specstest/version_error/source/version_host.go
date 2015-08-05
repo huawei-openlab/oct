@@ -31,7 +31,7 @@ func testVersion() {
 	}
 	fmt.Println("Host enviroment setting up for runc is already!")
 	var filePath string
-	filePath = "config.json"
+	filePath = "./../../source/config.json"
 
 	errSpecVersion := "0.1.0"
 	var linuxspec *specs.LinuxSpec
@@ -40,7 +40,7 @@ func testVersion() {
 		log.Fatalf("Specstest version test: readconfig error, %v", err)
 	}
 
-	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
+	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Version = errSpecVersion
 	linuxspec.Spec.Process.Args[0] = "./" + programmeString
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)

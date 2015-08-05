@@ -7,12 +7,12 @@
   "process": {
     "terminal": true,
     "user": {
-      "uid": 0,
-      "gid": 0,
+      "uid": 1,
+      "gid": 1,
       "additionalGids": null
     },
     "args": [
-      "./root_readonly_true_guest"
+      "./demo"
     ],
     "env": [
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
@@ -21,8 +21,8 @@
     "cwd": "/testtool"
   },
   "root": {
-    "path": "./../../source/rootfs_rootconfig",
-    "readonly": true
+    "path": "./rootfs_rootconfig",
+    "readonly": false
   },
   "hostname": "bash",
   "mounts": [

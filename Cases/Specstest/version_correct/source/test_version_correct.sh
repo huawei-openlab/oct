@@ -1,5 +1,5 @@
 #!/bin/bash
-runc
+cd ./../../source/ ; runc
 if [ $? -eq 0 ]; then
 	echo "[YES]        Linuxspec.Spec.Version == "pre_draft"   passed"
 else 
