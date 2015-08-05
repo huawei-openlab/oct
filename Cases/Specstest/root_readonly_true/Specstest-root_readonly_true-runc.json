@@ -39,9 +39,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "go build root_readonly_true_host.go",
-                "Cmd": "./root_readonly_true_host",
+                "Cmd": "cd ./source/ ; go build root_readonly_true_host.go ; ./root_readonly_true_host",
                 "Containers": [
                     {
                         "Object": "specs",
