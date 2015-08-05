@@ -22,38 +22,36 @@ import (
 	"log"
 )
 
-func testRootReadonlyFalse() {
-
-	var guestProgrammeFile string
-	guestProgrammeFile = "root_readonly_false_guest"
-	var outputFile string
-	outputFile = "readonly_false_out"
-	err := hostsetup.SetupEnv(guestProgrammeFile, outputFile)
+func testVersion() {
+	programmeString := "demo"
+	outputFile := ""
+	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
-		log.Fatalf("Specstest root readonly false test: hostsetup.SetupEnv error, %v", err)
+		log.Fatalf("Specstest version test: hostsetup.SetupEnv error, %v", err)
 	}
 	fmt.Println("Host enviroment setting up for runc is already!")
 	var filePath string
 	filePath = "config.json"
 
+	errSpecVersion := "0.1.0"
 	var linuxspec *specs.LinuxSpec
 	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
 	if err != nil {
-		log.Fatalf("Specstestroot readonly false test: readconfig error, %v", err)
+		log.Fatalf("Specstest version test: readconfig error, %v", err)
 	}
 
 	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
-	linuxspec.Spec.Root.Readonly = false
-	linuxspec.Spec.Process.Args[0] = "./root_readonly_false_guest"
+	linuxspec.Spec.Version = errSpecVersion
+	linuxspec.Spec.Process.Args[0] = "./" + programmeString
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
-	//err = wirteConfig(filePath, linuxspec)
+
 	if err != nil {
-		log.Fatalf("Specstest root readonly false test: writeconfig error, %v", err)
+		log.Fatalf("Specstest version test: writeconfig error, %v", err)
 	}
 	fmt.Println("Host enviroment for runc is already!")
 
 }
 
 func main() {
-	testRootReadonlyFalse()
+	testVersion()
 }
