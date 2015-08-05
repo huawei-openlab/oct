@@ -1,0 +1,63 @@
+{
+        "Name": "Specstest-version_error-runc",
+        "Summary": "test based opencontainers/specs",
+        "Owner": "linzhinan@huawei.com",
+        "Description": "Test runc when spec version == errvalue",
+        "Group": "Specstest/version_error/",
+        "License": "Apache 2.0",
+        "Explains" "Test runc when spec version == errvalue"
+        "Source": [
+                    "./source/config.json",
+	       "./source/version_host.go",
+                    "./source/demo.go"
+                    "./source/test_version_error.sh"
+        ],
+        "Requires": [
+            {
+                
+	       "Class":"operationOS", 
+	        "Type": "os",
+	        "Distribution": "Ubuntu14.04",
+	        "Resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "Class": "specstest",
+                "Type": "container",
+                "Version": "runc V0.2",
+                "Files": [
+		   "./source/config.json"
+		]
+                
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/",
+                "Cmd": "go build version_host.go",
+                "Cmd": "./version_host",
+                "Cmd": "./test_version_error.sh > /tmp/testtool/version_error_out.txt",
+                "Containers": [
+                    {
+                        "Object": "specs",
+                        "Class": "specstest"
+                    }
+                ]
+            }         
+        ],
+        "Collect": [
+            {
+                "Object": "hostA",
+                "Files": ["/tmp/testtool/version_error_out.txt"]
+            }
+        ]
+    
+}
+
