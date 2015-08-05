@@ -26,7 +26,9 @@ func testRootReadonlyFalse() {
 
 	var guestProgrammeFile string
 	guestProgrammeFile = "root_readonly_false_guest"
-	err := hostsetup.SetupEnv(guestProgrammeFile)
+	var outputFile string
+	outputFile = "readonly_false_out"
+	err := hostsetup.SetupEnv(guestProgrammeFile, outputFile)
 	if err != nil {
 		log.Fatalf("Specstest root readonly false test: hostsetup.SetupEnv error, %v", err)
 	}

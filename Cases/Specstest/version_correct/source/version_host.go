@@ -24,7 +24,8 @@ import (
 
 func testVersion() {
 	programmeString := "demo"
-	err := hostsetup.SetupEnv(programmeString)
+	outputFile := ""
+	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
 		log.Fatalf("Specstest version test: hostsetup.SetupEnv error, %v", err)
 	}
