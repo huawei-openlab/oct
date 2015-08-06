@@ -6,8 +6,8 @@ The simplest way is to deploy all the micro-services on a simple system and run 
 Following these steps:
 
 ```
-git clone https://github.com/huawei-openlab/ocp-testing.git
-cd ocp-testing/engine
+git clone https://github.com/huawei-openlab/oct.git
+cd oct/engine
 make
 cd testserver
 ./testserver &
