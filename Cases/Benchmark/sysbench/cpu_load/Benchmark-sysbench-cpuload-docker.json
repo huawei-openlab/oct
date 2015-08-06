@@ -1,76 +1,53 @@
 {
-    "root": {
         "Name": "Benchmark-Test-sysbench-docker",
         "Summary": "test with sysbench tool",
+         "Version": "0.1",
         "Owner": "wangqilin2@huawei.com",
         "Details": "Test cpu performance via caculate the max prime number of a given number",
         "Group": "Performance/Benchmark/sysbench/cpu_load",
         "License": "Apache 2.0",
-        "Source": [
-            "./source/Dockerfile",
-	    "cpuload.sh"
-        ],
         "Requires": [
             {
+                      "Class": "operOS",
+	         "Type": "os",
+                      "Distribution": "Ubuntu",
+                      "Version": 14.04,
+                      "Resource": {
+                            "CPU": 1,
+                            "Memory": "2GB",
+                            "Disk": "100G"
+                        }
                 
-		"class":"operationOS", 
-	        "type": "os",
-	        "distribution": "Ubuntu14.04",
-	        "resource": {
-	            "CPU": 4,
-	            "Memory": "16GB",
-	            "Disk": "200G"
-	        }
-                
-            }
+            },
             {
-                
-                "class": "ImageA",
-                "type": "container",
-                "version": "dockerV1.0",
-                "file": [
-		   "./source/Dockerfile",
-		   "cpuload.sh"
-		]
-                
+                "Class": "sysbench",
+                 "Type": "container",
+                 "Distribution": "Docker",
+                 "Version": 1,
+                "Files": [
+                                "./source/Dockerfile",
+                                "./source/cpuload.sh"
+                                ]
             }
         ],
         "Deploy": [
             {
-                "object": "hostA",
-                "class": "OperationOS",
-                "setup": "null",
-                "containers": [
-                    {
-                        "name": "DockerA",
-                        "class": "ImageA",
-                        "deploy": null
-                    }
-                ]
+                 "Object": "hostA",
+                "class": "operOS",
+                 "Files": ["./source/Dockerfile", "./source/cpuload.sh"],
+                 "Containers": [
+                        {
+                            "Object": "sysbench-terminal",
+                            "Class": "sysbench"
+                        }
+                    ]
             }         
         ],
-        "Run": [
+         "Collects": [
             {
-                "hostA": {
-                    "run": null
-                }
-            },
-            {
-                "DockerA": {
-                    "run": null
-                }
-            }
-        ],
-        "Collect": [
-            {
-                "DockerA": {
-                    "collect": {
-                        "type": "cmd",
-                        "value": "octf_cli -f ~/cpuload.txt"
-                    }
-                }
+                "Object": "hostA",
+                "Files": ["./source/sysbench-cpuload-output.json"]
             }
         ]
-    }
 }
 
