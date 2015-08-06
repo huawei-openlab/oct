@@ -16,8 +16,9 @@ import (
 
 /*
 #include <stdio.h>
-void CSystem(char *cmd){
-	system (cmd);
+#include <stdlib.h>
+int CSystem(char *cmd){
+	return system (cmd);
 }
 */
 import "C"
