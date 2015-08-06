@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"crypto/md5"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -37,9 +38,9 @@ type Deploy struct {
 
 //FIXME: the type is not consistent
 type OSResource struct {
-	CPU int
+	CPU    int
 	Memory string
-	Disk string
+	Disk   string
 }
 
 type Require struct {
@@ -78,16 +79,16 @@ type Resource struct {
 }
 
 type TestCase struct {
-	Name     string
-	Version  string
-	License  string
-	Group    string
-	Owner    string
+	Name        string
+	Version     string
+	License     string
+	Group       string
+	Owner       string
 	Description string
-	Sources  []string
-	Requires []Require
-	Deploys  []Deploy
-	Collects []Collect
+	Sources     []string
+	Requires    []Require
+	Deploys     []Deploy
+	Collects    []Collect
 }
 
 func PreparePath(cachename string, filename string) (realurl string) {
@@ -161,6 +162,7 @@ func SendCommand(apiurl string, b []byte) {
 	}
 }
 
+//TODO: add err para?
 func ReadFile(file_url string) (content string) {
 	_, err := os.Stat(file_url)
 	if err != nil {
@@ -270,4 +272,11 @@ func UntarFile(cache_url string, filename string) {
 
 		io.Copy(fw, tr)
 	}
+}
+
+func MD5(data string) (val string) {
+	t := md5.New()
+	io.WriteString(t, data)
+	return fmt.Sprintf("%x", t.Sum(nil))
+
 }
