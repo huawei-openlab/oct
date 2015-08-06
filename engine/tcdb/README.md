@@ -2,7 +2,8 @@ In this session, we define how the case should be organized.
 
 The case should be listed like this:
 
-Casedir
+```
+casedir
   |__ group one
   |        |_____ case one
   |        |_____ case two
@@ -14,3 +15,4 @@ Casedir
 			|___ sources/container_file
 			|___ sources/container_script one
 
+```
