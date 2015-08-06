@@ -162,10 +162,15 @@ func SendCommand(apiurl string, b []byte) {
 }
 
 func ReadFile(file_url string) (content string) {
+	_, err := os.Stat(file_url)
+	if err != nil {
+		fmt.Println("cannot find the file ", file_url)
+		return content
+	}
 	file, err := os.Open(file_url)
 	defer file.Close()
 	if err != nil {
-		fmt.Println(file_url, err)
+		fmt.Println("cannot open the file ", file_url)
 		return content
 	}
 	buf := bytes.NewBufferString("")
