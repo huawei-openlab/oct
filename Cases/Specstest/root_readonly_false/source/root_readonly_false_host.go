@@ -45,6 +45,10 @@ func testRootReadonlyFalse() {
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Root.Readonly = false
 	linuxspec.Spec.Process.Args[0] = "./root_readonly_false_guest"
+	linuxspec.Spec.Process.Terminal = true
+	linuxspec.Spec.Process.User.UID = 0
+	linuxspec.Spec.Process.User.GID = 0
+	linuxspec.Spec.Process.User.AdditionalGids = nil
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
 	//err = wirteConfig(filePath, linuxspec)
 	if err != nil {
