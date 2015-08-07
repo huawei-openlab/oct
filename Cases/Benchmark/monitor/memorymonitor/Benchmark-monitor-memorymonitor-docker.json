@@ -1,0 +1,64 @@
+{
+        "Name": "Benchmark-Test-Monitor-docker",
+        "Summary": "test with cadvisor tool",
+        "Owner": "liugenping@huawei.com",
+        "Description": "Monitor memory totalusage via cadvisor",
+        "Group": "Performance/Benchmark/monitor/memorymonitor/",
+        "License": "Apache 2.0",
+        "Explains": "",
+        "Source": [
+                    "./source/Dockerfile",
+	      "./source/memorymonitor.go",
+                    "./source/deadloop.sh",
+                    "./host_deploy.sh",
+                    "./docker_deploy.sh"
+        ],
+        "Requires": [
+            {
+             
+	       "Class":"operationOS", 
+	        "Type": "os",
+	        "Distribution": "Ubuntu14.04",
+	        "Resource": {
+	        "CPU": 4,
+	        "Memory": "16GB",
+	        "Disk": "200G"
+	        }
+                
+            },
+            {
+                
+                "Class": "memorymoniter",
+                "Type": "container",
+                "Version": "dockerV1.0",
+                "Files": [
+		   "./source/Dockerfile"
+		]
+                
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd":"./host_deploy.sh -f memorymonitor.go",
+                "Cmd": "./docker_deploy.sh ",
+            }         
+        ],
+        "Run": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/",
+                "Cmd": "./memorymonitor docker"
+            }
+        ],
+        "Collects": [
+            {
+                "Object": "hostA",
+                "Files": ["./source/docker_memory.json"]
+            }
+        ]
+    
+}
+
