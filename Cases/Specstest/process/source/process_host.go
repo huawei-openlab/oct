@@ -43,8 +43,8 @@ func testVersion() {
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Version = oriSpecVersion
 	linuxspec.Spec.Process.Terminal = true
-	linuxspec.Spec.Process.User.Uid = 1
-	linuxspec.Spec.Process.User.Gid = 1
+	linuxspec.Spec.Process.User.UID = 1
+	linuxspec.Spec.Process.User.GID = 1
 	linuxspec.Spec.Process.User.AdditionalGids = nil
 	linuxspec.Spec.Process.Env[0] = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 	linuxspec.Spec.Process.Env[1] = "TERM=xterm"
