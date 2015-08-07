@@ -96,7 +96,11 @@ func apply_os(req libocit.Require) (resource libocit.Resource) {
 }
 
 func apply_container(req libocit.Require) (resource libocit.Resource) {
-	tar_url := libocit.TarFilelist(req.Files, pub_casedir, req.Class)
+	var files []string
+	for index := 0; index < len(req.Files); index++ {
+		files = append(files, path.Join(pub_casedir, req.Files[index]))
+	}
+	tar_url := libocit.TarFilelist(files, pub_casedir, req.Class)
 	post_url := pub_conf.CPurl + "/upload"
 	libocit.SendFile(post_url, tar_url, tar_url)
 
@@ -217,7 +221,7 @@ func main() {
 	// Send deploys
 	for index := 0; index < len(ts_demo.Deploys); index++ {
 		if len(ts_demo.Deploys[index].ResourceID) > 0 {
-			filelist := GetDeployFiles(ts_demo.Deploys[index])
+			filelist := GetDeployFiles(pub_casedir, ts_demo.Deploys[index])
 			//FIXME: change the democase
 			tar_url := libocit.TarFilelist(filelist, pub_casedir, ts_demo.Deploys[index].Object)
 			post_url := pub_conf.TSurl + "/casefile/" + ts_demo.Deploys[index].ResourceID
@@ -279,14 +283,14 @@ func main() {
 
 }
 
-func GetDeployFiles(deploy libocit.Deploy) (filelist []string) {
+func GetDeployFiles(dir string, deploy libocit.Deploy) (filelist []string) {
 	for index := 0; index < len(deploy.Files); index++ {
-		filelist = append(filelist, deploy.Files[index])
+		filelist = append(filelist, path.Join(dir, deploy.Files[index]))
 	}
 	for index := 0; index < len(deploy.Containers); index++ {
 		container := deploy.Containers[index]
 		for c_index := 0; c_index < len(container.Files); c_index++ {
-			filelist = append(filelist, container.Files[c_index])
+			filelist = append(filelist, path.Join(dir, container.Files[c_index]))
 		}
 	}
 	return filelist

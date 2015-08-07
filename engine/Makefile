@@ -1,4 +1,4 @@
-SUBDIR := scheduler ocitd containerpool testserver report tcdb
+SUBDIR := scheduler ocitd containerpool testserver report tcserver
 
 all:  
 	@echo "Start to build." 

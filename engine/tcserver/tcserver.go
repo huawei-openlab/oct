@@ -11,10 +11,11 @@ import (
 	"os"
 	"strings"
 	//	"os/exec"
+	"bytes"
 	"path"
 )
 
-type TCDBConf struct {
+type TCServerConf struct {
 	GitRepo  string
 	CaseDir  string
 	Group    []string
@@ -33,7 +34,7 @@ type MetaUnit struct {
 }
 
 var store = map[string]*MetaUnit{}
-var pub_conf TCDBConf
+var pub_config TCServerConf
 
 func RefreshRepo(repo string) {
 }
@@ -81,13 +82,13 @@ func LastModified(case_dir string) (last_modified int64) {
 	return last_modified
 }
 
-func LoadDB(conf TCDBConf) {
-	RefreshRepo(conf.GitRepo)
-	LoadMeta(conf.Metafile)
+func LoadDB() {
+	RefreshRepo(pub_config.GitRepo)
+	LoadMeta(pub_config.Metafile)
 
-	for g_index := 0; g_index < len(conf.Group); g_index++ {
-		repo_name := strings.Replace(path.Base(conf.GitRepo), ".git", "", 1)
-		group_dir := path.Join(conf.CacheDir, repo_name, conf.CaseDir, conf.Group[g_index])
+	for g_index := 0; g_index < len(pub_config.Group); g_index++ {
+		repo_name := strings.Replace(path.Base(pub_config.GitRepo), ".git", "", 1)
+		group_dir := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseDir, pub_config.Group[g_index])
 		files, _ := ioutil.ReadDir(group_dir)
 		for _, file := range files {
 			if file.IsDir() {
@@ -98,14 +99,14 @@ func LoadDB(conf TCDBConf) {
 					continue
 				}
 
-				store_md := libocit.MD5(path.Join(conf.Group[g_index], file.Name()))
+				store_md := libocit.MD5(path.Join(pub_config.Group[g_index], file.Name()))
 				if v, ok := store[store_md]; ok {
 					if (*v).LastModifiedTime < last_modified {
 						(*v).LastModifiedTime = last_modified
 					}
 				} else {
 					var meta MetaUnit
-					meta.Group = conf.Group[g_index]
+					meta.Group = pub_config.Group[g_index]
 					meta.Name = file.Name()
 					meta.TestedTime = 0
 					meta.LastModifiedTime = last_modified
@@ -125,16 +126,33 @@ func ListCases(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCase(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get(":ID")
+	meta := store[id]
+	//      meta_string, _ := json.Marshal(meta)
+	repo_name := strings.Replace(path.Base(pub_config.GitRepo), ".git", "", 1)
+	case_dir := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseDir, meta.Group, meta.Name)
+	tar_url := libocit.TarDir(case_dir)
+
+	file, err := os.Open(tar_url)
+	defer file.Close()
+	if err != nil {
+		//FIXME: add to head
+		w.Write([]byte("Cannot open the file: " + tar_url))
+		return
+	}
+
+	buf := bytes.NewBufferString("")
+	buf.ReadFrom(file)
+	//TODO: write head, filename and the etc
+	w.Write([]byte(buf.String()))
 }
 
 func main() {
-	var config TCDBConf
-	content := libocit.ReadFile("./tcdb.conf")
-	json.Unmarshal([]byte(content), &config)
+	content := libocit.ReadFile("./tcserver.conf")
+	json.Unmarshal([]byte(content), &pub_config)
+	LoadDB()
 
-	LoadDB(config)
-
-	port := fmt.Sprintf(":%d", config.Port)
+	port := fmt.Sprintf(":%d", pub_config.Port)
 	fmt.Println("Listen to port ", port)
 	mux := routes.New()
 	mux.Get("/case", ListCases)
