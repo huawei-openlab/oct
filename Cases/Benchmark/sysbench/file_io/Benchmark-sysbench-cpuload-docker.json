@@ -3,8 +3,8 @@
         "Summary": "test with sysbench tool",
          "Version": "0.1",
         "Owner": "wangqilin2@huawei.com",
-        "Details": "Test fileio performance by caculating the i/o time",
-        "Group": "Performance/Benchmark/sysbench/fileio",
+        "Details": "Test memory performance",
+        "Group": "Performance/Benchmark/sysbench/memoryrw",
         "License": "Apache 2.0",
         "Requires": [
             {
@@ -26,7 +26,7 @@
                  "Version": 1,
                 "Files": [
                                 "./source/Dockerfile",
-                                "./source/fileio.sh"
+                                "./source/memoryrw.sh"
                                 ]
             }
         ],
@@ -34,7 +34,7 @@
             {
                  "Object": "hostA",
                 "class": "operOS",
-                 "Files": ["./source/Dockerfile", "./source/fileio.sh"],
+                 "Files": ["./source/Dockerfile", "./source/memoryrw.sh"],
                  "Containers": [
                         {
                             "Object": "sysbench-terminal",
@@ -46,7 +46,7 @@
          "Collects": [
             {
                 "Object": "hostA",
-                "Files": ["./source/sysbench-fileio-output.json"]
+                "Files": ["./source/sysbench-memoryrw-output.json"]
             }
         ]
 }
