@@ -8,7 +8,7 @@
         "Explains": "",
         "Source": [
                     "./source/Dockerfile",
-	       "./source/cpu_overall_usage.go",
+	       "./source/cpu_usage.go",
                     "./source/deadloop.sh",
                     "./host_deploy.sh",
                     "./docker_deploy.sh"
@@ -41,7 +41,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd":"./host_deploy.sh -f cpu_overall_usage.go",
+                "Cmd":"./host_deploy.sh -f cpu_usage.go",
                 "Cmd": "./docker_deploy.sh ",
                 "Containers": [
                     {
@@ -51,18 +51,10 @@
                 ]
             }         
         ],
-        "Run": [
-            {
-                "Object": "hostA",
-                "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "./cpu_overall_usage > cpu_overall_usage.txt"
-            }
-        ],
         "Collects": [
             {
                 "Object": "hostA",
-                "Files": ["./source/cpu_overall_usage.txt"]
+                "Files": ["./source/docker_cpu.json"]
             }
         ]
     
