@@ -18,20 +18,22 @@ import (
 	adaptor "./../../source/adaptor"
 	"encoding/json"
 	"errors"
-	"fmt"
+	//"fmt"
 	"github.com/google/cadvisor/client"
 	info "github.com/google/cadvisor/info/v1"
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	//"os/exec"
 )
 
 // CPU usage time statistics.
+
 type CpuUsageInfo struct {
-	Usage       CpuUsage `json:"cpu_usage"`
 	ContainerID string   `json:"container_id"`
+	Usage       CpuUsage `json:"cpu_usage"`
 }
 
 type CpuUsage struct {
@@ -41,7 +43,7 @@ type CpuUsage struct {
 
 	// Per CPU/core usage of the container.
 	// Unit: nanoseconds.
-	PerCoreUsage []CpuPerCoreUsage `json:"percore_usage"`
+	PerCoreUsage map[string]float64 `json:"percore_usage"`
 
 	Load float64 `json:"load"`
 
@@ -60,21 +62,16 @@ type CpuBreakdown struct {
 	SystemUsage float64 `json:"system_usage"`
 }
 
-type CpuPerCoreUsage struct {
-	coreID       int     `json:"core_ID"`
-	percoreUsage float64 `json:"percore_usage"`
-}
-
-func getCpu(cInfo info.ContainerInfo, mInfo *info.MachineInfo, cpuusageinfo *CpuUsageInfo) (err error) {
+func getCpu(cInfo info.ContainerInfo, mInfo *info.MachineInfo, cpuusageinfo *CpuUsageInfo, cpuArray []CpuUsageInfo) (err error, cpuArrayResult []CpuUsageInfo) {
 	cur := cInfo.Stats[len(cInfo.Stats)-1]
-	fmt.Println(cpuusageinfo.ContainerID)
+
 	if len(cInfo.Stats) >= 2 {
 		prev := cInfo.Stats[len(cInfo.Stats)-2]
 		rawUsage := float64(cur.Cpu.Usage.Total - prev.Cpu.Usage.Total)
 		intervalInNs := float64((cur.Timestamp).Sub(prev.Timestamp).Nanoseconds())
 		cpuusageinfo.Usage.OverallUsage = ((rawUsage / intervalInNs) / float64(mInfo.NumCores)) * 100
-		fmt.Printf("Container cpu overall usage %.02f \n", cpuusageinfo.Usage.OverallUsage)
 	}
+
 	for i := 1; i < len(cInfo.Stats); i++ {
 		cur := cInfo.Stats[i]
 		prev := cInfo.Stats[i-1]
@@ -84,9 +81,15 @@ func getCpu(cInfo info.ContainerInfo, mInfo *info.MachineInfo, cpuusageinfo *Cpu
 		cpuusageinfo.Usage.TotalUsage = float64(cur.Cpu.Usage.Total-prev.Cpu.Usage.Total) / f
 		cpuusageinfo.Usage.BreakdownUsage.SystemUsage = float64(cur.Cpu.Usage.User-prev.Cpu.Usage.User) / f
 		cpuusageinfo.Usage.BreakdownUsage.UserUsage = float64(cur.Cpu.Usage.System-prev.Cpu.Usage.System) / f
+		for j := 1; j < mInfo.NumCores; j++ {
+			stringJ := strconv.Itoa(j)
+			cpuusageinfo.Usage.PerCoreUsage[stringJ] = float64(cur.Cpu.Usage.PerCpu[j]-prev.Cpu.Usage.PerCpu[j]) / f
+		}
+		cpuArray = append(cpuArray, *cpuusageinfo)
 
 	}
-	return nil
+
+	return nil, cpuArray
 }
 
 func getContainerInfo(client *client.Client, container string) (containerInfo info.ContainerInfo, err error) {
@@ -134,31 +137,39 @@ func main() {
 		log.Fatalf("getContainerName fail, error: %v\n", err)
 		return
 	}
-	//cpuusageinfo := new(CpuUsageInfo)
+
 	mInfo, err := client.MachineInfo()
 	var jsonString []byte
 	for _, container := range containers {
-		fmt.Printf("container %v's cpu info: \n", container)
+		//Get container info struct from cadvisor client
 		cInfo, err := getContainerInfo(client, container)
 		if err != nil {
-			fmt.Printf("getContainerInfo fail and got error %v\n", err)
+			log.Fatalf("getContainerInfo fail and got error %v\n", err)
 			return
 		}
+		var cpuArray []CpuUsageInfo
+		cpuArray = []CpuUsageInfo{}
 		cpuUsageInfo := new(CpuUsageInfo)
+		cpuUsageInfo.Usage.PerCoreUsage = make(map[string]float64)
 		cpuUsageInfo.ContainerID = cInfo.Name
-		//fmt.Println(cpuUsageInfo.ContainerID)
-		//var usageInfo CpuUsageInfo
-		err = getCpu(cInfo, mInfo, cpuUsageInfo)
-		fmt.Println(cpuUsageInfo)
 
-		//fmt.Println(usageInfo.ContainerID)
-		jsonString, err = json.Marshal(cpuUsageInfo)
+		// Get cpu usage and store  them to result(cpuArray)
+		err, result := getCpu(cInfo, mInfo, cpuUsageInfo, cpuArray)
+		if err != nil {
+			log.Fatalf("Get cpuusage err, error:  %v\n", err)
+			return
+		}
+
+		//Conver to json
+		jsonString, err = json.Marshal(result)
 		if err != nil {
 			log.Fatalf("convert to json err, error:  %v\n", err)
 			return
 		}
 
 	}
+
+	//Output to docker_cpu.json file
 	err = ioutil.WriteFile("./"+testingProject+"_cpu.json", []byte(jsonString), 0666)
 
 }

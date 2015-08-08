@@ -50,13 +50,11 @@ do
 done
 printf "\n"
 
-#Compile  cpu_overall_usage on host
-echo  "Compile cpu_overall_usage.go"
+#Compile  cpu_usage on host
+echo  "Compile cpu_usage.go"
 cd $pre_dir
-if [ -n $2 ] ;
-	then
-	go build $2
-fi
+go buil cpu_usage.go
+
 #go build cpu_overall_usage.go
 printf "\n"
 
