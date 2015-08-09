@@ -1,6 +1,6 @@
 # Testing Cases And Framework For Open Container Specifications
 
-The ocp-testing project aims to promote the open container project by providing a universal testing framewrk for all the container projects. The testing includes: ocp specification, container function and container performance.
+The oct(open container testing) project aims to promote the open container project by providing a universal testing framewrk for all the container projects. The testing includes: ocp specification, container function and container performance.
 
 ## The framework architecture
 ![Framework](docs/static_files/test_framework.png "Framework")
