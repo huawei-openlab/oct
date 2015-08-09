@@ -17,11 +17,17 @@ package main
 import (
 	//"bytes"
 	//"fmt"
+	//specs "github.com/opencontainers/specs"
+	"encoding/json"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+type TestResult struct {
+	Readonly map[string]string `json:"Linuxspec.Spec.Root.Readonly"`
+}
 
 func testRootReadonlyTrue() {
 
@@ -33,22 +39,29 @@ func testRootReadonlyTrue() {
 		log.Fatalf("Specs test testRootReadonlyTrue grep mount string err, %v", err)
 	}
 
+	testResult := new(TestResult)
+	testResult.Readonly = make(map[string]string)
 	outString := string(outBytes)
-	var resultString string
 	if strings.Contains(outString, "(ro,") {
-		resultString = "[YES]        Linuxspec.Spec.Root.Readonly == ture   passed"
+		testResult.Readonly["true"] = "passed"
 	} else {
-		resultString = "[NO]        Linuxspec.Spec.Root.Readonly == ture   failed"
+		testResult.Readonly["true"] = "failed"
 	}
 
-	foutfile := "/testtool/readonly_true_out.txt"
+	jsonString, err := json.Marshal(testResult)
+	if err != nil {
+		log.Fatalf("Convert to json err, error:  %v\n", err)
+		return
+	}
+
+	foutfile := "/testtool/readonly_true_out.json"
 	fout, err := os.Create(foutfile)
 	defer fout.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		fout.WriteString(resultString)
+		fout.WriteString(string(jsonString))
 	}
 }
 
