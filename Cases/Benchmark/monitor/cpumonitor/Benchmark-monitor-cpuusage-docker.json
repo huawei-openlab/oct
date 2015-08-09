@@ -41,8 +41,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd":"./host_deploy.sh -f cpu_usage.go",
-                "Cmd": "./docker_deploy.sh ",
+                "Cmd":"./host_deploy.sh -f cpu_usage.go ; ./docker_deploy.sh",
                 "Containers": [
                     {
                         "Object": "cpu",
@@ -50,6 +49,19 @@
                     }
                 ]
             }         
+        ],
+            "Run": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/ ; ./cpu_usage",
+                   "Containers": [
+                    {
+                        "Object": "cpu",
+                        "Class": "cpuusage"
+                    }
+                ]
+            }
         ],
         "Collects": [
             {
