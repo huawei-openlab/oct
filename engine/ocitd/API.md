@@ -25,7 +25,7 @@ The [attributes](#attributes "attributes") are listed at the end of this documen
 |------|----|------|-----------|
 | POST | `/task` | [Upload files](#task "Upload task file") | Upload the certain deploy files, name: taskID.tar.gz|
 | POST | `/command` | [Send commands](#command "Send the testing command") | Tell OCTD to deploy or run the testing|
-| GET  | `/report` | [Reports] (#report "Get the report file") | Get the report file by the path|
+| GET  | `/report` | [Reports](#report "Get the report file") | Get the report file by the path|
 
 ###Task
 ```
@@ -69,7 +69,7 @@ Tell OCTD to deploy or run the testing
   }
 ```
 
-###Task
+###Report
 ```
 GET /report
 ```
