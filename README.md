@@ -20,6 +20,10 @@ The oct(open container testing) project aims to promote the open container proje
     4. Deploy the tesing enviornment
     5. Run the test
     6. Collect and publish the testing report
+   
+  * `Test Case Server` :  
+    The Test Case Server provides restful API for user to list/get the test cases.
+    It uses the github as the static test case database.
     
 ## Testcase specification
 Refers to [Cases/README](Cases/README.md) 
@@ -89,6 +93,7 @@ By making a contribution to this project, I certify that:
 
 - Fork the repository on GitHub
 - Read the [README](README.md) for build and test instructions
+- Read the [APIs](engine/API.md) to test each service
 - Play with the project, submit bugs, submit patches!
 
 ### Contribution Flow
