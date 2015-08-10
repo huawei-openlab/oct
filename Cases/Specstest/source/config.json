@@ -7,12 +7,12 @@
   "process": {
     "terminal": true,
     "user": {
-      "uid": 1,
-      "gid": 1,
+      "uid": 0,
+      "gid": 0,
       "additionalGids": null
     },
     "args": [
-      "./demo"
+      "./root_readonly_true_guest"
     ],
     "env": [
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
