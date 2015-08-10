@@ -88,12 +88,20 @@ type TestCase struct {
 	Sources     []string
 	Requires    []Require
 	Deploys     []Deploy
+	Run         []Deploy
 	Collects    []Collect
 }
 
 type HttpRet struct {
 	Status  string
 	Message string
+}
+
+type TestingCommand struct {
+	ID         string
+	ObjectName string
+	//Command: deploy, run
+	Command string
 }
 
 func PreparePath(cachename string, filename string) (realurl string) {

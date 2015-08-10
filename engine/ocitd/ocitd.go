@@ -23,15 +23,19 @@ int CSystem(char *cmd){
 */
 import "C"
 
-type OCITDConfig struct {
-	TSurl string
-	Port  int
+type OCTDConfig struct {
+	TSurl    string
+	Port     int
+	CacheDir string
+	Debug    bool
 }
 
-func GetReport(w http.ResponseWriter, r *http.Request) {
-	pre_uri := "/tmp/testcase_ocitd_cache"
-	filename := r.URL.Query().Get("file")
-	realurl := path.Join(pre_uri, filename)
+var pub_config OCTDConfig
+
+func GetResult(w http.ResponseWriter, r *http.Request) {
+	filename := r.URL.Query().Get("File")
+	ID := r.URL.Query().Get("ID")
+	realurl := path.Join(pub_config.CacheDir, ID, filename)
 
 	file, err := os.Open(realurl)
 	defer file.Close()
@@ -51,17 +55,21 @@ func GetReport(w http.ResponseWriter, r *http.Request) {
 }
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
-	cache_uri := "/tmp/testcase_ocitd_cache"
-	real_url, _ := libocit.ReceiveFile(w, r, cache_uri)
+	//The task ID is alreay included in the real_url
+	real_url, _ := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
-	libocit.UntarFile(cache_uri, real_url)
-	w.Write([]byte("OK"))
+	libocit.UntarFile(pub_config.CacheDir, real_url)
+
+	var ret libocit.HttpRet
+	ret.Status = "OK"
+	ret_string, _ := json.Marshal(ret)
+	w.Write([]byte(ret_string))
+
 	return
 }
 
 func RunCommand(cmd string) {
-	pre_uri := "/tmp/testcase_ocitd_cache/source"
-	os.Chdir(pre_uri)
+	os.Chdir(path.Join(pub_config.CacheDir, "source"))
 
 	C.CSystem(C.CString(cmd))
 	return
@@ -83,30 +91,60 @@ func PullImage(container libocit.Container) {
 	}
 }
 
-func DeployCommand(w http.ResponseWriter, r *http.Request) {
+//FIXME: used in OCTD, it is necessary to put here?
+func FindCommand(testCase libocit.TestCase, objectName string, phaseName string) (command string) {
+	var deploy_list []libocit.Deploy
+	if phaseName == "deploy" {
+		deploy_list = testCase.Deploys
+	} else if phaseName == "run" {
+		deploy_list = testCase.Run
+	}
+	for index := 0; index < len(deploy_list); index++ {
+		if deploy_list[index].Object == objectName {
+			command = deploy_list[index].Cmd
+			break
+		}
+	}
+	return command
+}
+
+func UpdateStatus(testCommand libocit.TestingCommand) {
+	var status string
+	post_url := path.Join(pub_config.TSurl, testCommand.ID, "status")
+	if testCommand.Command == "deploy" {
+		status = "Deployed"
+	} else if testCommand.Command == "run" {
+		status = "Finish"
+	}
+	libocit.SendCommand(post_url, []byte(status))
+}
+
+func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	result, _ := ioutil.ReadAll(r.Body)
 	r.Body.Close()
 
-	var deploy libocit.Deploy
-	json.Unmarshal([]byte(result), &deploy)
+	var testCommand libocit.TestingCommand
+	json.Unmarshal([]byte(result), &testCommand)
 
-	images := make(map[string]int)
-	for index := 0; index < len(deploy.Containers); index++ {
-		container := deploy.Containers[index]
-		_, pulled := images[container.Class]
-		if pulled {
-			fmt.Println("Already pulled")
-		} else {
-			images[container.Class] = 1
-			PullImage(container)
-		}
-	}
+	var testCase libocit.TestCase
+	content := libocit.ReadFile(path.Join(pub_config.CacheDir, testCommand.ID, "config.json"))
+	json.Unmarshal([]byte(content), &testCase)
 
-	if len(deploy.Cmd) > 0 {
-		RunCommand(deploy.Cmd)
+	command := FindCommand(testCase, testCommand.ObjectName, testCommand.Command)
+
+	if len(command) > 0 {
+		RunCommand(command)
 	}
+	//Send status update to the test server
+	UpdateStatus(testCommand)
+
+	var ret libocit.HttpRet
+	ret.Status = "OK"
+	ret_string, _ := json.Marshal(ret)
+	w.Write([]byte(ret_string))
 }
 
+//FIXME: should be removed, since move to test server
 func CollectFiles(w http.ResponseWriter, r *http.Request) {
 	result, _ := ioutil.ReadAll(r.Body)
 	r.Body.Close()
@@ -121,18 +159,17 @@ func CollectFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var config OCITDConfig
 	content := libocit.ReadFile("./ocitd.conf")
-	json.Unmarshal([]byte(content), &config)
+	json.Unmarshal([]byte(content), &pub_config)
 
 	var port string
-	port = fmt.Sprintf(":%d", config.Port)
+	port = fmt.Sprintf(":%d", pub_config.Port)
 
 	mux := routes.New()
-	mux.Get("/report", GetReport)
-	mux.Post("/upload", UploadFile)
-	mux.Post("/deploy", DeployCommand)
-	mux.Post("/collect", CollectFiles)
+	mux.Get("/result", GetResult)
+	mux.Post("/task", UploadFile)
+	mux.Post("/command", TestingCommand)
+	//	mux.Post("/collect", CollectFiles)
 	http.Handle("/", mux)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {

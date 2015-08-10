@@ -53,8 +53,10 @@ The [attributes](#attributes "attributes") are listed at the end of this documen
 
 |Method|Path|Summary|Description|
 |------|----|------|-----------|
-| POST | `/task` | [Upload files](#upload "Upload") | Upload the test case files, name: taskID.tar.gz. |
-| GET | `/result/:ID` | [Get test result](#result "Result") | Fetch the case result file. %taskid-result.tar.gz. |
+| POST | `/task` | [Upload files](#upload "Upload") | Upload the test case files, name: taskID.tar.gz. Used by 'Scheduler'|
+| GET | `/:ID/result` | [Get test result](#result "Result") | Fetch the case result file. %taskid-result.tar.gz. Used by 'Schedular'|
+| GET | `/:ID/status` | [Get testing status result](#get-status "Get Status") | Fetch the testing status. Used by 'Schedular'|
+| POST | `/:ID/status` | [Set the testing status result](#set-status "Set Status") | Set the testing status. Used by 'OCTD'|
 | GET | `/os` | [Resource](#resource "Resource") | Get the host resource on the server.|
 | POST| `/os` | [Add resource](#add "Add resource") | Add a new host OS node, usually done by OCTD automaticly.|
 | GET | `/os/:OSID` | [Detailed Resource](#details "Details") | Get the detailed information of a host OS.|
@@ -79,7 +81,7 @@ Upload the test files, name: taskID.tar.gz
 ###result
 
 ```
-GET /result/:ID
+GET /:ID/result
 ```
 
 **Response**
@@ -98,6 +100,49 @@ The returned value should be like this:
                  |________a.json
                  |________b.json
                  
+```
+
+###get-status
+
+```
+GET /:ID/status
+```
+
+**Response**
+
+"Applying resource/Deploying/Running test/Finish"
+
+``` 
+  {"Status": "OK",
+   "Message": "Deploying"
+  }
+```
+
+###set-status
+
+```
+POST /:ID/status
+```
+
+**Input**
+
+| *Name* | *Type* | *Description* |
+| -------| ------ | --------- |
+| Status | string | The status of the task.|
+
+**Example**
+
+```
+  curl -i -d '{"Status":"Deploying"}'  /10002/status
+```
+
+**Response**
+
+
+``` 
+  {"Status": "OK",
+   "Message": "The status is changed"
+  }
 ```
 
 ####resource

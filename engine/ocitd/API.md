@@ -10,12 +10,16 @@ The 'OCID' is the program installed on the hostOS, used to communicate with the 
 |Key|Type|Description|Example|
 |------|----|------| ----- |
 | TSurl | string | The url of the Test Server, with the port| "http://localhost:8001" |
+| Port | int | Port of the OCTD daemon| 9001 |
+| CacheDir | string | Where are all the temporary files stored| "/tmp/octd-cache" |
 | Debug | bool | Print the debug information on the screen| true, default to false |
 
 ```
 {
 	"TSurl": "http://localhost:8001",
-	"Port": 9001
+	"Port": 9001,
+	"CacheDir": "/tmp/octd-cache",
+	"Debug": false
 }
 ```
 
@@ -25,7 +29,7 @@ The 'OCID' is the program installed on the hostOS, used to communicate with the 
 |------|----|------|-----------|
 | POST | `/task` | [Upload files](#task "Upload task file") | Upload the certain deploy files, name: taskID.tar.gz|
 | POST | `/command` | [Send commands](#command "Send the testing command") | Tell OCTD to deploy or run the testing|
-| GET  | `/report` | [Reports](#report "Get the report file") | Get the report file by the path|
+| GET  | `/result` | [Result](#result "Get the result file") | Get the result file by the path|
 
 ###Task
 ```
@@ -69,21 +73,21 @@ Tell OCTD to deploy or run the testing
   }
 ```
 
-###Report
+###Result
 ```
-GET /report
+GET /result
 ```
 
 **Parameters**
 
 | *Name* | *Type* | *Description* |
 | -------| ------ | --------- |
-| File | string | The report url. Defined in the config.json in each test case. |
+| File | string | The result file url. Defined in the config.json in each test case. |
 | ID | string | The task ID, same with the ID in 'Scheduler' and 'Test Server' |
 
 **Response**
 
-The whole report file.
+The whole result file.
 ```
 Server JSON output:
 {
