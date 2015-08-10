@@ -11,32 +11,19 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 type TestServerConfig struct {
 	Port           int
 	ServerListFile string
+	CacheDir       string
 	Debug          bool
 }
 
-func DeployCommand(w http.ResponseWriter, r *http.Request) {
-	result, _ := ioutil.ReadAll(r.Body)
-	r.Body.Close()
-
-	var deploy libocit.Deploy
-	json.Unmarshal([]byte(result), &deploy)
-
-	os := *(store[deploy.ResourceID])
-	deploy.ResourceID = ""
-	deploy_url := "http://" + os.IP + ":9001/deploy"
-
-	fmt.Println("Receive and send the deploy command ", deploy_url)
-	libocit.SendCommand(deploy_url, []byte(result))
-	//TODO: write back the info
-}
-
-func GetReport(w http.ResponseWriter, r *http.Request) {
+//TODO: not done yet
+func GetResult(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 	report_file := r.URL.Query().Get("file")
 	os := *(store[id])
@@ -58,20 +45,111 @@ func GetReport(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(string(resp_body)))
 }
 
-func ReceiveFile(w http.ResponseWriter, r *http.Request) {
-	cache_uri := "/tmp/testserver_cache/"
-	real_url, handle_name := libocit.ReceiveFile(w, r, cache_uri)
+//List all the hostOS status
+func GetStatus(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get(":ID")
+	task := task_store[id]
 
+	body, _ := json.Marshal(*task)
+	w.Write([]byte(body))
+}
+
+//Set the hostOS status
+func SetStatus(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 
-	//TS act as the agent
-	os := *(store[id])
+	result, _ := ioutil.ReadAll(r.Body)
+	r.Body.Close()
 
-	//FIXME: better org
-	post_url := "http://" + os.IP + ":9001/upload"
+	var testStatus libocit.TestingStatus
+	json.Unmarshal([]byte(result), &testStatus)
+
+	task := *(task_store[id])
+
+	var ret libocit.HttpRet
+	ret.Status = "Failed"
+	ret.Message = "Cannot find the related Object " + testStatus.Object
+	for index := 0; index < len(task.OSList); index++ {
+		if task.OSList[index].Object == testStatus.Object {
+			task.OSList[index].Status = testStatus.Status
+			ret.Status = "OK"
+			ret.Message = "The status is changed."
+			break
+
+		}
+	}
+	ret_string, _ := json.Marshal(ret)
+	w.Write([]byte(ret_string))
+}
+
+//This is the main task running function
+func RunTask(taskID string) {
+
+	var testCommand libocit.TestingCommand
+	task := *(task_store[taskID])
+
+	testCommand.ID = taskID
+	testCommand.Command = "deploy"
+
+	for index := 0; index < len(task.OSList); index++ {
+		//FIXME: should untar the task, compare the resource and send to diffrent OS
+		// Here cause it is too late for me to back home..
+		testCommand.Object = "hostA"
+
+		fakeIDForHack := "0002"
+		os := *(store[fakeIDForHack])
+		post_url := "http://" + os.IP + ":9001/command"
+
+		content, _ := json.Marshal(testCommand)
+		libocit.SendCommand(post_url, []byte(content))
+	}
+
+	testCommand.Command = "run"
+
+	for index := 0; index < len(task.OSList); index++ {
+		//FIXME: should untar the task, compare the resource and send to diffrent OS
+		// Here cause it is too late for me to back home..
+		testCommand.Object = "hostA"
+
+		fakeIDForHack := "0002"
+		os := *(store[fakeIDForHack])
+		post_url := "http://" + os.IP + ":9001/command"
+
+		content, _ := json.Marshal(testCommand)
+		libocit.SendCommand(post_url, []byte(content))
+	}
+}
+
+func ReceiveTask(w http.ResponseWriter, r *http.Request) {
+	//handle_name:  taskID.tar.gz
+	real_url, handle_name := libocit.ReceiveFile(w, r, pub_config.CacheDir)
+
+	taskID := strings.Replace(handle_name, ".tar.gz", "", 1)
+
+	var task libocit.Task
+	task.ID = taskID
+	fakeIDForHack := "0002"
+
+	//FIXME: should untar the task, compare the resource and send to diffrent OS
+	// Here cause it is too late for me to back home..
+	os := *(store[fakeIDForHack])
+	task.OSList = append(task.OSList, os)
+	post_url := "http://" + os.IP + ":9001/task"
 	fmt.Println("Receive and send file ", real_url)
+	task_store[taskID] = &task
+
+	//FIXME: it is better to send the related the file to the certain host OS
 	libocit.SendFile(post_url, real_url, handle_name)
-	w.Write([]byte(id))
+
+	//FIXME: if there were not enough resource ,return error
+	var ret libocit.HttpRet
+	ret.Status = "OK"
+	ret.Message = "success in receiving task files"
+
+	ret_string, _ := json.Marshal(ret)
+	w.Write([]byte(ret_string))
+
+	RunTask(taskID)
 }
 
 func GetOSQuery(r *http.Request) (os libocit.OS) {
@@ -238,26 +316,31 @@ func init_db(filename string) {
 }
 
 var store = map[string]*libocit.OS{}
+var task_store = map[string]*libocit.Task{}
 
 var lock = sync.RWMutex{}
+var pub_config TestServerConfig
 
 func main() {
-	var config TestServerConfig
 
 	config_content := libocit.ReadFile("./testserver.conf")
-	json.Unmarshal([]byte(config_content), &config)
+	json.Unmarshal([]byte(config_content), &pub_config)
 
 	var port string
-	port = fmt.Sprintf(":%d", config.Port)
-	//	pub_debug = config.Debug
-	init_db(config.ServerListFile)
+	port = fmt.Sprintf(":%d", pub_config.Port)
+	init_db(pub_config.ServerListFile)
 
 	mux := routes.New()
+	//TODO: following two are not done yet
 	mux.Get("/os", GetOS)
 	mux.Post("/os", PostOS)
-	mux.Get("/report/:ID", GetReport)
-	mux.Post("/casefile/:ID", ReceiveFile)
-	mux.Post("/deploy", DeployCommand)
+
+	mux.Get("/:ID/status", GetStatus)
+	mux.Post("/:ID/status", SetStatus)
+	mux.Post("/task", ReceiveTask)
+
+	mux.Get("/:ID/result", GetResult)
+
 	http.Handle("/", mux)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {

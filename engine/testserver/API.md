@@ -12,6 +12,7 @@ The [attributes](#attributes "attributes") are listed at the end of this documen
 |------|----|------| ----- |
 | Port | int | The port of the Test Server.| 8001 |
 | ServerListFile | string | For simple cases, we put all the server infos into a file.| ["servers.conf"](#servers) |
+| CacheDir | string | The cache dir where the temporal files stored.| "/tmp/testserver_cache" |
 | Debug | bool | Print the debug information on the screen| true, default to false |
 
 ```
@@ -110,11 +111,27 @@ GET /:ID/status
 
 **Response**
 
-"Applying resource/Deploying/Running test/Finish"
+"Applying/Allocated/Deploying/Deployed/Running/Finish"
 
 ``` 
-  {"Status": "OK",
-   "Message": "Deploying"
+  {"ID" "0001",
+   [
+    {
+//OS ID
+     "ID" : "10001",
+     "Object": "HostA",
+     "Distribution": "CentOS",
+      ....
+     "Status": "Deploying"
+    },
+    {
+     "ID" : "10002",
+     "Object": "HostB",
+     "Distribution": "CentOS",
+      ....
+     "Status": "Deployed"
+    }
+   ]
   }
 ```
 
@@ -129,11 +146,12 @@ POST /:ID/status
 | *Name* | *Type* | *Description* |
 | -------| ------ | --------- |
 | Status | string | The status of the task.|
+| Object | string | The object name in the task.|
 
 **Example**
 
 ```
-  curl -i -d '{"Status":"Deploying"}'  /10002/status
+  curl -i -d '{"Status":"deploy", "Object": "hostA"}'  /10002/status
 ```
 
 **Response**

@@ -23,6 +23,12 @@ type OS struct {
 	Memory       int64
 	IP           string
 	Status       string
+	Object       string
+}
+
+type Task struct {
+	ID     string
+	OSList []OS
 }
 
 //TODO add a 'casename' ?
@@ -97,9 +103,14 @@ type HttpRet struct {
 	Message string
 }
 
+type TestingStatus struct {
+	Object string
+	Status string
+}
+
 type TestingCommand struct {
-	ID         string
-	ObjectName string
+	ID     string
+	Object string
 	//Command: deploy, run
 	Command string
 }

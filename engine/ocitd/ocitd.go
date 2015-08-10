@@ -109,14 +109,17 @@ func FindCommand(testCase libocit.TestCase, objectName string, phaseName string)
 }
 
 func UpdateStatus(testCommand libocit.TestingCommand) {
-	var status string
+	var testStatus libocit.TestingStatus
+
 	post_url := path.Join(pub_config.TSurl, testCommand.ID, "status")
 	if testCommand.Command == "deploy" {
-		status = "Deployed"
+		testStatus.Status = "Deployed"
 	} else if testCommand.Command == "run" {
-		status = "Finish"
+		testStatus.Status = "Finish"
 	}
-	libocit.SendCommand(post_url, []byte(status))
+	testStatus.Object = testCommand.Object
+	ts_string, _ := json.Marshal(testStatus)
+	libocit.SendCommand(post_url, []byte(ts_string))
 }
 
 func TestingCommand(w http.ResponseWriter, r *http.Request) {
@@ -130,7 +133,7 @@ func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	content := libocit.ReadFile(path.Join(pub_config.CacheDir, testCommand.ID, "config.json"))
 	json.Unmarshal([]byte(content), &testCase)
 
-	command := FindCommand(testCase, testCommand.ObjectName, testCommand.Command)
+	command := FindCommand(testCase, testCommand.Object, testCommand.Command)
 
 	if len(command) > 0 {
 		RunCommand(command)
