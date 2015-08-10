@@ -3,11 +3,9 @@ The 'Scheduler' is one of the main components of the whole OCT framework.
 It keeps running as a daemon, communicates with the 'Test Case Server'， 'Container service Server' and the 'Test Server'.
 
 
-The [configuration](#configs "configuration") file is used for the OCT user to set his/her own configuration.
-
-The [openAPIs](#apis "APIs") are used for the 'Scheduler' user to monitor the running status.
-
-The [attributes](#attributes "attributes") are listed at the end of this document.
+- The [configuration](#configs "configuration") file is used for the OCT user to set his/her own configuration.
+- The [openAPIs](#apis "APIs") are used for the 'Scheduler' user to monitor the running status.
+- The [attributes](#attributes "attributes") are listed at the end of this document.
 
 ##Configs
 |Key|Type|Description|Example|
