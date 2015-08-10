@@ -32,6 +32,7 @@ The 'Test Case Server' provides all the test cases which stored at github.
 | GET | `/case` | [List](#list "list") | List the cases. |
 | GET | `/case/:ID` | [Details](#details "details") | Fetch the case files. %caseid.tar.gz |
 | GET | `/case/:ID/report` | [Report] (#report "report") | Get the case report|
+| POST| `/case` | [Refresh](#refresh "refresh") | Refresh the cases. |
 
 ###list
 ```
@@ -87,6 +88,21 @@ Fetch the case report.
 The whole %caseid-report file.
 
 
+###refresh
+```
+POST /case
+```
+Refresh the test cases.
+
+**Response**
+
+```
+ {
+    "Status": "OK",
+    "Message": ""
+ }
+```
+
 ##Attributes
 
 **ID**
@@ -96,5 +112,9 @@ The whole %caseid-report file.
 `The name of the test case, same with the API URL for fetching the event.`
 
 **Status**
-`'idle/tested'`
+In `List` : `'idle/tested'`
+
+In `Refresh` : `'OK/Failed'`
+
+
 

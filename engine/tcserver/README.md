@@ -12,7 +12,10 @@ casedir
   |__ group three
 	   |____  case three
 			|___ config.json
-			|___ sources/container_file
-			|___ sources/container_script one
+			|___ source/container-file
+			|___ source/container-script one
+			|___ report.md
 
 ```
+
+The `unit-test.sh` is used to check whether the 'tcserver' works as expect

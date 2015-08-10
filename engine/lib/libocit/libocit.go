@@ -91,6 +91,11 @@ type TestCase struct {
 	Collects    []Collect
 }
 
+type HttpRet struct {
+	Status  string
+	Message string
+}
+
 func PreparePath(cachename string, filename string) (realurl string) {
 	realurl = path.Join(cachename, filename)
 	dir := path.Dir(realurl)
