@@ -2,8 +2,10 @@
 The 'OCID' is the program installed on the hostOS, used to communicate with the 'Test Server'.
 (TODO:  All 'OCITD' should rename by OCTD since the project name changed)
 
-There is one  [configuration](#configs "configuration") file, the OCT user need to modify it to his/her own setting first.
-There are [openAPIs](#apis "APIs") for the 'OCT' developer to integrate 'OCTD' with the 'Test Server'.
+The [configuration](#configs "configuration") file is used for the OCT users to set his/her own configuration.
+
+The [openAPIs](#apis "APIs") are used for the 'OCT' developer to integrate 'OCTD' with the 'Test Server'.
+
 The [attributes](#attributes "attributes") are listed at the end of this document.
 
 ##Configs
