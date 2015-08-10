@@ -16,12 +16,17 @@ package main
 
 import (
 	//"bytes"
+	"encoding/json"
 	//"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 )
+
+type TestResult struct {
+	Readonly map[string]string `json:"Linuxspec.Spec.Root.Readonly"`
+}
 
 func testRootReadonlyFalse() {
 
@@ -32,23 +37,43 @@ func testRootReadonlyFalse() {
 	if err != nil {
 		log.Fatalf("Specs test testRootReadonlyFalse grep mount string err, %v", err)
 	}
-
+	testResult := new(TestResult)
+	testResult.Readonly = make(map[string]string)
 	outString := string(outBytes)
-	var resultString string
+	//var resultString string
 	if strings.Contains(outString, "(rw,") {
-		resultString = "[YES]        Linuxspec.Spec.Root.Readonly == false   passed"
+		testResult.Readonly["false"] = "passed"
+		//resultString = "[YES]        Linuxspec.Spec.Root.Readonly == false   passed"
 	} else {
-		resultString = "[NO]        Linuxspec.Spec.Root.Readonly == false   failed"
+		testResult.Readonly["false"] = "failed"
+		//resultString = "[NO]        Linuxspec.Spec.Root.Readonly == false   failed"
 	}
 
-	foutfile := "/testtool/readonly_false_out.txt"
-	fout, err := os.Create(foutfile)
-	defer fout.Close()
+	jsonString, err := json.Marshal(testResult)
+	if err != nil {
+		log.Fatalf("Convert to json err, error:  %v\n", err)
+		return
+	}
 
+	foutfile := "/testtool/readonly_false_out.json"
+	//fout, err := os.OpenFile(foutfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	fout, err := os.Create(foutfile)
+	//defer fout.Close()
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		fout.WriteString(resultString)
+		/*
+			var b []byte
+			n, err := fout.Read(b)
+			if err != nil {
+				log.Fatalf("Read file err : %v", err)
+
+			} else {
+				fmt.Println("len n : %v", n)
+				fout.WriteAt(jsonString, int64(n))
+			}
+		*/
+		fout.WriteString(string(jsonString))
 	}
 }
 
