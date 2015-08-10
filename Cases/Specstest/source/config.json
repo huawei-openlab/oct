@@ -139,14 +139,14 @@
       "KILL",
       "NET_BIND_SERVICE"
     ],
-    "devices": [
-      "null",
-      "random",
-      "full",
-      "tty",
-      "zero",
-      "urandom"
-    ],
+ "devices": [
+            "null",
+            "random",
+            "full",
+            "tty",
+            "zero",
+            "urandom"
+        ],
     "rootfsPropagation": ""
   }
 }
