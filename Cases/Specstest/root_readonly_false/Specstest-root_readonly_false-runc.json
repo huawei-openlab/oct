@@ -39,9 +39,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "go build root_readonly_false_host.go",
-                "Cmd": "./root_readonly_false_host",
+                "Cmd": "cd ./source/ ; go build root_readonly_false_host.go; ./root_readonly_false_host",
                 "Containers": [
                     {
                         "Object": "specs",
@@ -54,8 +52,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "runc"
+                "Cmd": "cd ./source/ ; runc",
             }
         ],
         "Collect": [
