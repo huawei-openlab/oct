@@ -1,11 +1,9 @@
 #Test Case Server
 The 'Test Case Server' provides all the test cases which stored at github.
 
-The [configuration](#configs "configuration") file is used for the OCT users to set his/her own configuration.
-
-The [openAPIs](#apis "APIs") are used for the developers to integrate the 'Test Case Server' with the 'Scheduler'.
-
-The [attributes](#attributes "attributes") are listed at the end of this document.
+- The [configuration](#configs "configuration") file is used for the OCT users to set his/her own configuration.
+- The [openAPIs](#apis "APIs") are used for the developers to integrate the 'Test Case Server' with the 'Scheduler'.
+- The [attributes](#attributes "attributes") are listed at the end of this document.
 
 ##Configs
 |Key|Type|Description|Example|
