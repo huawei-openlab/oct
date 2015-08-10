@@ -9,7 +9,7 @@
         "Requires": [
             {
                       "Class": "operOS",
-	         "Type": "os",
+	                "Type": "os",
                       "Distribution": "Ubuntu",
                       "Version": 14.04,
                       "Resource": {
