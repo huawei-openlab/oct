@@ -20,6 +20,7 @@ type TCServerConf struct {
 	CaseDir  string
 	Group    []string
 	CacheDir string
+	//FIXME: the metafile is useless since we can compare the file timestamp directly
 	Metafile string
 	Port     int
 }
