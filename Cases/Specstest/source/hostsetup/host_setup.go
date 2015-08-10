@@ -31,13 +31,13 @@ func SetupEnv(guestFile string, outputFile string) error {
 
 	if outputFile != "" {
 		fmt.Println("Touch output file...................")
-		cmd = exec.Command("/bin/sh", "-c", "touch /tmp/testtool/"+outputFile+".txt")
+		cmd = exec.Command("/bin/sh", "-c", "touch /tmp/testtool/"+outputFile+".json")
 		_, err = cmd.Output()
 		if err != nil {
-			log.Fatalf("Specstest root readonly test: touch %s.txt err, %v", outputFile, err)
+			log.Fatalf("Specstest root readonly test: touch %s.json err, %v", outputFile, err)
 		}
 
-		cmd = exec.Command("/bin/sh", "-c", "chown root:root  /tmp/testtool/"+outputFile+".txt")
+		cmd = exec.Command("/bin/sh", "-c", "chown root:root  /tmp/testtool/"+outputFile+".json")
 		_, err = cmd.Output()
 		if err != nil {
 			log.Fatalf("Specstest root readonly test: change to root power err, %v", err)

@@ -59,7 +59,7 @@
         "Collect": [
             {
                 "Object": "hostA",
-                "Files": ["/tmp/testtool/readonly_true_out.txt"]
+                "Files": ["/tmp/testtool/readonly_true_out.json"]
             }
         ]
     
