@@ -144,6 +144,12 @@ func SendFile(post_url string, file_url string, filename string) {
 		fmt.Println("error writing to buffer")
 		return
 	}
+	_, err = os.Stat(file_url)
+	if err != nil {
+		fmt.Println("error in stat file")
+		return
+	}
+
 	fh, err := os.Open(file_url)
 	if err != nil {
 		fmt.Println("error opening file")
@@ -151,6 +157,7 @@ func SendFile(post_url string, file_url string, filename string) {
 	}
 	_, err = io.Copy(fileWriter, fh)
 	if err != nil {
+		fmt.Println("error copy file")
 		return
 	}
 	contentType := bodyWriter.FormDataContentType()

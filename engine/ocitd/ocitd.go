@@ -111,7 +111,7 @@ func FindCommand(testCase libocit.TestCase, objectName string, phaseName string)
 func UpdateStatus(testCommand libocit.TestingCommand) {
 	var testStatus libocit.TestingStatus
 
-	post_url := path.Join(pub_config.TSurl, testCommand.ID, "status")
+	post_url := pub_config.TSurl + "/" + testCommand.ID + "/status"
 	if testCommand.Command == "deploy" {
 		testStatus.Status = "Deployed"
 	} else if testCommand.Command == "run" {
