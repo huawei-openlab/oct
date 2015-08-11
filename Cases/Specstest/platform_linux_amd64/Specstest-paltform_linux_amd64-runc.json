@@ -1,0 +1,55 @@
+{
+        "Name": "Specstest-platform_linux_amd64-runc",
+        "Summary": "test based opencontainers/specs",
+        "Owner": "linzhinan@huawei.com",
+        "Description": "Test runc when linuxspec.Spec.Platform.OS = linux, linuxspec.Spec.Platform.Arch = amd64",
+        "Group": "Specstest/platform_linux_amd64/",
+        "License": "Apache 2.0",
+        "Explains" "Test runc when linuxspec.Spec.Platform.OS = linux, linuxspec.Spec.Platform.Arch = amd64 "
+        "Source": [
+	       "./source/platform_linux_amd64_host.go",
+                    "./source/demo.go"
+                    "./source/test_linux_amd64.sh"
+        ],
+        "Requires": [
+            {
+                
+	       "Class":"operationOS", 
+	        "Type": "os",
+	        "Distribution": "Ubuntu14.04",
+	        "Resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "Class": "specstest",
+                "Type": "container",
+                "Version": "runc V0.2",
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/ ; go build platform_linux_amd64_host.go ; ./platform_linux_amd64_host ; ./test_linux_amd64.sh > /tmp/testtool/platform_linux_amd64_out.txt",
+                "Containers": [
+                    {
+                        "Object": "specs",
+                        "Class": "specstest"
+                    }
+                ]
+            }         
+        ],
+        "Collect": [
+            {
+                "Object": "hostA",
+                "Files": ["/tmp/testtool/platform_linux_amd64_out.txt"]
+            }
+        ]
+    
+}
+
