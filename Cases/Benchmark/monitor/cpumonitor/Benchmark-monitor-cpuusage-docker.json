@@ -36,8 +36,8 @@
         "./source/Dockerfile",
         "./source/cpu_usage.go",
         "./source/deadloop.sh",
-        "./host_deploy.sh",
-        "./docker_deploy.sh"
+        "./source/host_deploy.sh",
+        "./source/docker_deploy.sh"
       ],
       "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./docker_deploy.sh",
       "Containers": [
