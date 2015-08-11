@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"strconv"
 )
 
 type ServerConfig struct {
@@ -50,7 +49,7 @@ func get_url(req libocit.Require, path string) (apiurl string) {
 	if len(req.Distribution) > 1 {
 		data.Add("Distribution", req.Distribution)
 	}
-	data.Add("Version", strconv.Itoa(req.Version))
+	data.Add("Version", req.Version)
 
 	u, _ := url.ParseRequestURI(apiuri)
 	u.Path = path
@@ -102,7 +101,9 @@ func apply_container(req libocit.Require) (resource libocit.Resource) {
 	}
 	tar_url := libocit.TarFilelist(files, pub_casedir, req.Class)
 	post_url := pub_conf.CPurl + "/upload"
-	libocit.SendFile(post_url, tar_url, tar_url)
+
+	var params map[string]string
+	libocit.SendFile(post_url, tar_url, params)
 
 	apiurl := pub_conf.CPurl + "/build"
 	b, jerr := json.Marshal(req)
@@ -151,10 +152,8 @@ func ar_validation(ar_demo []libocit.Resource) (validate bool, err_string string
 	return true, "OK"
 }
 
+//Usage:  ./scheduler ./demo.tar.gz
 func main() {
-	var ts_demo libocit.TestCase
-	var validate bool
-	var msg string
 	var case_file string
 
 	config_content := libocit.ReadFile("./scheduler.conf")
@@ -163,123 +162,19 @@ func main() {
 	pub_debug = pub_conf.Debug
 	arg_num := len(os.Args)
 	if arg_num < 2 {
-		case_file = "./case01/Network-iperf.json"
+		case_file = "./demo.tar.gz"
 	} else {
 		case_file = os.Args[1]
 	}
-	pub_casedir = path.Dir(case_file)
-	fmt.Println(case_file)
-	test_json_str := libocit.ReadFile(case_file)
-	json.Unmarshal([]byte(test_json_str), &ts_demo)
-	if pub_debug {
-		fmt.Println(ts_demo)
-	}
-	validate, msg = ts_validation(ts_demo)
-	if !validate {
-		fmt.Println(msg)
-		return
-	}
-	if pub_debug {
-		fmt.Println(ts_demo)
-	}
+	post_url := pub_conf.TSurl + "/task"
+	fmt.Println(post_url)
 
-	//libocit.Require Session
-	var resources []libocit.Resource
-	//TODO: async in the future
-	resources = apply_resources(ts_demo)
-	validate, msg = ar_validation(resources)
-	if !validate {
-		fmt.Println(msg)
-		return
-	}
-
-	//Deploy Session
-
-	// Prepare deploys
-	for index := 0; index < len(ts_demo.Deploys); index++ {
-		var deploy libocit.Deploy
-		deploy = ts_demo.Deploys[index]
-		for r_index := 0; r_index < len(resources); r_index++ {
-			var resource libocit.Resource
-			resource = resources[r_index]
-			if resource.Used {
-				continue
-			}
-			if resource.Req.Class == deploy.Class {
-				ts_demo.Deploys[index].ResourceID = resource.ID
-				resources[r_index].Used = true
-				continue
-			}
-			// TODO should do it after apply resource
-			fmt.Println("Cannot get here, failed to get enough resource")
-		}
-	}
-	if pub_debug {
-		fmt.Println(ts_demo.Deploys)
-	}
-
-	// Send deploys
-	for index := 0; index < len(ts_demo.Deploys); index++ {
-		if len(ts_demo.Deploys[index].ResourceID) > 0 {
-			filelist := GetDeployFiles(pub_casedir, ts_demo.Deploys[index])
-			//FIXME: change the democase
-			tar_url := libocit.TarFilelist(filelist, pub_casedir, ts_demo.Deploys[index].Object)
-			post_url := pub_conf.TSurl + "/casefile/" + ts_demo.Deploys[index].ResourceID
-			fmt.Println("Send file  -- ", post_url, tar_url)
-			libocit.SendFile(post_url, tar_url, tar_url)
-
-			apiurl := pub_conf.TSurl + "/deploy"
-			b, jerr := json.Marshal(ts_demo.Deploys[index])
-			if jerr != nil {
-				fmt.Println("Failed to marshal json:", jerr)
-				return
-			}
-			fmt.Println("Send command ", apiurl)
-			libocit.SendCommand(apiurl, []byte(b))
-		}
-	}
-
-	// Send 'Run' -- do we really need this?
-
-	// Prepare collect
-	for index := 0; index < len(ts_demo.Collects); index++ {
-		for r_index := 0; r_index < len(ts_demo.Deploys); r_index++ {
-			if ts_demo.Collects[index].Object == ts_demo.Deploys[r_index].Object {
-				ts_demo.Collects[index].ResourceID = ts_demo.Deploys[r_index].ResourceID
-			}
-		}
-	}
-
-	// Send collects
-	for index := 0; index < len(ts_demo.Collects); index++ {
-		if len(ts_demo.Collects[index].ResourceID) > 0 {
-			collect := ts_demo.Collects[index]
-			for f_index := 0; f_index < len(collect.Files); f_index++ {
-				file := collect.Files[f_index]
-				apiurl := pub_conf.TSurl + "/report/" + ts_demo.Collects[index].ResourceID + "?file=" + file
-				fmt.Println("Send collect cmd ", apiurl)
-				resp, err := http.Get(apiurl)
-				if err != nil {
-					fmt.Println("Error ", err)
-					continue
-				}
-				defer resp.Body.Close()
-				resp_body, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					return
-				}
-				fmt.Println(resp.Status)
-				fmt.Println(string(resp_body))
-				cache_dir := "/tmp/test_scheduler_result"
-				real_url := libocit.PreparePath(cache_dir, file)
-				f, err := os.Create(real_url)
-				defer f.Close()
-				f.Write(resp_body)
-				f.Sync()
-
-			}
-		}
-	}
+	var params map[string]string
+	params = make(map[string]string)
+	//FIXME: the id autobe automaticly allocated
+	params["id"] = "00001"
+	libocit.SendFile(post_url, case_file, params)
+	return
 
 }
 

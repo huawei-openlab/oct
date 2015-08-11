@@ -189,7 +189,7 @@ GET /os
   {
     "ID": "1000",
     "Distribution": "CentOS",
-    "Version": 7,
+    "Version": "7",
     "CPU": 16,
     "Memory": 100000,
     "IP": 192.168.100.1,
@@ -199,7 +199,7 @@ GET /os
   {
     "ID": "1002",
     "Distribution": "CentOS",
-    "Version": 7,
+    "Version": "7",
     "CPU": 32,
     "Memory": 100000,
     "Disk": 10000,
@@ -230,7 +230,7 @@ Add a new host OS node to the Test Server. Most time it is done automaticly when
 
 **Example**
 ```
-  curl -i -d '{"Distribution":"CentOS", "Version": 7,
+  curl -i -d '{"Distribution":"CentOS", "Version": "7",
               "Arch": "X86_64", "CPU": 32, "Memory": 100000, 
               "Disk": 10000, "IP": "192.168.100.2"]}'  /os
 ```

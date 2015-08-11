@@ -71,8 +71,8 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func RunCommand(cmd string) {
-	os.Chdir(path.Join(pub_config.CacheDir, "source"))
+func RunCommand(cmd string, dir string) {
+	os.Chdir(dir)
 
 	C.CSystem(C.CString(cmd))
 	return
@@ -133,13 +133,15 @@ func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal([]byte(result), &testCommand)
 
 	var testCase libocit.TestCase
+	//FIXME: this is the bug when the tar dir is not all same
 	content := libocit.ReadFile(path.Join(pub_config.CacheDir, testCommand.ID, "config.json"))
 	json.Unmarshal([]byte(content), &testCase)
 
 	command := FindCommand(testCase, testCommand.Object, testCommand.Command)
 
 	if len(command) > 0 {
-		RunCommand(command)
+		dir := path.Join(pub_config.CacheDir, testCommand.ID, "source")
+		RunCommand(command, dir)
 	}
 	//Send status update to the test server
 	UpdateStatus(testCommand)

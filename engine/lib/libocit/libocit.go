@@ -16,6 +16,7 @@ import (
 )
 
 type OS struct {
+	CLASS        string
 	ID           string
 	Distribution string
 	Version      string
@@ -29,17 +30,18 @@ type OS struct {
 
 type Task struct {
 	ID     string
+	TC     TestCase
 	OSList []OS
 }
 
-//TODO add a 'casename' ?
 type Deploy struct {
 	Object     string
 	Class      string
 	Cmd        string
 	Files      []string
 	Containers []Container
-
+	ID         string
+	//FIXME: Remove resourceID after ID is confirmed
 	ResourceID string
 }
 
@@ -54,7 +56,7 @@ type Require struct {
 	Class        string
 	Type         string
 	Distribution string
-	Version      int
+	Version      string
 	Resource     OSResource
 	Files        []string
 }
@@ -65,13 +67,15 @@ type Container struct {
 	Cmd          string
 	Files        []string
 	Distribution string
-	Version      int
+	Version      string
 }
 
 type Collect struct {
 	Object string
 	Files  []string
 
+	ID string
+	//FIXME: since ID comes, we don't need resource id
 	ResourceID string
 }
 
@@ -352,6 +356,39 @@ func UntarFile(cache_url string, filename string) {
 
 		io.Copy(fw, tr)
 	}
+}
+
+func ReadTar(tar_url string, file_url string) (content string) {
+	fr, err := os.Open(tar_url)
+	if err != nil {
+		fmt.Println("fail in open file ", tar_url)
+		return content
+	}
+	defer fr.Close()
+	gr, err := gzip.NewReader(fr)
+	if err != nil {
+		fmt.Println("fail in using gzip")
+		return content
+	}
+	defer gr.Close()
+
+	tr := tar.NewReader(gr)
+	for {
+		h, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		if h.Name == file_url {
+			buf := bytes.NewBufferString("")
+			buf.ReadFrom(tr)
+			content = buf.String()
+			break
+		}
+	}
+	return content
 }
 
 func MD5(data string) (val string) {

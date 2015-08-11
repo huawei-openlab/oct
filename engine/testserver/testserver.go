@@ -83,6 +83,7 @@ func SetStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(ret_string))
 }
 
+//TODO make it async 
 //This is the main task running function
 func RunTask(taskID string) {
 
@@ -92,32 +93,71 @@ func RunTask(taskID string) {
 	testCommand.ID = taskID
 	testCommand.Command = "deploy"
 
-	for index := 0; index < len(task.OSList); index++ {
-		//FIXME: should untar the task, compare the resource and send to diffrent OS
-		// Here cause it is too late for me to back home..
-		testCommand.Object = "hostA"
-
-		fakeIDForHack := "0002"
-		os := *(store[fakeIDForHack])
+	for index := 0; index < len(task.TC.Deploys); index++ {
+		id := task.TC.Deploys[index].ID
+		os := *(store[id])
 		post_url := "http://" + os.IP + ":9001/command"
 
 		content, _ := json.Marshal(testCommand)
+		if pub_config.Debug {
+			fmt.Println("Command ", string(content), "  to ", post_url)
+		}
 		libocit.SendCommand(post_url, []byte(content))
 	}
 
 	testCommand.Command = "run"
 
-	for index := 0; index < len(task.OSList); index++ {
-		//FIXME: should untar the task, compare the resource and send to diffrent OS
-		// Here cause it is too late for me to back home..
-		testCommand.Object = "hostA"
-
-		fakeIDForHack := "0002"
-		os := *(store[fakeIDForHack])
+	for index := 0; index < len(task.TC.Run); index++ {
+		id := task.TC.Run[index].ID
+		os := *(store[id])
 		post_url := "http://" + os.IP + ":9001/command"
 
 		content, _ := json.Marshal(testCommand)
+		if pub_config.Debug {
+			fmt.Println("Command ", string(content), "  to ", post_url)
+		}
 		libocit.SendCommand(post_url, []byte(content))
+	}
+
+	//FIXME: do the collect work
+}
+
+func AllocateOS(task libocit.Task) {
+	for index := 0; index < len(task.TC.Requires); index++ {
+		req := task.TC.Requires[index]
+		if req.Type == "os" {
+			var os_query libocit.OS
+			//TODO, now only check these options
+			os_query.Distribution = req.Distribution
+			os_query.Version = req.Version
+			id := GetAvaliableResource(os_query)
+			for d_index := 0; d_index < len(task.TC.Deploys); d_index++ {
+				deploy := task.TC.Deploys[d_index]
+				if deploy.Class == req.Class {
+					task.TC.Deploys[d_index].ID = id
+					for r_index := 0; r_index < len(task.TC.Run); r_index++ {
+						run := task.TC.Run[r_index]
+						if deploy.Object == run.Object {
+							task.TC.Run[r_index].ID = id
+						}
+
+					}
+					for c_index := 0; c_index < len(task.TC.Collects); c_index++ {
+						collect := task.TC.Collects[c_index]
+						if deploy.Object == collect.Object {
+							task.TC.Collects[c_index].ID = id
+						}
+
+					}
+
+				}
+
+			}
+			if pub_config.Debug {
+				ret_string, _ := json.Marshal(task.TC)
+				fmt.Println("get --- id ---- ", string(ret_string))
+			}
+		}
 	}
 }
 
@@ -126,25 +166,31 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	real_url, params := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
 	handle_name := path.Base(real_url)
-	taskID := strings.Replace(handle_name, ".tar.gz", "", 1)
-
-	fmt.Println("params id", params["id"], "  ", handle_name)
+	taskID := params["id"]
 
 	var task libocit.Task
 	task.ID = taskID
-	fakeIDForHack := "0002"
 
-	//FIXME: should untar the task, compare the resource and send to diffrent OS
-	// Here cause it is too late for me to back home..
-	os := *(store[fakeIDForHack])
-	task.OSList = append(task.OSList, os)
-	post_url := "http://" + os.IP + ":9001/task"
-	fmt.Println("Receive and send file ", real_url)
-	w.Write([]byte("receive and send file"))
+	// for example, we have taskID.tar.gz
+	//  untar it, the test case will be put into taskID/config.json
+	case_file := path.Join(strings.Replace(handle_name, ".tar.gz", "", 1), "config.json")
+
+	content := libocit.ReadTar(real_url, case_file)
+	json.Unmarshal([]byte(content), &task.TC)
+
+	AllocateOS(task)
+
 	task_store[taskID] = &task
 
-	//FIXME: it is better to send the related the file to the certain host OS
-	libocit.SendFile(post_url, real_url, params)
+	for index := 0; index < len(task.TC.Deploys); index++ {
+		deploy := task.TC.Deploys[index]
+		os := *(store[deploy.ID])
+		post_url := "http://" + os.IP + ":9001/task"
+		fmt.Println("Receive and send file ", real_url, " to  ", post_url)
+
+		//FIXME: it is better to send the related the file to the certain host OS
+		libocit.SendFile(post_url, real_url, params)
+	}
 
 	//FIXME: if there were not enough resource ,return error
 	var ret libocit.HttpRet
@@ -193,6 +239,7 @@ func GetOSQuery(r *http.Request) (os libocit.OS) {
 }
 
 // Will use sql to seach, for now, just
+//TODO: different ID even same Class, add the ticket?
 func GetAvaliableResource(os_query libocit.OS) (ID string) {
 	for _, os := range store {
 		if len(os_query.Distribution) > 1 {
@@ -288,6 +335,7 @@ func PostOS(w http.ResponseWriter, r *http.Request) {
 			ret.Status = "Failed"
 			ret.Message = "this os is already exist"
 		} else {
+			os.ID = id
 			store[id] = &os
 			ret.Status = "OK"
 			ret.Message = "Success in adding the os"
@@ -329,6 +377,7 @@ func init_db(filename string) {
 		os.Status = "free"
 		content, _ := json.Marshal(os)
 		id := libocit.MD5(string(content))
+		os.ID = id
 		store[id] = &os
 	}
 
