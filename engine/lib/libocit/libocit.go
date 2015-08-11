@@ -135,10 +135,10 @@ func PreparePath(cachename string, filename string) (realurl string) {
 	return realurl
 }
 
-func SendFile(post_url string, file_url string, filename string) {
+func SendFile(post_url string, file_url string, params map[string]string) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
-
+	filename := path.Base(file_url)
 	//'tcfile': testcase file
 	fileWriter, err := bodyWriter.CreateFormFile("tcfile", filename)
 	if err != nil {
@@ -161,9 +161,23 @@ func SendFile(post_url string, file_url string, filename string) {
 		fmt.Println("error copy file")
 		return
 	}
-	contentType := bodyWriter.FormDataContentType()
+
+	for key, val := range params {
+		fmt.Println("key  ", key, "  val  ", val)
+		_ = bodyWriter.WriteField(key, val)
+	}
+	//	contentType := bodyWriter.FormDataContentType()
+
 	bodyWriter.Close()
-	resp, err := http.Post(post_url, contentType, bodyBuf)
+	request, err := http.NewRequest("POST", post_url, bodyBuf)
+	if err != nil {
+		fmt.Println("error in get new request")
+		return
+	}
+	request.Header.Set("Content-Type", bodyWriter.FormDataContentType())
+	client := &http.Client{}
+	resp, err := client.Do(request)
+	//resp, err := http.Post(post_url, contentType, bodyBuf)
 	if err != nil {
 		return
 	}
@@ -172,6 +186,7 @@ func SendFile(post_url string, file_url string, filename string) {
 	if err != nil {
 		return
 	}
+	//TODO: good response
 	fmt.Println(resp.Status)
 	fmt.Println(resp_body)
 }
@@ -215,13 +230,22 @@ func ReadFile(file_url string) (content string) {
 	return content
 }
 
-func ReceiveFile(w http.ResponseWriter, r *http.Request, cache_url string) (real_url string, handle_name string) {
+func ReceiveFile(w http.ResponseWriter, r *http.Request, cache_url string) (real_url string, params map[string]string) {
 	r.ParseMultipartForm(32 << 20)
 	file, handler, err := r.FormFile("tcfile")
-	fmt.Println(handler.Filename)
+
+	params = make(map[string]string)
+
+	if r.MultipartForm != nil {
+		for key, val := range r.MultipartForm.Value {
+			//Must use val[0]
+			params[key] = val[0]
+		}
+	}
+
 	if err != nil {
 		fmt.Println("Cannot find the tc file")
-		return real_url, handle_name
+		return real_url, params
 	}
 	defer file.Close()
 
@@ -231,13 +255,12 @@ func ReceiveFile(w http.ResponseWriter, r *http.Request, cache_url string) (real
 		fmt.Println("Cannot create the file ", real_url)
 		//TODO: better system error
 		http.Error(w, err.Error(), 500)
-		return real_url, handle_name
+		return real_url, params
 	}
 	defer f.Close()
 	io.Copy(f, file)
 
-	handle_name = handler.Filename
-	return real_url, handle_name
+	return real_url, params
 }
 
 // file name filelist is like this: './source/file'

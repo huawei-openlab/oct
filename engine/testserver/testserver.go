@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"sync"
@@ -122,10 +123,13 @@ func RunTask(taskID string) {
 
 func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	//handle_name:  taskID.tar.gz
-	real_url, handle_name := libocit.ReceiveFile(w, r, pub_config.CacheDir)
+	real_url, params := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
+	handle_name := path.Base(real_url)
 	taskID := strings.Replace(handle_name, ".tar.gz", "", 1)
-	fmt.Println("task id is ", taskID, "  ", handle_name)
+
+	fmt.Println("params id", params["id"], "  ", handle_name)
+
 	var task libocit.Task
 	task.ID = taskID
 	fakeIDForHack := "0002"
@@ -140,7 +144,7 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	task_store[taskID] = &task
 
 	//FIXME: it is better to send the related the file to the certain host OS
-	libocit.SendFile(post_url, real_url, handle_name)
+	libocit.SendFile(post_url, real_url, params)
 
 	//FIXME: if there were not enough resource ,return error
 	var ret libocit.HttpRet
@@ -264,7 +268,9 @@ func PostOS(w http.ResponseWriter, r *http.Request) {
 
 	result, _ := ioutil.ReadAll(r.Body)
 	r.Body.Close()
-	fmt.Println(string(result))
+	if pub_config.Debug {
+		fmt.Println(string(result))
+	}
 	json.Unmarshal([]byte(result), &os)
 	if os.Distribution == "" {
 		ret.Status = "Failed"
@@ -345,10 +351,10 @@ func main() {
 	init_db(pub_config.ServerListFile)
 
 	mux := routes.New()
-	//TODO: following two are not done yet
+	//TODO: following one is are not done yet
 	mux.Get("/os", GetOS)
-	mux.Post("/os", PostOS)
 
+	mux.Post("/os", PostOS)
 	mux.Get("/:ID/status", GetStatus)
 	mux.Post("/:ID/status", SetStatus)
 	mux.Post("/task", ReceiveTask)
