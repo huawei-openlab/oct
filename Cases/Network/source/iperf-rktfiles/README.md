@@ -5,10 +5,12 @@ a Rocket image which will provide a mongodb service.
 
 ## Source Files
 
-mktree.sh::
-	A script to compose the image file tree
-manifest::
-	The rocket image description file
+##### mktree.sh
+A script to compose the image file tree
+##### manifest
+The rocket image description file
+##### run.sh
+The task script. This file defines the set of operations that will be run inside the container
 
 ## Requirements
 
@@ -23,13 +25,13 @@ specification for the location and format of the manifest file and the
 location of the image contents.
 
     rootfs/
-			/usr/bin/
-				mongod
+			/usr/local/bin/
+				iperf3
 			/lib64/
 			  lib*.so
 			/data/db/
 			/dev/
-
+			run.sh
 ### iperf3 daemon
 
 The first file is the iperf3.  It is placed by convention into
