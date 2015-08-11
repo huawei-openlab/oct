@@ -19,8 +19,8 @@
 		"app": {
 				"exec": [
 						"/usr/local/bin/iperf3",
-						"-s",
-						"-J"
+						"-c",
+						"./run.sh"
 				],
 				"user": "0",
 				"group": "0",
