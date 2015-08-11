@@ -125,7 +125,7 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	real_url, handle_name := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
 	taskID := strings.Replace(handle_name, ".tar.gz", "", 1)
-
+	fmt.Println("task id is ", taskID, "  ", handle_name)
 	var task libocit.Task
 	task.ID = taskID
 	fakeIDForHack := "0002"
@@ -136,6 +136,7 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	task.OSList = append(task.OSList, os)
 	post_url := "http://" + os.IP + ":9001/task"
 	fmt.Println("Receive and send file ", real_url)
+	w.Write([]byte("receive and send file"))
 	task_store[taskID] = &task
 
 	//FIXME: it is better to send the related the file to the certain host OS
@@ -259,25 +260,36 @@ func GetAllOS(w http.ResponseWriter, r *http.Request) {
 
 func PostOS(w http.ResponseWriter, r *http.Request) {
 	var os libocit.OS
+	var ret libocit.HttpRet
+
 	result, _ := ioutil.ReadAll(r.Body)
 	r.Body.Close()
-
+	fmt.Println(string(result))
 	json.Unmarshal([]byte(result), &os)
 	if os.Distribution == "" {
-		w.Write([]byte("os distribution required"))
-		return
+		ret.Status = "Failed"
+		ret.Message = "os distribution required"
+	} else if os.Version == "" {
+		ret.Status = "Failed"
+		ret.Message = "os version required"
+	} else if os.Arch == "" {
+		ret.Status = "Failed"
+		ret.Message = "os arch required"
+	} else {
+		lock.Lock()
+		id := libocit.MD5(string(result))
+		if _, ok := store[id]; ok {
+			ret.Status = "Failed"
+			ret.Message = "this os is already exist"
+		} else {
+			store[id] = &os
+			ret.Status = "OK"
+			ret.Message = "Success in adding the os"
+		}
+		lock.Unlock()
 	}
-	if os.Version == "" {
-		w.Write([]byte("os version required"))
-		return
-	}
-	if os.Arch == "" {
-		w.Write([]byte("os arch required"))
-		return
-	}
-	lock.Lock()
-	store[os.Distribution] = &os
-	lock.Unlock()
+	ret_body, _ := json.Marshal(ret)
+	w.Write([]byte(ret_body))
 }
 
 func DeleteOS(w http.ResponseWriter, r *http.Request) {
@@ -309,7 +321,9 @@ func init_db(filename string) {
 	for index := 0; index < len(_servers.Servers); index++ {
 		os := _servers.Servers[index]
 		os.Status = "free"
-		store[os.ID] = &os
+		content, _ := json.Marshal(os)
+		id := libocit.MD5(string(content))
+		store[id] = &os
 	}
 
 	log.Println(store)

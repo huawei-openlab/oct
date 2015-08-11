@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -175,22 +176,23 @@ func SendFile(post_url string, file_url string, filename string) {
 	fmt.Println(resp_body)
 }
 
-func SendCommand(apiurl string, b []byte) {
+func SendCommand(apiurl string, b []byte) (ret HttpRet) {
 	body := bytes.NewBuffer(b)
 	resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
 	defer resp.Body.Close()
 	if perr != nil {
-		// handle error
-		fmt.Println("err in post:", perr)
-		return
+		ret.Status = "Failed"
+		ret.Message = "err in posting"
 	} else {
 		result, berr := ioutil.ReadAll(resp.Body)
 		if berr != nil {
+			ret.Status = "Failed"
+			ret.Message = "err in reading the response of the posting"
 		} else {
-			//TODO: write back the info
-			fmt.Println(result)
+			json.Unmarshal([]byte(result), &ret)
 		}
 	}
+	return ret
 }
 
 //TODO: add err para?

@@ -12,6 +12,8 @@ import (
 	"os"
 	"os/exec"
 	"path"
+
+//	"strings"
 )
 
 /*
@@ -57,9 +59,10 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	//The task ID is alreay included in the real_url
 	real_url, _ := libocit.ReceiveFile(w, r, pub_config.CacheDir)
+	//	id := strings.Replace(path.Base(real_url), ".tar.gz", "", 1)
+	//	libocit.UntarFile(path.Join(pub_config.CacheDir, id), real_url)
 
 	libocit.UntarFile(pub_config.CacheDir, real_url)
-
 	var ret libocit.HttpRet
 	ret.Status = "OK"
 	ret_string, _ := json.Marshal(ret)
@@ -147,23 +150,23 @@ func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(ret_string))
 }
 
-//FIXME: should be removed, since move to test server
-func CollectFiles(w http.ResponseWriter, r *http.Request) {
-	result, _ := ioutil.ReadAll(r.Body)
-	r.Body.Close()
+func RegisterToTestServer() {
+	post_url := pub_config.TSurl + "/os"
 
-	var filelist []string
-	json.Unmarshal([]byte(result), &filelist)
+	//TODO
+	//Seems there will be lots of coding while getting the system info
+	//Using config now.
 
-	for index := 0; index < len(filelist); index++ {
-		fmt.Println(filelist[index])
-	}
-
+	content := libocit.ReadFile("./host.conf")
+	ret := libocit.SendCommand(post_url, []byte(content))
+	fmt.Println(ret)
 }
 
 func main() {
 	content := libocit.ReadFile("./ocitd.conf")
 	json.Unmarshal([]byte(content), &pub_config)
+
+	RegisterToTestServer()
 
 	var port string
 	port = fmt.Sprintf(":%d", pub_config.Port)
@@ -172,8 +175,9 @@ func main() {
 	mux.Get("/result", GetResult)
 	mux.Post("/task", UploadFile)
 	mux.Post("/command", TestingCommand)
-	//	mux.Post("/collect", CollectFiles)
+
 	http.Handle("/", mux)
+	fmt.Println("Start to listen ", port)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

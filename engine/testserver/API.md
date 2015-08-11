@@ -19,6 +19,7 @@ The [attributes](#attributes "attributes") are listed at the end of this documen
 {
 	"Port": 8001,
 	"ServerListFile": "servers.conf",
+	"CacheDir" : "/tmp/testserver_cache", 
 	"Debug": true
 }
 ```
