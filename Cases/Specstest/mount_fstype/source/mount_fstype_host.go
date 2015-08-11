@@ -15,20 +15,16 @@ package main
 import (
 	configconvert "./../../source/configconvert"
 	hostsetup "./../../source/hostsetup"
+	"flag"
 	"fmt"
 	specs "github.com/opencontainers/specs"
 	"log"
 )
 
-func setFsListAndExcuteTest() {
-	// filesystemlists := []string{"ext2", "ext3", "ext4", "ntfs", "tmpfs", "sysfs"}
-	filesystemlists := []string{"ext2"}
-	for _, fs := range filesystemlists {
-		testFsTypeSupport(fs)
-	}
-}
+var input_fsname = flag.String("fs", "tmpfs", "input the filesystem to test")
 
 func testFsTypeSupport(fstest string) {
+
 	//set file path
 	configjsonFilePath := "./../../source/config.json"
 	guestProgrammeFileName := ""
@@ -60,5 +56,8 @@ func testFsTypeSupport(fstest string) {
 }
 
 func main() {
-	setFsListAndExcuteTest()
+	//parse the  command line input to get tested filesystems
+	flag.Parse()
+	fsname := *input_fsname
+	testFsTypeSupport(fsname)
 }
