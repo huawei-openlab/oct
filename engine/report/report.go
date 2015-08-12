@@ -44,7 +44,7 @@ func generate_resource(ts_demo libocit.TestCase) (content string) {
 		for r_index := 0; r_index < len(ts_demo.Requires); r_index++ {
 			req := ts_demo.Requires[r_index]
 			if req.Class == deploy.Class {
-				version = req.Distribution + strconv.Itoa(req.Version)
+				version = req.Distribution + req.Version
 				resource = "CPU " + strconv.Itoa(req.Resource.CPU) + ", Memory " + req.Resource.Memory + ", Disk " + req.Resource.Disk
 				break
 			}
@@ -68,7 +68,7 @@ func generate_resource(ts_demo libocit.TestCase) (content string) {
 		if req.Type != "container" {
 			continue
 		}
-		content += "|" + req.Class + "|" + req.Distribution + strconv.Itoa(req.Version) + "|" + "[Dockerfile](#dockerfile) |\n"
+		content += "|" + req.Class + "|" + req.Distribution + req.Version + "|" + "[Dockerfile](#dockerfile) |\n"
 	}
 	return content
 }
