@@ -1,0 +1,50 @@
+{
+        "Name": "Specstest-linux-capabilities-SETFCAP",
+        "Summary": "test linux-capabilities-SETFCAP",
+        "Owner": "wangqilin2@huawei.com",
+        "Description": "Test runc  whether it supports the linux capabilities SETFCAP",
+        "Group": "Specstest/linux_capabilities/",
+        "License": "Apache 2.0",
+        "Explains" "Test runc by set the capabilities SETFCAP to an other file"
+        "Requires": [
+            {
+                
+	       "Class":"operationOS", 
+	        "Type": "os",
+	        "Distribution": "Ubuntu14.04",
+	        "Resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "Class": "specstest",
+                "Type": "container",
+                "Version": "runc V0.2",
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/ ; go build linux_capabilities_SETFCAP_host.go ; ./linux_capabilities_SETFCAP_host;",
+                "Containers": [
+                    {
+                        "Object": "specs",
+                        "Class": "specstest"
+                    }
+                ]
+            }         
+        ],
+        "Collect": [
+            {
+                "Object": "hostA",
+                "Files": ["/tmp/testtool/linux_capabilities_SETFCAP_host.json"]
+            }
+        ]
+    
+}
+

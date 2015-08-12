@@ -1,0 +1,58 @@
+{
+        "Name": "Benchmark-sysbench-memoryrw-rkt",
+        "Summary": "test with sysbench tool",
+        "Version": "0.1",
+        "Owner": "wangqilin2@huawei.com",
+        "Details": "Test memory performance",
+        "Group": "Performance/Benchmark/sysbench/memory_rw",
+        "License": "Apache 2.0",
+        "Requires": [
+            {
+                
+	       "Class": "operOS",
+                    "Type": "os",
+                    "Distribution": "Ubuntu",
+                    "Version": 14.04,
+	        "resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {      
+                 "Class": "sysbench",
+                 "Type": "container",
+                 "Distribution": "rkt",
+                 "Version": 0.7,
+                  "Files": null
+            }
+        ],
+        "Deploy": [
+                        {
+                "Object": "hostA",
+                "class": "operOS",
+                 "Files":null,
+                "Containers": [
+                        {
+                            "Object": "sysbench-rkt-terminal",
+                            "Class": "sysbench",
+                             "Cmd": "chmod 757 /etc/resolv.conf",
+                             "Cmd": "echo 'nameserver 8.8.8.8' >> /etc/resolv.conf",
+                             "Cmd": "apt-get update",
+                             "Cmd": "apt-get install -y sysbench",
+                             "Cmd": "sysbench --num-threads=4 --memory-block-size=1024 --memory-total-size=10G  --test=memory run",
+                             "Cmd": "sysbench --num-threads=4 --memory-block-size=1024 --memory-total-size=100G  --test=memory run"                     
+                        }
+                    ],
+                 "Cmd": "sudo rkt -debug=true -insecure-skip-verify run docker://ubuntu:14.04 --interactive"
+            }     
+        ],
+        "Collects": [
+            {
+                "Object": "hostA",
+                "Files": ["./source/sysbench-memoryrw-rkt-output.json"]
+            }
+        ]
+}
+

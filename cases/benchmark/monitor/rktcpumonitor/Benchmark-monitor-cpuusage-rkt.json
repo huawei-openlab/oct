@@ -1,0 +1,68 @@
+{
+  "Name": "Benchmark-Test-Monitor-RKT",
+  "Summary": "test with cadvisor tool",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Monitor RKT cpu_usage via cadvisor,conlude TotalUsage, PerCoreUsage, Load, OverallUsage, BreakdownUsage",
+  "Group": "Performance/Benchmark/monitor/rktcpumonitor/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "Ubuntu",
+      "Versioin": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "cpuusage",
+      "Type": "container",
+      "Distribution": "RKT",
+      "Version": "0.7"
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/cpu_usage.go",
+        "./source/deadloop.sh",
+        "./source/host_deploy.sh",
+        "./source/rkt_deploy.sh"
+      ],
+      "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./rkt_deploy.sh",
+      "Containers": [
+        {
+          "Object": "cpu",
+          "Class": "cpuusage"
+        }
+      ]
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./cpu_usage rkt",
+      "Containers": [
+        {
+          "Object": "cpu",
+          "Class": "cpuusage"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "./source/rkt_cpu.json"
+      ]
+    }
+  ]
+}
