@@ -1,0 +1,72 @@
+{
+  "Name": "Benchmark-Test-Monitor-docker",
+  "Summary": "test with cadvisor tool",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Monitor cpu cpu_usage via cadvisor,conlude TotalUsage, PerCoreUsage, Load, OverallUsage, BreakdownUsage",
+  "Group": "Performance/Benchmark/monitor/dockercpumonitor/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Versioin": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "cpuusage",
+      "Type": "container",
+      "Distribution": "Docker",
+      "Version": "1.0",
+      "Files": [
+        "./source/Dockerfile"
+      ]
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/Dockerfile",
+        "./source/cpu_usage.go",
+        "./source/deadloop.sh",
+        "./source/host_deploy.sh",
+        "./source/docker_deploy.sh"
+      ],
+      "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./docker_deploy.sh",
+      "Containers": [
+        {
+          "Object": "cpu",
+          "Class": "cpuusage"
+        }
+      ]
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./cpu_usage docker",
+      "Containers": [
+        {
+          "Object": "cpu",
+          "Class": "cpuusage"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "./source/docker_cpu.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+        "Name": "Specstest-root_readonly_true-runc",
+        "Summary": "test based opencontainers/specs",
+        "Owner": "linzhinan@huawei.com",
+        "Description": "Test runc when spec root:readonly == true",
+        "Group": "Specstest/root_readonly_true/",
+        "License": "Apache 2.0",
+        "Explains" "Test runc when spec root:readonly == true"
+        "Source": [
+                    "./source/config.json",
+	       "./source/root_readonly_true_host.go",
+                    "./source/root_readonly_true_guest.go"
+        ],
+        "Requires": [
+            {
+                
+	       "Class":"operationOS", 
+	        "Type": "os",
+	        "Distribution": "Ubuntu14.04",
+	        "Resource": {
+	            "CPU": 4,
+	            "Memory": "16GB",
+	            "Disk": "200G"
+	        }
+                
+            }
+            {
+                
+                "Class": "specstest",
+                "Type": "container",
+                "Version": "runc V0.2",
+                "Files": [
+		   "./source/config.json"
+		]
+                
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/ ; go build root_readonly_true_host.go ; ./root_readonly_true_host",
+                "Containers": [
+                    {
+                        "Object": "specs",
+                        "Class": "specstest"
+                    }
+                ]
+            }         
+        ],
+          "Run": [
+            {
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Cmd": "cd ./source/",
+                "Cmd": "runc"
+            }
+        ],
+        "Collect": [
+            {
+                "Object": "hostA",
+                "Files": ["/tmp/testtool/readonly_true_out.json"]
+            }
+        ]
+    
+}
+

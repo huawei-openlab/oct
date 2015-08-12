@@ -1,0 +1,53 @@
+{
+        "Name": "Benchmark-Test-sysbench-docker",
+        "Summary": "test with sysbench tool",
+         "Version": "0.1",
+        "Owner": "wangqilin2@huawei.com",
+        "Details": "Test memory performance",
+        "Group": "Performance/Benchmark/sysbench/memoryrw",
+        "License": "Apache 2.0",
+        "Requires": [
+            {
+               "Class": "operOS",
+	         "Type": "os",
+                      "Distribution": "Ubuntu",
+                      "Version": 14.04,
+                      "Resource": {
+                            "CPU": 1,
+                            "Memory": "2GB",
+                            "Disk": "100G"
+                        }
+                
+            },
+            {
+                "Class": "sysbench",
+                 "Type": "container",
+                 "Distribution": "Docker",
+                 "Version": 1,
+                "Files": [
+                                "./source/Dockerfile",
+                                "./source/memoryrw.sh"
+                                ]
+            }
+        ],
+        "Deploy": [
+            {
+                 "Object": "hostA",
+                "class": "operOS",
+                 "Files": ["./source/Dockerfile", "./source/memoryrw.sh"],
+                 "Containers": [
+                        {
+                            "Object": "sysbench-terminal",
+                            "Class": "sysbench"
+                        }
+                    ]
+            }         
+        ],
+         "Collects": [
+            {
+                "Object": "hostA",
+                "Files": ["./source/sysbench-memoryrw-output.json"]
+            }
+        ]
+}
+
