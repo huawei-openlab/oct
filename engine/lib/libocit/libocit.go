@@ -40,9 +40,8 @@ type Deploy struct {
 	Cmd        string
 	Files      []string
 	Containers []Container
-	ID         string
-	//FIXME: Remove resourceID after ID is confirmed
-	ResourceID string
+	//if it was hostOS, the ID is the host OS ID
+	ID string
 }
 
 //FIXME: the type is not consistent
@@ -74,19 +73,8 @@ type Collect struct {
 	Object string
 	Files  []string
 
+	//if it was hostOS, the ID is the host OS ID
 	ID string
-	//FIXME: since ID comes, we don't need resource id
-	ResourceID string
-}
-
-type Resource struct {
-	//TODO: put following to a struct and make a hash?
-	ID     string //returned
-	Status bool   //whether it is available
-	Msg    string //return value from server
-
-	Req  Require
-	Used bool
 }
 
 type TestCase struct {
@@ -106,17 +94,21 @@ type TestCase struct {
 type HttpRet struct {
 	Status  string
 	Message string
+	Data    string
 }
 
+//Set the object status, for example, set an HostA to 'running'
 type TestingStatus struct {
 	Object string
 	Status string
 }
 
 type TestingCommand struct {
+	//If it was hostOS, the ID is the hostOS ID
 	ID     string
 	Object string
-	//Command: deploy, run
+	//Status: deploy, run
+	Status  string
 	Command string
 }
 
@@ -328,6 +320,12 @@ func TarDir(case_dir string) (tar_url string) {
 }
 
 func UntarFile(cache_url string, filename string) {
+	_, err := os.Stat(filename)
+	if err != nil {
+		fmt.Println("cannot find the file ", filename)
+		return
+	}
+
 	fr, err := os.Open(filename)
 	if err != nil {
 		fmt.Println("fail in open file ", filename)
@@ -351,14 +349,24 @@ func UntarFile(cache_url string, filename string) {
 			panic(err)
 		}
 		target_url := PreparePath(cache_url, h.Name)
-		fw, _ := os.OpenFile(target_url, os.O_CREATE|os.O_WRONLY, os.FileMode(h.Mode))
-		defer fw.Close()
-
-		io.Copy(fw, tr)
+		fw, err := os.OpenFile(target_url, os.O_CREATE|os.O_WRONLY, os.FileMode(h.Mode))
+		if err != nil {
+			//Dir for example
+			continue
+		} else {
+			io.Copy(fw, tr)
+			fw.Close()
+		}
 	}
 }
 
 func ReadTar(tar_url string, file_url string) (content string) {
+	_, err := os.Stat(tar_url)
+	if err != nil {
+		fmt.Println("cannot find the file ", tar_url)
+		return content
+	}
+
 	fr, err := os.Open(tar_url)
 	if err != nil {
 		fmt.Println("fail in open file ", tar_url)

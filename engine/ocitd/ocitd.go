@@ -39,6 +39,16 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 	ID := r.URL.Query().Get("ID")
 	realurl := path.Join(pub_config.CacheDir, ID, filename)
 
+	if pub_config.Debug {
+		fmt.Println(realurl)
+	}
+
+	_, err := os.Stat(realurl)
+	if err != nil {
+		w.Write([]byte("Cannot find the file: " + realurl))
+		return
+	}
+
 	file, err := os.Open(realurl)
 	defer file.Close()
 	if err != nil {
@@ -50,19 +60,20 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 	buf := bytes.NewBufferString("")
 	buf.ReadFrom(file)
 
-	fmt.Println(realurl)
-
 	w.Write([]byte(buf.String()))
-
 }
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
-	//The task ID is alreay included in the real_url
-	real_url, _ := libocit.ReceiveFile(w, r, pub_config.CacheDir)
-	//	id := strings.Replace(path.Base(real_url), ".tar.gz", "", 1)
-	//	libocit.UntarFile(path.Join(pub_config.CacheDir, id), real_url)
+	real_url, params := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
-	libocit.UntarFile(pub_config.CacheDir, real_url)
+	fmt.Println(params)
+
+	if val, ok := params["id"]; ok {
+		libocit.UntarFile(path.Join(pub_config.CacheDir, val), real_url)
+	} else {
+
+		libocit.UntarFile(pub_config.CacheDir, real_url)
+	}
 	var ret libocit.HttpRet
 	ret.Status = "OK"
 	ret_string, _ := json.Marshal(ret)
@@ -94,30 +105,13 @@ func PullImage(container libocit.Container) {
 	}
 }
 
-//FIXME: used in OCTD, it is necessary to put here?
-func FindCommand(testCase libocit.TestCase, objectName string, phaseName string) (command string) {
-	var deploy_list []libocit.Deploy
-	if phaseName == "deploy" {
-		deploy_list = testCase.Deploys
-	} else if phaseName == "run" {
-		deploy_list = testCase.Run
-	}
-	for index := 0; index < len(deploy_list); index++ {
-		if deploy_list[index].Object == objectName {
-			command = deploy_list[index].Cmd
-			break
-		}
-	}
-	return command
-}
-
 func UpdateStatus(testCommand libocit.TestingCommand) {
 	var testStatus libocit.TestingStatus
 
 	post_url := pub_config.TSurl + "/" + testCommand.ID + "/status"
-	if testCommand.Command == "deploy" {
+	if testCommand.Status == "deploy" {
 		testStatus.Status = "Deployed"
-	} else if testCommand.Command == "run" {
+	} else if testCommand.Status == "run" {
 		testStatus.Status = "Finish"
 	}
 	testStatus.Object = testCommand.Object
@@ -132,16 +126,9 @@ func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	var testCommand libocit.TestingCommand
 	json.Unmarshal([]byte(result), &testCommand)
 
-	var testCase libocit.TestCase
-	//FIXME: this is the bug when the tar dir is not all same
-	content := libocit.ReadFile(path.Join(pub_config.CacheDir, testCommand.ID, "config.json"))
-	json.Unmarshal([]byte(content), &testCase)
-
-	command := FindCommand(testCase, testCommand.Object, testCommand.Command)
-
-	if len(command) > 0 {
+	if len(testCommand.Command) > 0 {
 		dir := path.Join(pub_config.CacheDir, testCommand.ID, "source")
-		RunCommand(command, dir)
+		RunCommand(testCommand.Command, dir)
 	}
 	//Send status update to the test server
 	UpdateStatus(testCommand)

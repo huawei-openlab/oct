@@ -11,8 +11,8 @@
             {
                     "Class": "operOS",
                     "Type": "os",
-		    "Distribution": "CentOS",
-		    "Version": 7,
+		    "Distribution": "Ubuntu",
+		    "Version": "12.04",
                     "Resource": {
                         "CPU": 1,
                         "Memory": "2GB",
@@ -23,7 +23,7 @@
                     "Class": "iperf3",
 		    "Type": "container",
 		    "Distribution": "Docker",
-                    "Version": 1,
+                    "Version": "1",
 		    "Files": ["./source/Dockerfile"]
             }
         ],
@@ -42,13 +42,13 @@
                             "Class": "iperf3"
                         }
                     ],
-		"Cmd": "./iperf_test.sh"
+		"Cmd": "git clone https://github.com/huawei-openlab/oct.git"
             }
 	],
         "Collects": [
             {
                 "Object": "hostA",
-		"Files": ["./source/iperf-tcp-result.json", "./source/iperf-udp-result.json"]
+		"Files": ["./source/oct/README.md", "./source/oct/engine/HowTO.md"]
             }
         ]
 }

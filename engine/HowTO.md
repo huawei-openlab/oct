@@ -13,12 +13,11 @@ cd testserver
 ./testserver &
 cd ../ocitd
 ./ocitd &
-cd ../containerpool
-./containerpool &
-cd ../scheduler
-
+cd ../scheduler/democase
+tar czvf ../democase.tar.gz *
+cd ..
 # choose a testcase.
-./scheduler case01/Network-iperf.json
+./scheduler democase.tar.gz
 
 ```
-The raw result will be store at /tmp/test_scheduler_result/
+The raw result will be store at /tmp/testserver_cache/%(taskID)

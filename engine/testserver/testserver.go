@@ -12,7 +12,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-	"strings"
 	"sync"
 )
 
@@ -23,7 +22,6 @@ type TestServerConfig struct {
 	Debug          bool
 }
 
-//TODO: not done yet
 func GetResult(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 	report_file := r.URL.Query().Get("file")
@@ -56,6 +54,7 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 //Set the hostOS status
+//TODO, In the async testing, when all the OS get the same status, continue to the next
 func SetStatus(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 
@@ -90,36 +89,75 @@ func RunTask(taskID string) {
 	var testCommand libocit.TestingCommand
 	task := *(task_store[taskID])
 
+	//Deploy
 	testCommand.ID = taskID
-	testCommand.Command = "deploy"
-
+	testCommand.Status = "deploy"
 	for index := 0; index < len(task.TC.Deploys); index++ {
 		id := task.TC.Deploys[index].ID
-		os := *(store[id])
-		post_url := "http://" + os.IP + ":9001/command"
+		hostOS := *(store[id])
+		//TODO: 9001 will be replaced with OS.Port
+		post_url := "http://" + hostOS.IP + ":9001/command"
 
+		testCommand.Command = task.TC.Deploys[index].Cmd
 		content, _ := json.Marshal(testCommand)
 		if pub_config.Debug {
 			fmt.Println("Command ", string(content), "  to ", post_url)
 		}
 		libocit.SendCommand(post_url, []byte(content))
+
+		//TODO: add the container command 
 	}
 
-	testCommand.Command = "run"
+	//Run
 
+	testCommand.Status = "run"
 	for index := 0; index < len(task.TC.Run); index++ {
 		id := task.TC.Run[index].ID
-		os := *(store[id])
-		post_url := "http://" + os.IP + ":9001/command"
-
+		hostOS := *(store[id])
+		//TODO: 9001 will be replaced with OS.Port
+		post_url := "http://" + hostOS.IP + ":9001/command"
+		testCommand.Command = task.TC.Run[index].Cmd
 		content, _ := json.Marshal(testCommand)
 		if pub_config.Debug {
 			fmt.Println("Command ", string(content), "  to ", post_url)
 		}
 		libocit.SendCommand(post_url, []byte(content))
+
+		//TODO: add the container command 
 	}
 
-	//FIXME: do the collect work
+	//Collect
+	for index := 0; index < len(task.TC.Collects); index++ {
+		collect := task.TC.Collects[index]
+		id := collect.ID
+		hostOS := *(store[id])
+		for f_index := 0; f_index < len(collect.Files); f_index++ {
+			//TODO: 9001 will be replaced with OS.Port
+			get_url := "http://" + hostOS.IP + ":9001/result" + "?File=" + collect.Files[f_index] + "&ID=" + taskID
+			if pub_config.Debug {
+				fmt.Println("Get collect url : ", get_url)
+			}
+
+			resp, err := http.Get(get_url)
+			if err != nil {
+				fmt.Println("Error ", err)
+				continue
+			}
+			defer resp.Body.Close()
+			resp_body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return
+			}
+			fmt.Println(resp.Status)
+			fmt.Println(string(resp_body))
+			real_url := libocit.PreparePath(path.Join(pub_config.CacheDir, taskID), collect.Files[f_index])
+			f, err := os.Create(real_url)
+			defer f.Close()
+			f.Write(resp_body)
+			f.Sync()
+		}
+
+	}
 }
 
 func AllocateOS(task libocit.Task) {
@@ -131,6 +169,7 @@ func AllocateOS(task libocit.Task) {
 			os_query.Distribution = req.Distribution
 			os_query.Version = req.Version
 			id := GetAvaliableResource(os_query)
+			task.OSList = append(task.OSList, *(store[id]))
 			for d_index := 0; d_index < len(task.TC.Deploys); d_index++ {
 				deploy := task.TC.Deploys[d_index]
 				if deploy.Class == req.Class {
@@ -162,10 +201,8 @@ func AllocateOS(task libocit.Task) {
 }
 
 func ReceiveTask(w http.ResponseWriter, r *http.Request) {
-	//handle_name:  taskID.tar.gz
 	real_url, params := libocit.ReceiveFile(w, r, pub_config.CacheDir)
 
-	handle_name := path.Base(real_url)
 	taskID := params["id"]
 
 	var task libocit.Task
@@ -173,9 +210,7 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 
 	// for example, we have taskID.tar.gz
 	//  untar it, the test case will be put into taskID/config.json
-	case_file := path.Join(strings.Replace(handle_name, ".tar.gz", "", 1), "config.json")
-
-	content := libocit.ReadTar(real_url, case_file)
+	content := libocit.ReadTar(real_url, "config.json")
 	json.Unmarshal([]byte(content), &task.TC)
 
 	AllocateOS(task)
@@ -271,42 +306,60 @@ func GetAvaliableResource(os_query libocit.OS) (ID string) {
 	return ""
 }
 
+func GetResourceList(os_query libocit.OS) (ids []string) {
+	for _, os := range store {
+		if len(os_query.Distribution) > 1 {
+			if os_query.Distribution != (*os).Distribution {
+				continue
+			}
+		}
+		if len(os_query.Version) > 1 {
+			if os_query.Version != (*os).Version {
+				continue
+			}
+		}
+		if len(os_query.Arch) > 1 {
+			if os_query.Arch != (*os).Arch {
+				continue
+			}
+		}
+		if os_query.CPU > (*os).CPU {
+			log.Println("not enough CPU")
+			continue
+		}
+		if os_query.Memory > (*os).Memory {
+			log.Println("not enough Memory")
+			continue
+		}
+		ids = append(ids, (*os).ID)
+	}
+	return ids
+}
+
 func GetOS(w http.ResponseWriter, r *http.Request) {
 	var os_query libocit.OS
 	os_query = GetOSQuery(r)
-	if len(os_query.Distribution) < 1 {
-		GetAllOS(w, r)
-		return
+
+	ids := GetResourceList(os_query)
+
+	var ret libocit.HttpRet
+	if len(ids) < 1 {
+		ret.Status = "Failed"
+		ret.Message = "Cannot find the avaliable OS"
+	} else {
+		ret.Status = "OK"
+		ret.Message = "Find the avaliable OS"
+		var oss []libocit.OS
+		for index := 0; index < len(ids); index++ {
+			oss = append(oss, *(store[ids[index]]))
+		}
+
+		data, _ := json.Marshal(oss)
+		ret.Data = string(data)
 	}
-	lock.RLock()
 
-	var ID string
-	ID = GetAvaliableResource(os_query)
-	lock.RUnlock()
-
-	log.Println(ID)
-	if len(ID) < 1 {
-		return
-	}
-
-	var resource libocit.Resource
-	resource.ID = ID
-	resource.Msg = "ok, good resource"
-	resource.Status = true
-	body, _ := json.Marshal(resource)
+	body, _ := json.Marshal(ret)
 	w.Write([]byte(body))
-}
-
-func GetAllOS(w http.ResponseWriter, r *http.Request) {
-	lock.RLock()
-	os_list := make([]libocit.OS, len(store))
-	i := 0
-	for _, os := range store {
-		os_list[i] = *os
-		i++
-	}
-	lock.RUnlock()
-	w.Write([]byte("FIXME: all the os"))
 }
 
 func PostOS(w http.ResponseWriter, r *http.Request) {
@@ -400,9 +453,8 @@ func main() {
 	init_db(pub_config.ServerListFile)
 
 	mux := routes.New()
-	//TODO: following one is are not done yet
-	mux.Get("/os", GetOS)
 
+	mux.Get("/os", GetOS)
 	mux.Post("/os", PostOS)
 	mux.Get("/:ID/status", GetStatus)
 	mux.Post("/:ID/status", SetStatus)

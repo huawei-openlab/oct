@@ -28,7 +28,7 @@ The 'OCID' is the program installed on the hostOS, used to communicate with the 
 |Method|Path|Summary|Description|
 |------|----|------|-----------|
 | POST | `/task` | [Upload files](#task "Upload task file") | Upload the certain deploy files, name: taskID.tar.gz|
-| POST | `/command` | [Send commands](#command "Send the testing command") | Tell OCTD to deploy or run the testing|
+| POST | `/command` | [Send commands](#command "Send the testing command") | Tell OCTD which commands need to run|
 | GET  | `/result` | [Result](#result "Get the result file") | Get the result file by the path|
 
 ###Task
@@ -56,14 +56,14 @@ Upload the certain deploy files, name: taskID.tar.gz
 ```
 POST /command
 ```
-Tell OCTD to deploy or run the testing
+Tell OCTD which commands need to run. 
 
 **Input**
 
 |Name|Type|Description|
 |------|-----|-----------|
 | ID | string | The task ID, same with the ID in 'Scheduler' and 'Test Server'|
-| Command | string | "deploy" or "run"|
+| Command | string | Command in the deploy.Cmd or run.Cmd in the config.json|
 
 **Response**
 

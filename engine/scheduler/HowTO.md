@@ -7,7 +7,3 @@ Following these steps:
 2. go to scheduler/testserver/iocitd/containerpool directory
    build the related .go file.
 3. run testserver/iocitd/containerpool as daemons
-4. go to scheduler directory, choose a testcase.
-   For example,
-	./scheduler case01/Network-iperf.json
-   The raw result will be store at /tmp/test_scheduler_result
