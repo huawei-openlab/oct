@@ -15,7 +15,7 @@
       "Resource": {
         "CPU": 1,
         "Memory": "1GB",
-        "Disk": "1G"
+        "Disk": "2G"
       }
     },
     {
@@ -34,7 +34,7 @@
         "./source/demo.go",
         "./source/test_platform_linux_amd64.go"
       ],
-      "Cmd": "cd ./source/ ; go build platform_linux_amd64_host_deploy.go ; ./platform_linux_amd64_host_deploy ; cd ./../source/ ; ./test_platform_linux_amd64",
+      "Cmd": "go build platform_linux_amd64_host_deploy.go ; ./platform_linux_amd64_host_deploy ; ./test_platform_linux_amd64",
       "Containers": [
         {
           "Object": "specs",
