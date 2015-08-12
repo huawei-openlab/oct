@@ -53,7 +53,7 @@ printf "\n"
 #Compile  cpu_usage on host
 echo  "Compile cpu_usage.go"
 cd $pre_dir
-go buil cpu_usage.go
+go build cpu_usage.go
 
 #go build cpu_overall_usage.go
 printf "\n"
