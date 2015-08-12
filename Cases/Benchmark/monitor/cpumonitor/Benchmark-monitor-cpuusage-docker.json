@@ -10,7 +10,7 @@
     {
       "Class": "OperationOS",
       "Type": "os",
-      "Distribution": "ubuntu",
+      "Distribution": "Ubuntu",
       "Versioin": "14.04",
       "Resource": {
         "CPU": 1,
