@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -296,14 +297,15 @@ func GetOSQuery(r *http.Request) (os libocit.OS) {
 func GetAvaliableResource(os_query libocit.OS) (ID string) {
 	for _, os := range store {
 		if len(os_query.Distribution) > 1 {
-			if os_query.Distribution != (*os).Distribution {
+			if strings.EqualFold(os_query.Distribution, (*os).Distribution) == false {
 				continue
 			}
 		}
 		if len(os_query.Version) > 1 {
-			if os_query.Version != (*os).Version {
-				continue
-			}
+			//TODO do not check the version for now
+			//			if os_query.Version != (*os).Version {
+			//				continue
+			//			}
 		}
 		if len(os_query.Arch) > 1 {
 			if os_query.Arch != (*os).Arch {
