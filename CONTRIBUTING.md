@@ -1,6 +1,6 @@
 # Contributing to OCT
 
-The ocp-testing repository is licensed under the Apache License, Version 2.0.
+The oct repository is licensed under the Apache License, Version 2.0.
 See the `LICENSE` file of this repository, and accepts contributions via
 GitHub pull requests. 
 
