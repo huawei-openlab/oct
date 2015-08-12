@@ -20,15 +20,30 @@ import (
 	"fmt"
 	specs "github.com/opencontainers/specs"
 	"log"
+	"os/exec"
 )
 
 func testPlatform() {
 	programmeString := "demo"
-	outputFile := ""
+	outputFile := "platform_linux_amd64_out"
 	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
-		log.Fatalf("Specstest platform linux amd64 test: hostsetup.SetupEnv error, %v", err)
+		log.Fatalf("[Specstest] platform linux amd64 test: hostsetup.SetupEnv error, %v", err)
 	}
+
+	fmt.Println("Build test programme...................")
+	cmd := exec.Command("/bin/sh", "-c", "go build test_platform_linux_amd64.go")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] platform linux amd64 test: build test programme error, %v", err)
+	}
+
+	cmd = exec.Command("/bin/sh", "-c", "mv test_platform_linux_amd64 /tmp/testtool/")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] platform linux amd64 test:: mv test programme error, %v", err)
+	}
+
 	fmt.Println("Host enviroment setting up for runc is already!")
 	var filePath string
 	filePath = "./../../source/config.json"
@@ -37,7 +52,7 @@ func testPlatform() {
 	var linuxspec *specs.LinuxSpec
 	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
 	if err != nil {
-		log.Fatalf("Specstest platform linux amd64 test: readconfig error, %v", err)
+		log.Fatalf("[Specstest] platform linux amd64 test: readconfig error, %v", err)
 	}
 
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
@@ -46,9 +61,8 @@ func testPlatform() {
 	linuxspec.Spec.Platform.Arch = "amd64"
 	linuxspec.Spec.Process.Args[0] = "./" + programmeString
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
-
 	if err != nil {
-		log.Fatalf("Specstest platform linux amd64 test: writeconfig error, %v", err)
+		log.Fatalf("[Specstest] platform linux amd64 test: writeconfig error, %v", err)
 	}
 	fmt.Println("Host enviroment for runc is already!")
 
