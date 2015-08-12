@@ -160,7 +160,7 @@ func RunTask(taskID string) {
 	}
 }
 
-func AllocateOS(task libocit.Task) {
+func AllocateOS(task libocit.Task) (success bool) {
 	for index := 0; index < len(task.TC.Requires); index++ {
 		req := task.TC.Requires[index]
 		if req.Type == "os" {
@@ -169,6 +169,10 @@ func AllocateOS(task libocit.Task) {
 			os_query.Distribution = req.Distribution
 			os_query.Version = req.Version
 			id := GetAvaliableResource(os_query)
+			if len(id) < 1 {
+				success = false
+				return success
+			}
 			task.OSList = append(task.OSList, *(store[id]))
 			for d_index := 0; d_index < len(task.TC.Deploys); d_index++ {
 				deploy := task.TC.Deploys[d_index]
@@ -198,6 +202,8 @@ func AllocateOS(task libocit.Task) {
 			}
 		}
 	}
+	success = true
+	return success
 }
 
 func ReceiveTask(w http.ResponseWriter, r *http.Request) {
@@ -214,8 +220,19 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	// content := libocit.ReadTar(real_url, "config.json", "")
 	content := libocit.ReadTar(real_url, "", ".json")
 	json.Unmarshal([]byte(content), &task.TC)
+	success := AllocateOS(task)
+	if success == false {
+		var ret libocit.HttpRet
+		ret.Status = "Failed"
+		ret.Message = "Donnot have the required operation systems"
 
-	AllocateOS(task)
+		ret_string, _ := json.Marshal(ret)
+		if pub_config.Debug {
+			fmt.Println(string(ret_string))
+		}
+		w.Write([]byte(ret_string))
+		return
+	}
 
 	task_store[taskID] = &task
 
@@ -229,7 +246,6 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 		libocit.SendFile(post_url, real_url, params)
 	}
 
-	//FIXME: if there were not enough resource ,return error
 	var ret libocit.HttpRet
 	ret.Status = "OK"
 	ret.Message = "success in receiving task files"
