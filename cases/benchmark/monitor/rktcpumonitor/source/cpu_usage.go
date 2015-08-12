@@ -17,7 +17,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	adaptor "github.com/huawei-openlab/oct/blob/master/Cases/Benchmark/monitor/source/adaptor"
+	adaptor "./../../source/adaptor"
 	//"fmt"
 	"github.com/google/cadvisor/client"
 	info "github.com/google/cadvisor/info/v1"
