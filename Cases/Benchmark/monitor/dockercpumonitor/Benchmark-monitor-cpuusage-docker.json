@@ -39,7 +39,7 @@
         "./source/host_deploy.sh",
         "./source/docker_deploy.sh"
       ],
-      "Cmd": "./source/host_deploy.sh -f cpu_usage.go ; ./source/docker_deploy.sh",
+      "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./docker_deploy.sh",
       "Containers": [
         {
           "Object": "cpu",
@@ -52,7 +52,7 @@
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "cd ./source/ ; ./cpu_usage docker",
+      "Cmd": "./cpu_usage docker",
       "Containers": [
         {
           "Object": "cpu",

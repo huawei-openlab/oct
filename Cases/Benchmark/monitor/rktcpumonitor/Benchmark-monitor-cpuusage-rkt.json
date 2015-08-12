@@ -35,7 +35,7 @@
         "./source/host_deploy.sh",
         "./source/rkt_deploy.sh"
       ],
-      "Cmd": "./source/host_deploy.sh -f cpu_usage.go ; ./source/rkt_deploy.sh",
+      "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./rkt_deploy.sh",
       "Containers": [
         {
           "Object": "cpu",
@@ -48,7 +48,7 @@
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "cd ./source/ ; ./cpu_usage rkt",
+      "Cmd": "./cpu_usage rkt",
       "Containers": [
         {
           "Object": "cpu",
