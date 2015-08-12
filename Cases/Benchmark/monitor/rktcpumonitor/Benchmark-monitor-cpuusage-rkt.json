@@ -1,9 +1,9 @@
 {
-  "Name": "Benchmark-Test-Monitor-docker",
+  "Name": "Benchmark-Test-Monitor-RKT",
   "Summary": "test with cadvisor tool",
   "Owner": "linzhinan@huawei.com",
-  "Description": "Monitor cpu cpu_usage via cadvisor,conlude TotalUsage, PerCoreUsage, Load, OverallUsage, BreakdownUsage",
-  "Group": "Performance/Benchmark/monitor/cpumonitor/",
+  "Description": "Monitor RKT cpu_usage via cadvisor,conlude TotalUsage, PerCoreUsage, Load, OverallUsage, BreakdownUsage",
+  "Group": "Performance/Benchmark/monitor/rktcpumonitor/",
   "License": "Apache 2.0",
   "Explains": "",
   "Requires": [
@@ -21,11 +21,8 @@
     {
       "Class": "cpuusage",
       "Type": "container",
-      "Distribution": "Docker",
-      "Version": "1.0",
-      "Files": [
-        "./source/Dockerfile"
-      ]
+      "Distribution": "RKT",
+      "Version": "0.7"
     }
   ],
   "Deploys": [
@@ -33,13 +30,12 @@
       "Object": "hostA",
       "Class": "OperationOS",
       "Files": [
-        "./source/Dockerfile",
         "./source/cpu_usage.go",
         "./source/deadloop.sh",
         "./source/host_deploy.sh",
-        "./source/docker_deploy.sh"
+        "./source/rkt_deploy.sh"
       ],
-      "Cmd": "./host_deploy.sh -f cpu_usage.go ; ./docker_deploy.sh",
+      "Cmd": "./source/host_deploy.sh -f cpu_usage.go ; ./source/rkt_deploy.sh",
       "Containers": [
         {
           "Object": "cpu",
@@ -52,7 +48,7 @@
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "cd ./source/ ; ./cpu_usage docker",
+      "Cmd": "cd ./source/ ; ./cpu_usage rkt",
       "Containers": [
         {
           "Object": "cpu",
@@ -65,7 +61,7 @@
     {
       "Object": "hostA",
       "Files": [
-        "./source/docker_cpu.json"
+        "./source/rkt_cpu.json"
       ]
     }
   ]
