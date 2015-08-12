@@ -147,6 +147,7 @@ func RegisterToTestServer() {
 	//Using config now.
 
 	content := libocit.ReadFile("./host.conf")
+	fmt.Println(content)
 	ret := libocit.SendCommand(post_url, []byte(content))
 	fmt.Println(ret)
 }

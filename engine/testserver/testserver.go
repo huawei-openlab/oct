@@ -236,7 +236,8 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task_store[taskID] = &task
-
+	var success_count int
+	success_count = 0
 	for index := 0; index < len(task.TC.Deploys); index++ {
 		deploy := task.TC.Deploys[index]
 		os := *(store[deploy.ID])
@@ -244,12 +245,25 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Receive and send file ", real_url, " to  ", post_url)
 
 		//FIXME: it is better to send the related the file to the certain host OS
-		libocit.SendFile(post_url, real_url, params)
+		ret := libocit.SendFile(post_url, real_url, params)
+		if ret.Status == "OK" {
+			success_count += 1
+		} else {
+			if pub_config.Debug {
+				fmt.Println(ret)
+			}
+		}
+
 	}
 
 	var ret libocit.HttpRet
-	ret.Status = "OK"
-	ret.Message = "success in receiving task files"
+	if success_count == len(task.TC.Deploys) {
+		ret.Status = "OK"
+		ret.Message = "success in receiving task files"
+	} else {
+		ret.Status = "Failed"
+		ret.Message = "Some testing files were not send successfully"
+	}
 
 	ret_string, _ := json.Marshal(ret)
 	w.Write([]byte(ret_string))

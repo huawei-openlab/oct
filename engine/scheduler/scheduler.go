@@ -71,7 +71,8 @@ func main() {
 	params = make(map[string]string)
 	//FIXME: the id autobe automaticly allocated
 	params["id"] = "00001"
-	libocit.SendFile(post_url, case_file, params)
+	ret := libocit.SendFile(post_url, case_file, params)
+	fmt.Println(ret)
 	return
 
 }

@@ -131,31 +131,35 @@ func PreparePath(cachename string, filename string) (realurl string) {
 	return realurl
 }
 
-func SendFile(post_url string, file_url string, params map[string]string) {
+func SendFile(post_url string, file_url string, params map[string]string) (ret HttpRet) {
 	bodyBuf := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
 	filename := path.Base(file_url)
 	//'tcfile': testcase file
 	fileWriter, err := bodyWriter.CreateFormFile("tcfile", filename)
 	if err != nil {
-		fmt.Println("error writing to buffer")
-		return
+		ret.Status = "Failed"
+		ret.Message = "error writing to buffer"
+		return ret
 	}
 	_, err = os.Stat(file_url)
 	if err != nil {
-		fmt.Println("error in stat file")
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in stat file " + file_url
+		return ret
 	}
 
 	fh, err := os.Open(file_url)
 	if err != nil {
-		fmt.Println("error opening file")
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in open file " + file_url
+		return ret
 	}
 	_, err = io.Copy(fileWriter, fh)
 	if err != nil {
-		fmt.Println("error copy file")
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in copy file " + file_url
+		return ret
 	}
 
 	for key, val := range params {
@@ -167,31 +171,36 @@ func SendFile(post_url string, file_url string, params map[string]string) {
 	bodyWriter.Close()
 	request, err := http.NewRequest("POST", post_url, bodyBuf)
 	if err != nil {
-		fmt.Println("error in get new request")
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in get new request"
+		return ret
 	}
 	request.Header.Set("Content-Type", bodyWriter.FormDataContentType())
 	client := &http.Client{}
 	resp, err := client.Do(request)
-	//resp, err := http.Post(post_url, contentType, bodyBuf)
 	if err != nil {
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in send new request"
+		return ret
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		ret.Status = "Failed"
+		ret.Message = "error in reading response"
+	} else {
+		ret.Status = "OK"
+		ret.Message = string(resp_body)
 	}
-	//TODO: good response
-	fmt.Println(resp.Status)
-	fmt.Println(resp_body)
+	return ret
+
 }
 
 func SendCommand(apiurl string, b []byte) (ret HttpRet) {
 	body := bytes.NewBuffer(b)
 	resp, perr := http.Post(apiurl, "application/json;charset=utf-8", body)
-	defer resp.Body.Close()
 	if perr != nil {
+		fmt.Println(perr)
 		ret.Status = "Failed"
 		ret.Message = "err in posting"
 	} else {
@@ -202,6 +211,7 @@ func SendCommand(apiurl string, b []byte) (ret HttpRet) {
 		} else {
 			json.Unmarshal([]byte(result), &ret)
 		}
+		resp.Body.Close()
 	}
 	return ret
 }
