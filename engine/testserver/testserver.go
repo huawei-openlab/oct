@@ -220,6 +220,9 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	// Should always use 'config.json'
 	// content := libocit.ReadTar(real_url, "config.json", "")
 	content := libocit.ReadTar(real_url, "", ".json")
+	if pub_config.Debug {
+		fmt.Println(content)
+	}
 	json.Unmarshal([]byte(content), &task.TC)
 	success := AllocateOS(task)
 	if success == false {

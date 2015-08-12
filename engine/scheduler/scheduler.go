@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"time"
 )
 
 type ServerConfig struct {
@@ -69,10 +70,10 @@ func main() {
 
 	var params map[string]string
 	params = make(map[string]string)
-	//FIXME: the id autobe automaticly allocated
-	params["id"] = "00001"
+	//TODO: use system time as the id now
+	id := fmt.Sprintf("%d", time.Now().Unix())
+	params["id"] = id
 	ret := libocit.SendFile(post_url, case_file, params)
 	fmt.Println(ret)
 	return
-
 }

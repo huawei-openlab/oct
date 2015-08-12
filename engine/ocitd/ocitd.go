@@ -83,14 +83,19 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func RunCommand(cmd string, dir string) {
+	if pub_config.Debug {
+		fmt.Println("Run the command < ", cmd, ">  in ", dir)
+	}
 	os.Chdir(dir)
 
 	C.CSystem(C.CString(cmd))
 	return
-	fmt.Println("Run the command ", cmd)
-	c := exec.Command("/bin/sh", "-c", cmd)
-	c.Run()
-	fmt.Println("After run the command ", cmd)
+
+// Golang bug? cannot get the standard output
+//	fmt.Println("Run the command ", cmd)
+//	c := exec.Command("/bin/sh", "-c", cmd)
+//	c.Run()
+//	fmt.Println("After run the command ", cmd)
 }
 
 func PullImage(container libocit.Container) {
@@ -119,6 +124,27 @@ func UpdateStatus(testCommand libocit.TestingCommand) {
 	libocit.SendCommand(post_url, []byte(ts_string))
 }
 
+//This is for the un-formal testcase, for example with third-party libs included
+func FindJsonDir(base_dir string) (json_dir string) {
+        files_info, _ := ioutil.ReadDir(base_dir)
+        for _, file := range files_info {
+                if file.IsDir() {
+                        sub_json_dir := FindJsonDir(path.Join(base_dir, file.Name()))
+			if len(sub_json_dir) > 1 {
+				json_dir = sub_json_dir
+				return json_dir
+			}
+                } else {
+                        fileSuffix := path.Ext(file.Name())
+                        if fileSuffix == ".json" {
+				json_dir = base_dir
+				return json_dir
+			}
+                }
+        }
+        return json_dir
+}
+
 func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	result, _ := ioutil.ReadAll(r.Body)
 	r.Body.Close()
@@ -127,7 +153,8 @@ func TestingCommand(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal([]byte(result), &testCommand)
 
 	if len(testCommand.Command) > 0 {
-		dir := path.Join(pub_config.CacheDir, testCommand.ID, "source")
+		json_dir := FindJsonDir(path.Join(pub_config.CacheDir, testCommand.ID))
+		dir := path.Join(json_dir, "source")
 		RunCommand(testCommand.Command, dir)
 	}
 	//Send status update to the test server
