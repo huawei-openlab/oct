@@ -210,7 +210,9 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 
 	// for example, we have taskID.tar.gz
 	//  untar it, the test case will be put into taskID/config.json
-	content := libocit.ReadTar(real_url, "config.json")
+	// Should always use 'config.json'
+	// content := libocit.ReadTar(real_url, "config.json", "")
+	content := libocit.ReadTar(real_url, "", ".json")
 	json.Unmarshal([]byte(content), &task.TC)
 
 	AllocateOS(task)

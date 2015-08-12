@@ -360,7 +360,8 @@ func UntarFile(cache_url string, filename string) {
 	}
 }
 
-func ReadTar(tar_url string, file_url string) (content string) {
+//file_url is the default file, suffix is the potential file
+func ReadTar(tar_url string, file_url string, suffix string) (content string) {
 	_, err := os.Stat(tar_url)
 	if err != nil {
 		fmt.Println("cannot find the file ", tar_url)
@@ -379,7 +380,6 @@ func ReadTar(tar_url string, file_url string) (content string) {
 		return content
 	}
 	defer gr.Close()
-
 	tr := tar.NewReader(gr)
 	for {
 		h, err := tr.Next()
@@ -389,13 +389,25 @@ func ReadTar(tar_url string, file_url string) (content string) {
 		if err != nil {
 			panic(err)
 		}
-		if h.Name == file_url {
-			buf := bytes.NewBufferString("")
-			buf.ReadFrom(tr)
-			content = buf.String()
-			break
+		if len(suffix) > 0 {
+			fileSuffix := path.Ext(h.Name)
+			if fileSuffix == suffix {
+				buf := bytes.NewBufferString("")
+				buf.ReadFrom(tr)
+				content = buf.String()
+				break
+			}
+		}
+		if len(file_url) > 0 {
+			if h.Name == file_url {
+				buf := bytes.NewBufferString("")
+				buf.ReadFrom(tr)
+				content = buf.String()
+				break
+			}
 		}
 	}
+
 	return content
 }
 
