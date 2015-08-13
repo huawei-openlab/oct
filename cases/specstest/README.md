@@ -10,7 +10,7 @@ It is test scope contains:
 - Generates an OCI bundle that tests that the runtime is compliant
 - A tool for testing fetching/unpacking of OCI images
 
-### How to Use Specs test   
+### How to Use Specs Test   
 
 Specstest aims to reach the reuslt as below,
 - Provide functionality to specified the needed  [opencontainers/specs](https://github.com/opencontainers/specs)  version to as a test benchmark.
@@ -37,7 +37,9 @@ as a local package, int [oct/cases/specstest/source/](./source/)
 ``` go
 git clone https://github.com/huawei-openlab/oct.git
 ```
+- Install runc on your local machine    
 
+Reference to [opencontainers/runc](https://github.com/opencontainers/runc)
 -  Specify the specs version
 Suggest to use the specs vesion: commit 7414f4d3e90b5c22cae7c952d123e911c0cf94ba, just skip this step.       
 
