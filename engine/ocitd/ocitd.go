@@ -37,7 +37,8 @@ var pub_config OCTDConfig
 func GetResult(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Query().Get("File")
 	ID := r.URL.Query().Get("ID")
-	realurl := path.Join(pub_config.CacheDir, ID, filename)
+	json_dir := FindJsonDir(path.Join(pub_config.CacheDir, ID))
+	realurl := path.Join(json_dir, "source", filename)
 
 	if pub_config.Debug {
 		fmt.Println(realurl)
@@ -91,11 +92,11 @@ func RunCommand(cmd string, dir string) {
 	C.CSystem(C.CString(cmd))
 	return
 
-// Golang bug? cannot get the standard output
-//	fmt.Println("Run the command ", cmd)
-//	c := exec.Command("/bin/sh", "-c", cmd)
-//	c.Run()
-//	fmt.Println("After run the command ", cmd)
+	// Golang bug? cannot get the standard output
+	//	fmt.Println("Run the command ", cmd)
+	//	c := exec.Command("/bin/sh", "-c", cmd)
+	//	c.Run()
+	//	fmt.Println("After run the command ", cmd)
 }
 
 func PullImage(container libocit.Container) {
@@ -125,24 +126,31 @@ func UpdateStatus(testCommand libocit.TestingCommand) {
 }
 
 //This is for the un-formal testcase, for example with third-party libs included
+//TODO, need to use the formal format, since the output will also be '.json'
 func FindJsonDir(base_dir string) (json_dir string) {
-        files_info, _ := ioutil.ReadDir(base_dir)
-        for _, file := range files_info {
-                if file.IsDir() {
-                        sub_json_dir := FindJsonDir(path.Join(base_dir, file.Name()))
+	files_info, _ := ioutil.ReadDir(base_dir)
+	for _, file := range files_info {
+		if file.IsDir() {
+			sub_json_dir := FindJsonDir(path.Join(base_dir, file.Name()))
 			if len(sub_json_dir) > 1 {
 				json_dir = sub_json_dir
 				return json_dir
 			}
-                } else {
-                        fileSuffix := path.Ext(file.Name())
-                        if fileSuffix == ".json" {
-				json_dir = base_dir
-				return json_dir
+		} else {
+			fileSuffix := path.Ext(file.Name())
+			if fileSuffix == ".json" {
+				_, err := os.Stat(path.Join(base_dir, "source"))
+				if err != nil {
+					continue
+				} else {
+					//  ./casename.json, ./source/
+					json_dir = base_dir
+					return json_dir
+				}
 			}
-                }
-        }
-        return json_dir
+		}
+	}
+	return json_dir
 }
 
 func TestingCommand(w http.ResponseWriter, r *http.Request) {

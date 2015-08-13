@@ -112,9 +112,15 @@ type TestingCommand struct {
 	Command string
 }
 
+//WHen filename is null, we just want to prepare a pure directory
 func PreparePath(cachename string, filename string) (realurl string) {
-	realurl = path.Join(cachename, filename)
-	dir := path.Dir(realurl)
+	var dir string
+	if filename == "" {
+		dir = cachename
+	} else {
+		realurl = path.Join(cachename, filename)
+		dir = path.Dir(realurl)
+	}
 	p, err := os.Stat(dir)
 	if err != nil {
 		if !os.IsExist(err) {
