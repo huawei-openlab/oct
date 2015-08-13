@@ -12,7 +12,7 @@
       "additionalGids": null
     },
     "args": [
-      "./root_readonly_true_guest"
+      "bash"
     ],
     "env": [
       "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
