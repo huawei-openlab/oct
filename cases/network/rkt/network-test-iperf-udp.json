@@ -1,0 +1,58 @@
+{
+        "Name": "Network-Test-iperf-udp",
+        "Summary": "network bandwidth, jitter, packet loss",
+        "Version": "0.1",
+        "Owner": "chengtiesheng@huawei.com",
+        "Description": "Test network bandwidth/jitter/lost between different containers",
+        "Group": "Performance/Network",
+        "License": "Apache 2.0",
+        "Explains": "The Sources here is useless",
+        "Sources": [
+            "./source/Dockerfile",
+            "./source/iperf-test-rkt.sh"
+        ],
+        "Requires": [
+            {
+                    "Class": "operOS",
+                    "Type": "os",
+            		    "Distribution": "CentOS",
+		                "Version": 7,
+                    "Resource": {
+                        "CPU": 1,
+                        "Memory": "2GB",
+                        "Disk": "100G"
+                    }
+            },
+            {
+                    "Class": "iperf3",
+		    "Type": "container",
+		    "Distribution": "Docker",
+                    "Version": 1,
+		    "Files": ["./source/Dockerfile"]
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "class": "operOS",
+		"Files": ["./source/iperf-test-rkt.sh", "./source/Dockerfile"],
+                "Containers": [
+                        {
+                            "Object": "iperf_server",
+                            "Class": "iperf3"
+                        },
+                        {
+                            "Object": "iperf_client",
+                            "Class": "iperf3"
+                        }
+                    ],
+		"Cmd": "./iperf-test-rkt.sh"
+            }
+	],
+        "Collects": [
+            {
+                "Object": "hostA",
+		"Files": ["./source/iperf-udp-result.json"]
+            }
+        ]
+}
