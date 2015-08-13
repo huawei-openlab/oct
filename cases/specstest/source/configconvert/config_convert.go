@@ -16,7 +16,8 @@ package configconvert
 
 import (
 	"encoding/json"
-	specs "github.com/opencontainers/specs"
+	// specs "github.com/opencontainers/specs" //newest version
+	specs "./../specs"
 	"io/ioutil"
 	"log"
 	"os"
