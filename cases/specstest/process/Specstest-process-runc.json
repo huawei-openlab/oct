@@ -1,63 +1,57 @@
 {
-        "Name": "Specstest-process-runc",
-        "Summary": "test based opencontainers/specs",
-        "Owner": "linzhinan@huawei.com",
-        "Description": "Test runc when spec process",
-        "Group": "Specstest/process/",
-        "License": "Apache 2.0",
-        "Explains" "Test runc when spec process"
-        "Source": [
-                    "./source/config.json",
-	       "./source/process_host.go",
-                    "./source/process_guest.go"
-                    "./source/test_process.sh"
-        ],
-        "Requires": [
-            {
-                
-	       "Class":"operationOS", 
-	        "Type": "os",
-	        "Distribution": "Ubuntu14.04",
-	        "Resource": {
-	            "CPU": 4,
-	            "Memory": "16GB",
-	            "Disk": "200G"
-	        }
-                
-            }
-            {
-                
-                "Class": "specstest",
-                "Type": "container",
-                "Version": "runc V0.2",
-                "Files": [
-		   "./source/config.json"
-		]
-                
-            }
-        ],
-        "Deploys": [
-            {
-                "Object": "hostA",
-                "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "go build process_host.go",
-                "Cmd": "./process_host",
-                "Cmd": "./test_process.sh > /tmp/testtool/process_out.txt",
-                "Containers": [
-                    {
-                        "Object": "specs",
-                        "Class": "specstest"
-                    }
-                ]
-            }         
-        ],
-        "Collect": [
-            {
-                "Object": "hostA",
-                "Files": ["/tmp/testtool/process_out.txt"]
-            }
-        ]
-    
+  "Name": "Specstest-process-runc",
+  "Summary": "test based opencontainers/specs",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Test runc when spec process",
+  "Group": "Specstest/process/",
+  "License": "Apache 2.0",
+  "Explains": "Test runc when spec process",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Version": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "specstest",
+      "Type": "container",
+      "Distribution": "runc",
+      "Version": "0.2",
+      "Files": [
+        "./source/config.json"
+      ]
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/process_host.go",
+        "./source/process_guest.go",
+        "./source/test_process.go"
+      ],
+      "Cmd": "go build process_host.go ; ./process_host ; ./test_process",
+      "Containers": [
+        {
+          "Object": "specs",
+          "Class": "specstest"
+        }
+      ]
+    }
+  ],
+  "Collect": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "/tmp/testtool/process_out.txt"
+      ]
+    }
+  ]
 }
-
