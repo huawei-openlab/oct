@@ -1,0 +1,42 @@
+{
+		"acKind": "ImageManifest",
+		"acVersion": "0.6.1",
+		"name": "rocket-images-iperf",
+		"labels": [
+				{
+						"name": "version",
+						"value": "1.0.0"
+				},
+				{
+						"name": "arch",
+						"value": "amd64"
+				},
+				{
+						"name": "os",
+						"value": "linux"
+				}
+		],
+		"app": {
+				"exec": [
+						"/usr/local/bin/iperf3",
+						"-c",
+						"./run.sh"
+				],
+				"user": "0",
+				"group": "0",
+				"ports": [
+						{
+								"name": "iperf3",
+								"port": 5201,
+								"protocol": "tcp",
+								"socketActivated": false
+						}
+				]
+		},
+		"annotations": [
+				{
+						"name": "authors",
+						"value": "Cheng Tiesheng <chengtiesheng@huawei.com>"
+				}
+		]
+}

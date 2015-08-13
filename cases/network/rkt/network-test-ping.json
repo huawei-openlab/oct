@@ -1,0 +1,50 @@
+{
+        "Name": "Network-Test-ping",
+        "Summary": "network connectivity",
+        "Version": "0.1",
+        "Owner": "chengtiesheng@huawei.com",
+        "Description": "Test network connectivity between different containers",
+        "Group": "Performance/Network",
+        "License": "Apache 2.0",
+        "Explains": "The Sources here is useless",
+        "Sources": [
+            "./source/ping-test-rkt.sh"
+        ],
+        "Requires": [
+            {
+                    "Class": "operOS",
+                    "Type": "os",
+            		    "Distribution": "CentOS",
+		                "Version": 7,
+                    "Resource": {
+                        "CPU": 1,
+                        "Memory": "2GB",
+                        "Disk": "100G"
+                    }
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "class": "operOS",
+		        "Files": ["./source/ping-test-rkt.sh"],
+                "Containers": [
+                        {
+                            "Object": "ContainerA",
+                            "Class": "ping"
+                        },
+                        {
+                            "Object": "ContainerB",
+                            "Class": "ping"
+                        }
+                    ],
+		            "Cmd": "./ping-test-rkt.sh"
+            }
+	],
+        "Collects": [
+            {
+                "Object": "hostA",
+		        "Files": ["./source/ping-result"]
+            }
+        ]
+}

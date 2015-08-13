@@ -1,0 +1,58 @@
+{
+    "root": {
+        "name": "Network-Test-iperf-tcp",
+        "summary": "network bandwidth",
+        "version": 0.1,
+        "owner": "chengtiesheng@huawei.com",
+        "description": "Test network bandwidth between different containers",
+        "group": "Cases/Network",
+        "license": "Apache 2.0",
+        "source": [
+            "./source/Dockerfile",
+            "./source/iperf-test-rkt.sh"
+        ],
+        "Requires": [
+            {
+                    "Class": "operOS",
+                    "Type": "os",
+            		"Distribution": "CentOS",
+		            "Version": 7,
+                    "Resource": {
+                        "CPU": 1,
+                        "Memory": "2GB",
+                        "Disk": "100G"
+                    }
+            },
+            {
+                    "Class": "iperf3",
+		            "Type": "container",
+		            "Distribution": "Docker",
+                    "Version": 1,
+		            "Files": ["./source/Dockerfile"]
+            }
+        ],
+        "Deploys": [
+            {
+                "Object": "hostA",
+                "class": "operOS",
+		        "Files": ["./source/iperf-test-rkt.sh", "./source/Dockerfile"],
+                "Containers": [
+                        {
+                            "Object": "iperf_server",
+                            "Class": "iperf3"
+                        },
+                        {
+                            "Object": "iperf_client",
+                            "Class": "iperf3"
+                        }
+                    ],
+		            "Cmd": "./iperf-test-rkt.sh"
+            }
+	],
+        "Collects": [
+            {
+                "Object": "hostA",
+		        "Files": ["./source/iperf-tcp-result.json", "./source/iperf-udp-result.json"]
+            }
+        ]
+}
