@@ -31,7 +31,7 @@ func linuxCapabilitiesTestSETFCAP() {
 	testResult := new(TestResult)
 	testResult.Capabilities = make(map[string]string)
 
-	//authorized  /testtool/testSETFCAP the capbility to  set the capbility of another file
+	//authorized  /testtool/linux_capabilities_SETFCAP_guest the capbility to  set the capbility of another file
 	cmd := exec.Command("/bin/sh", "-c", "setcap CAP_SETFCAP=eip /testtool/linux_capabilities_SETFCAP_guest")
 	_, err := cmd.Output()
 	if err != nil {

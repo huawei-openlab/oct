@@ -20,6 +20,7 @@ import (
 	"fmt"
 	specs "github.com/opencontainers/specs"
 	"log"
+	"os/exec"
 )
 
 func testVersion() {
@@ -29,6 +30,20 @@ func testVersion() {
 	if err != nil {
 		log.Fatalf("Specstest version test: hostsetup.SetupEnv error, %v", err)
 	}
+
+	fmt.Println("Build test programme...................")
+	cmd := exec.Command("/bin/sh", "-c", "go build test_process.go")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] platform linux amd64 test: build test programme error, %v", err)
+	}
+
+	cmd = exec.Command("/bin/sh", "-c", "mv test_process ./../../source/")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] platform linux amd64 test:: mv test programme error, %v", err)
+	}
+
 	fmt.Println("Host enviroment setting up for runc is already!")
 	var filePath string
 	filePath = "./../../source/config.json"
@@ -49,6 +64,7 @@ func testVersion() {
 	linuxspec.Spec.Process.Env[0] = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 	linuxspec.Spec.Process.Env[1] = "TERM=xterm"
 	linuxspec.Spec.Process.Cwd = "/testtool"
+	linuxspec.Spec.Process.Args[0] = "./process_guest"
 
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
 
