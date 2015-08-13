@@ -79,6 +79,7 @@ type Collect struct {
 
 type TestCase struct {
 	Name        string
+	Summary     string
 	Version     string
 	License     string
 	Group       string
