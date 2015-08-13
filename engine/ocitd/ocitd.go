@@ -38,7 +38,7 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 	filename := r.URL.Query().Get("File")
 	ID := r.URL.Query().Get("ID")
 	json_dir := FindJsonDir(path.Join(pub_config.CacheDir, ID))
-	realurl := path.Join(json_dir, "source", filename)
+	realurl := path.Join(json_dir, filename)
 
 	if pub_config.Debug {
 		fmt.Println(realurl)
