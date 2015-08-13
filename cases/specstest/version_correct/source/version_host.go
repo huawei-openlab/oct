@@ -20,16 +20,32 @@ import (
 	"fmt"
 	specs "github.com/opencontainers/specs"
 	"log"
+	"os/exec"
 )
 
 func testVersion() {
 	programmeString := "demo"
 	outputFile := ""
+	testFile := "test_version_correct"
 	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
-		log.Fatalf("Specstest version test: hostsetup.SetupEnv error, %v", err)
+		log.Fatalf("[Specstest] version test: hostsetup.SetupEnv error, %v", err)
 	}
 	fmt.Println("Host enviroment setting up for runc is already!")
+
+	cmd := exec.Command("/bin/sh", "-c", "go build "+testFile+".go")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] version test: build test programme error, %v", err)
+	}
+
+	cmd = exec.Command("/bin/sh", "-c", "mv "+testFile+" ./../../source/")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] version test:: mv test programme error, %v", err)
+	}
+	fmt.Println("Built test_version ...")
+
 	var filePath string
 	filePath = "./../../source/config.json"
 
@@ -37,16 +53,16 @@ func testVersion() {
 	var linuxspec *specs.LinuxSpec
 	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
 	if err != nil {
-		log.Fatalf("Specstest version test: readconfig error, %v", err)
+		log.Fatalf("[Specstest] version test: readconfig error, %v", err)
 	}
 
-	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
+	linuxspec.Spec.Root.Path = "./../source/rootfs_rootconfig"
 	linuxspec.Spec.Version = oriSpecVersion
 	linuxspec.Spec.Process.Args[0] = "./" + programmeString
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
 
 	if err != nil {
-		log.Fatalf("Specstest version test: writeconfig error, %v", err)
+		log.Fatalf("[Specstest] version test: writeconfig error, %v", err)
 	}
 	fmt.Println("Host enviroment for runc is already!")
 
