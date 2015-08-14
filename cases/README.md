@@ -1,10 +1,16 @@
 The testcase should be written in JSON format, including five parts:
-  "Description", "Requires", "Deploy", "Run" and "Collect". 
+
+  "Description" part, "Requires", "Deploy", "Run" and "Collect". 
+  
+We provide a 'casevalidator' for case writers, Read the [HowTO](../engine/tools/casevalidator/HowTO.md) to check if your case was valid.
+ 
 ```
-{"Description": {}, "Requires": {}, "Deploys":{}, "Run": {}, "Collects": {}}
+{ //"Description" part,
+  "Requires": {}, "Deploys":{}, "Run": {}, "Collects": {}
+}
 ```
 
-### "Description"
+### "Description" part
 The case developer should fill in the following informations:
   "Name", "Owner", "Version", "Summary", "Licence", "Group", "URL", "Description", "Source". 
 (Yes, looks like rpm spec)
@@ -18,8 +24,7 @@ The case developer should fill in the following informations:
                                   // we assume/hope that there will be 'lots of' test cases, 
                                   // so search one by the group
  "URL": "github://test",
- "Details": "This is the detail description",
- "Source": ["a.dockerfile","b.sh"]      // This is the file list, we can put complicated commands to one script
+ "Description": "This is the detail description"
 }
 ```
 
@@ -29,10 +34,11 @@ Also, he/she should define the container image (by dockerfile for example), so t
 ```
  "Requires": [
             {
-                "class": "operationOS",  //class, not an object
-                "type": "os",  // only 'os' and 'container'
-                "distribution": "Ubuntu14.02",
-                "resource": {
+                "Class": "operationOS",  //class, not an object
+                "Type": "os",  // only 'os' and 'container'
+                "Distribution": "Ubuntu",  //case insensitive
+                "Version": "14.02"
+                "Resource": {
                         "CPU": 1,
                         "Memory": "2GB",
                         "Disk": "100G"
@@ -40,10 +46,10 @@ Also, he/she should define the container image (by dockerfile for example), so t
                 "amount": 2  //how many hostOS do we need, no need if the 'type' is container
             }
             {
-                "class": "ImageA": 
-                "type": "container",
-                "version": "dockerV1.0"
-                "file": "a.dockerfile"
+                "Class": "ImageA": 
+                "Type": "container",
+                "Version": "dockerV1.0"
+                "Files": ["a.dockerfile"]
             }
         ],
 ```
@@ -57,35 +63,29 @@ If the developer want to install extra package, he/she can put the related comma
 ```
   "Deploys": [
             {
-                "object": "hostA",
-                "class": "OperationOS",
-                "setup": "null",
-                 "containers": [
+                "Object": "hostA",
+                "Class": "OperationOS",
+                "Files": ["./source/b.sh", "./source/a.dockerfile"],
+                 "Containers": [
                         {
-                            "object": "DockerA",
-                            "class": "ImageA",
-                            "deploy": {
-                                "type": "script",
-                                "name": "b.sh"
-                            }
+                            "Object": "DockerA",
+                            "Class": "ImageA",
+                            "Cmd": ""
                         }
-                    ]
-                }
+                  ]
+                
             },
             {
-                "object": "hostB",
-                "class":  "OperationOS",  //difference object, same class
-                "containers": [
+                "Object": "hostB",
+                "Class":  "OperationOS",  //difference object, same class
+                "Containers": [
                         {
-                            "object": "DockerB",
-                            "class": "ImageA",
-                            "deploy": {
-                                "type": "cmd", //if you don't want to use another script, put commands here
-                                "commands": "systemctl start sshd" 
+                            "Object": "DockerB",
+                            "Class": "ImageA",
+                            "Cmd": "systemctl start sshd"
                             }
                         }
                     ]
-                }
             }
         ],
 ```         
@@ -97,29 +97,22 @@ directly or wrapped by a script. By default, after ruuning all the command, the 
 system will continue to the 'Collect' part.
 ```
 "Run": [
-            {
-                "hostA": {
-                    "run": null
-                }
-            },
-            {
-                "DockerA": {
-                    "run": {
-                        "type": "cmd",
-                        "value": "ping -c 1 -s 1500 192.168.10.10"
-                    }
-                }
+            { "Object": "HostA",
+              "Cmd": ""
+            }, 
+            { "Object": "DockerA",
+              "Cmd" : "ping -c 1 -s 1500 192.168.10.10"
             }
-        ]
+      ]
 ```
 
-### "Collect"
+### "Collects"
 The case developer should tell the host operation systems and/or the containers 
 if there was any output file.
 ```
-"Collect": [
-        {"DockerA": {
-          "file": "/tmp/dockerA/output.json"  //this file will be return to our framework as the output
+"Collects": [
+        {"Object": "HostA",
+          "Files": ["./source/output.json"]  //this file will be return to our framework as the output
         }
   ]
 ```
