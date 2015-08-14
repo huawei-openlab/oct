@@ -31,7 +31,7 @@ git clone https://github.com/huawei-openlab/oct.git
 Reference to [opencontainers/runc](https://github.com/opencontainers/runc)
 -  Specify the specs version     
 
-* Suggest to use the specs vesion: commit 7414f4d3e90b5c22cae7c952d123e911c0cf94ba *, just skip this step.       
+*Suggest to use the specs vesion: commit 7414f4d3e90b5c22cae7c952d123e911c0cf94ba*, just skip this step.       
 
 To use newest specs version, do,
 ``` bash
