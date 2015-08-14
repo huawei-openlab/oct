@@ -46,7 +46,7 @@
       ]
     }
   ],
-  "Collect": [
+  "Collects": [
     {
       "Object": "hostA",
       "Files": [
