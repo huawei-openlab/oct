@@ -14,7 +14,7 @@ as local packages instead of pulling specified version of specs from  [openconta
    Specs version : commit 7414f4d3e90b5c22cae7c952d123e911c0cf94ba      
 
    All configuration of this version have been supported by runc. It can be use to test the support level with the this specs version.
-- [oct/cases/specstest/source/specsnewest](./source/specsnewst)        
+- [oct/cases/specstest/source/specsnewest](./source/specsnewest)        
 
    Specs version : the newest commit in [opencontainers/specs](https://github.com/opencontainers/specs)
 
