@@ -15,9 +15,9 @@ package main
 import (
 	configconvert "./../../source/configconvert"
 	hostsetup "./../../source/hostsetup"
+	specs "./../../source/specs"
 	"flag"
 	"fmt"
-	specs "github.com/opencontainers/specs"
 	"log"
 )
 
