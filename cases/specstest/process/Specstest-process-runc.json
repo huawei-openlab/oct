@@ -37,7 +37,7 @@
         "./source/process_guest.go",
         "./source/test_process.go"
       ],
-      "Cmd": "go build process_host.go ; ./process_host ; cd ./../source/ ; ./test_process",
+      "Cmd": "go build process_host.go ; ./process_host ; cd ./../../source/ ; ./test_process",
       "Containers": [
         {
           "Object": "specs",
