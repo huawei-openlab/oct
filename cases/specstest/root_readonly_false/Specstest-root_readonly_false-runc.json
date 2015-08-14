@@ -52,7 +52,7 @@
       "Cmd": "cd ./../../source/ ; runc"
     }
   ],
-  "Collect": [
+  "Collects": [
     {
       "Object": "hostA",
       "Files": [

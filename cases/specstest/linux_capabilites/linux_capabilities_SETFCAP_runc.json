@@ -5,7 +5,7 @@
         "Description": "Test runc  whether it supports the linux capabilities SETFCAP",
         "Group": "Specstest/linux_capabilities/",
         "License": "Apache 2.0",
-        "Explains" "Test runc by set the capabilities SETFCAP to an other file"
+        "Explains": "Test runc by set the capabilities SETFCAP to an other file",
         "Requires": [
             {
                 
@@ -18,12 +18,11 @@
 	            "Disk": "200G"
 	        }
                 
-            }
+            },
             {
-                
                 "Class": "specstest",
                 "Type": "container",
-                "Version": "runc V0.2",
+                "Version": "runc V0.2"
             }
         ],
         "Deploys": [
@@ -39,12 +38,10 @@
                 ]
             }         
         ],
-        "Collect": [
+        "Collects": [
             {
                 "Object": "hostA",
                 "Files": ["/tmp/testtool/linux_capabilities_SETFCAP_host.json"]
             }
         ]
-    
 }
-

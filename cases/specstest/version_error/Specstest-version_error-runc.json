@@ -5,11 +5,11 @@
         "Description": "Test runc when spec version == errvalue",
         "Group": "Specstest/version_error/",
         "License": "Apache 2.0",
-        "Explains" "Test runc when spec version == errvalue"
+        "Explains": "Test runc when spec version == errvalue",
         "Source": [
                     "./source/config.json",
 	       "./source/version_host.go",
-                    "./source/demo.go"
+                    "./source/demo.go",
                     "./source/test_version_error.sh"
         ],
         "Requires": [
@@ -24,7 +24,7 @@
 	            "Disk": "200G"
 	        }
                 
-            }
+            },
             {
                 
                 "Class": "specstest",
@@ -52,7 +52,7 @@
                 ]
             }         
         ],
-        "Collect": [
+        "Collects": [
             {
                 "Object": "hostA",
                 "Files": ["/tmp/testtool/version_error_out.txt"]
