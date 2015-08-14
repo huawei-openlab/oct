@@ -197,6 +197,89 @@ func checkProp(tc libocit.TestCase) (messages []ValidatorMessage) {
 	return messages
 }
 
+func checkClass(tc libocit.TestCase) (messages []ValidatorMessage) {
+	var class_store map[string]bool
+	class_store = make(map[string]bool)
+	var object_store map[string]string
+	object_store = make(map[string]string)
+
+	for index := 0; index < len(tc.Requires); index++ {
+		req := tc.Requires[index]
+		if len(req.Class) < 1 {
+			var msg ValidatorMessage
+			msg.Type = "error"
+			msg.Data = "No 'Class' in one of 'Requires' session"
+			messages = append(messages, msg)
+		} else {
+			class_store[req.Class] = false
+		}
+	}
+
+	for index := 0; index < len(tc.Deploys); index++ {
+		deploy := tc.Deploys[index]
+		if len(deploy.Class) < 1 {
+			var msg ValidatorMessage
+			msg.Type = "error"
+			msg.Data = "No 'Class' in 'Deploys/" + deploy.Object + "' session"
+			messages = append(messages, msg)
+		} else {
+			if _, ok := class_store[deploy.Class]; ok {
+				class_store[deploy.Class] = true
+				object_store[deploy.Object] = deploy.Class
+			} else {
+				var msg ValidatorMessage
+				msg.Type = "error"
+				msg.Data = "The 'Class' " + deploy.Class + "in 'Deploys/" + deploy.Object + "' is not defined"
+				messages = append(messages, msg)
+			}
+		}
+	}
+
+	for index := 0; index < len(tc.Run); index++ {
+		run := tc.Run[index]
+		if len(run.Object) < 1 {
+			var msg ValidatorMessage
+			msg.Type = "error"
+			msg.Data = "No 'Object' in one of the 'Run' session"
+			messages = append(messages, msg)
+		} else {
+			if _, ok := object_store[run.Object]; !ok {
+				var msg ValidatorMessage
+				msg.Type = "error"
+				msg.Data = "The 'Object' " + run.Object + "in one 'Run' session is never deployed"
+				messages = append(messages, msg)
+			}
+		}
+	}
+
+	for index := 0; index < len(tc.Collects); index++ {
+		collect := tc.Collects[index]
+		if len(collect.Object) < 1 {
+			var msg ValidatorMessage
+			msg.Type = "error"
+			msg.Data = "No 'Object' in one of the 'Collect' session"
+			messages = append(messages, msg)
+		} else {
+			if _, ok := object_store[collect.Object]; !ok {
+				var msg ValidatorMessage
+				msg.Type = "error"
+				msg.Data = "The 'Object' " + collect.Object + "in one 'Collect' session is never deployed"
+				messages = append(messages, msg)
+			}
+		}
+	}
+
+	for key, val := range class_store {
+		if !val {
+			var msg ValidatorMessage
+			msg.Type = "warning"
+			msg.Data = "The 'Class/" + key + "' is never used"
+			messages = append(messages, msg)
+		}
+	}
+	return messages
+}
+
 func checkFile(tc libocit.TestCase, casedir string) (messages []ValidatorMessage) {
 
 	var file_store map[string]string
