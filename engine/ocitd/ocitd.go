@@ -35,19 +35,22 @@ type OCTDConfig struct {
 var pub_config OCTDConfig
 
 func GetResult(w http.ResponseWriter, r *http.Request) {
+	var realurl string
 	filename := r.URL.Query().Get("File")
 	ID := r.URL.Query().Get("ID")
-	json_dir := FindJsonDir(path.Join(pub_config.CacheDir, ID))
-	realurl := path.Join(json_dir, filename)
 
-	if pub_config.Debug {
-		fmt.Println(realurl)
-	}
-
-	_, err := os.Stat(realurl)
-	if err != nil {
-		w.Write([]byte("Cannot find the file: " + realurl))
-		return
+	_, err := os.Stat(filename)
+	if err == nil {
+		//absolute path
+		realurl = filename
+	} else {
+		json_dir := FindJsonDir(path.Join(pub_config.CacheDir, ID))
+		realurl = path.Join(json_dir, filename)
+		_, err = os.Stat(realurl)
+		if err != nil {
+			w.Write([]byte("Cannot find the file: " + realurl))
+			return
+		}
 	}
 
 	file, err := os.Open(realurl)
