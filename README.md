@@ -37,7 +37,25 @@ Refers to [Cases/README](Cases/README.md)
 - Any container user
 
 ### How to involve
-- Mailing list [Join](https://groups.google.com/forum/#!forum/oci-testing)
+If any issues are encountered while using the oct project, several avenues are available for support:
+<table>
+<tr>
+	<th align="left">
+	Issue Tracker
+	</th>
+	<td>
+	https://github.com/huawei-openlab/oct/issues
+	</td>
+</tr>
+<tr>
+	<th align="left">
+	Google Groups
+	</th>
+	<td>
+	https://groups.google.com/forum/#!forum/oci-testing
+	</td>
+</tr>
+</table>
 
 ### Getting Started
 
