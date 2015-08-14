@@ -12,39 +12,29 @@
 	       "Class": "operOS",
                     "Type": "os",
                     "Distribution": "Ubuntu",
-                    "Version": 14.04,
+                    "Version": "14.04",
 	        "resource": {
 	            "CPU": 4,
 	            "Memory": "16GB",
 	            "Disk": "200G"
 	        }
-                
-            }
+            },
             {      
                  "Class": "sysbench",
                  "Type": "container",
                  "Distribution": "rkt",
-                 "Version": 0.7,
-                  "Files": null
+                 "Version": "0.7"
             }
         ],
-        "Deploy": [
+        "Deploys": [
                         {
                 "Object": "hostA",
                 "class": "operOS",
-                 "Files":null,
                 "Containers": [
                         {
                             "Object": "sysbench-rkt-terminal",
                             "Class": "sysbench",
-                             "Cmd": "chmod 757 /etc/resolv.conf",
-                             "Cmd": "echo 'nameserver 8.8.8.8' >> /etc/resolv.conf",
-                             "Cmd": "apt-get update",
-                             "Cmd": "apt-get install -y sysbench",
-                             "Cmd": "sysbench --num-threads=1 --cpu-max-prime=50000 --test=cpu run",
-                             "Cmd": "sysbench --num-threads=1 --cpu-max-prime=500000 --test=cpu run",
-                             "Cmd": "sysbench --num-threads=4 --cpu-max-prime=50000 --test=cpu run",
-                             "Cmd": "sysbench --num-threads=4 --cpu-max-prime=500000 --test=cpu run"                    
+                             "Cmd": "chmod 757 /etc/resolv.conf; echo 'nameserver 8.8.8.8' >> /etc/resolv.conf ; apt-get update ; apt-get install -y sysbench; sysbench --num-threads=1 --cpu-max-prime=50000 --test=cpu run; sysbench --num-threads=1 --cpu-max-prime=500000 --test=cpu run ;  sysbench --num-threads=4 --cpu-max-prime=50000 --test=cpu run; sysbench --num-threads=4 --cpu-max-prime=500000 --test=cpu run"                    
                         }
                     ],
                  "Cmd": "sudo rkt -debug=true -insecure-skip-verify run docker://ubuntu:14.04 --interactive"

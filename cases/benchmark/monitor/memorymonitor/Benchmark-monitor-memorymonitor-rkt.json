@@ -14,9 +14,10 @@
         "Requires": [
             {
              
-	       "Class":"operationOS", 
+	       "Class":"OperationOS", 
 	        "Type": "os",
-	        "Distribution": "Ubuntu14.04",
+	        "Distribution": "Ubuntu",
+		"Version": "14.04",
 	        "Resource": {
 	        "CPU": 4,
 	        "Memory": "16GB",
@@ -28,16 +29,14 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd":"./host_deploy.sh -f memorymonitor.go",
-                "Cmd": "./rkt_deploy.sh ",
+                "Cmd":"./host_deploy.sh -f memorymonitor.go; ./rkt_deploy.sh"
             }         
         ],
         "Run": [
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "./memorymonitor rkt"
+                "Cmd": "cd ./source/ ; ./memorymonitor rkt"
             }
         ],
         "Collects": [
