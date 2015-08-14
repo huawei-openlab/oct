@@ -1,7 +1,7 @@
 package main
 
 import (
-	"../lib/libocit"
+	"../../lib/libocit"
 	"encoding/json"
 	"fmt"
 	"os"
