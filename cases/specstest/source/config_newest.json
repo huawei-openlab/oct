@@ -80,8 +80,30 @@
     "poststop": null
   },
   "linux": {
-    "uidMappings": null,
-    "gidMappings": null,
+    "uidMappings": [
+      {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 0
+      },
+      {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 0
+      }
+    ],
+    "gidMappings": [
+      {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 0
+      },
+      {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 0
+      }
+    ],
     "rlimits": null,
     "sysctl": null,
     "resources": {
@@ -110,10 +132,28 @@
         "blkioThrottleReadIopsDevice": "",
         "blkioThrottleWriteIopsDevice": ""
       },
-      "hugepageLimits": null,
+      "hugepageLimits": [
+        {
+          "pageSize": "",
+          "limit": 0
+        },
+        {
+          "pageSize": "",
+          "limit": 0
+        }
+      ],
       "network": {
         "classId": "",
-        "priorities": null
+        "priorities": [
+          {
+            "name": "",
+            "priority": 0
+          },
+          {
+            "name": "",
+            "priority": 0
+          }
+        ]
       }
     },
     "namespaces": [

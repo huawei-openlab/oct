@@ -18,7 +18,8 @@ import (
 	configconvert "./../../source/configconvert"
 	hostsetup "./../../source/hostsetup"
 	"fmt"
-	specs "github.com/opencontainers/specs"
+	// specs "github.com/opencontainers/specs" //newest version
+	specs "./../../source/specs"
 	"log"
 )
 
