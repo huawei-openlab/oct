@@ -42,29 +42,36 @@ import (
 //                  |____ dirN with files
 //
 
-func FindCaseJson(base_dir string) (json_file string, json_dir string) {
-	_, err := os.Stat(path.Join(base_dir, "config.json"))
+func FindCaseJson(baseDir string, caseName string) (json_file string, json_dir string) {
+	_, err := os.Stat(path.Join(baseDir, "config.json"))
 	if err == nil {
-		return path.Join(base_dir, "config.json"), base_dir
+		return path.Join(baseDir, "config.json"), baseDir
 	}
 
-	files_info, _ := ioutil.ReadDir(base_dir)
+	files_info, _ := ioutil.ReadDir(baseDir)
 	for _, file := range files_info {
 		if file.IsDir() {
-			sub_json_file, sub_json_dir := FindCaseJson(path.Join(base_dir, file.Name()))
+			sub_json_file, sub_json_dir := FindCaseJson(path.Join(baseDir, file.Name()), caseName)
 			if len(sub_json_dir) > 1 {
 				return sub_json_file, sub_json_dir
 			}
 		} else {
-			fileSuffix := path.Ext(file.Name())
-			if fileSuffix == ".json" {
-				_, err := os.Stat(path.Join(base_dir, "source"))
-				if err != nil {
-					continue
-				} else {
-					//  ./casename.json, ./source/
-					json_file = path.Join(base_dir, file.Name())
-					return json_file, base_dir
+			if len(caseName) > 0 {
+				if caseName == file.Name() {
+					json_file = path.Join(baseDir, file.Name())
+					return json_file, baseDir
+				}
+			} else {
+				fileSuffix := path.Ext(file.Name())
+				if fileSuffix == ".json" {
+					_, err := os.Stat(path.Join(baseDir, "source"))
+					if err != nil {
+						continue
+					} else {
+						//  ./casename.json, ./source/
+						json_file = path.Join(baseDir, file.Name())
+						return json_file, baseDir
+					}
 				}
 			}
 		}
@@ -247,9 +254,10 @@ func validateByCaseID(caseID string) {
 func validateByFile(caseFile string) {
 }
 
-func validateByDir(caseDir string) {
+func validateByDir(caseDir string, caseName string) (warning_msg []ValidatorMessage, err_msg []ValidatorMessage) {
 	var tc libocit.TestCase
-	json_file, json_dir := FindCaseJson(caseDir)
+	json_file, json_dir := FindCaseJson(caseDir, caseName)
+	fmt.Println("The case file found is ", json_file)
 	content := libocit.ReadFile(json_file)
 
 	json.Unmarshal([]byte(content), &tc)
@@ -257,25 +265,53 @@ func validateByDir(caseDir string) {
 	fmt.Println(json_dir)
 
 	prop_msgs := checkProp(tc)
-	fmt.Println(prop_msgs)
-
+	for index := 0; index < len(prop_msgs); index++ {
+		if prop_msgs[index].Type == "warning" {
+			warning_msg = append(warning_msg, prop_msgs[index])
+		} else if prop_msgs[index].Type == "error" {
+			err_msg = append(err_msg, prop_msgs[index])
+		}
+	}
 	file_msgs := checkFile(tc, json_dir)
-	fmt.Println(file_msgs)
+	for index := 0; index < len(file_msgs); index++ {
+		if file_msgs[index].Type == "warning" {
+			warning_msg = append(warning_msg, file_msgs[index])
+		} else if file_msgs[index].Type == "error" {
+			err_msg = append(err_msg, file_msgs[index])
+		}
+	}
+	return warning_msg, err_msg
 }
 
 func main() {
 	var caseDir = flag.String("d", "", "input the case dir")
 	var caseFile = flag.String("f", "", "input the file url, case.tar.gz")
+	var caseName = flag.String("n", "", "input the 'case name' in the case dir, if there were multiply cases in the case dir. You can use this with -d and -f.")
 	var caseID = flag.String("id", "", "input the 'case id' provided by 'Test Case server', please make sure the the tcserver is running.")
 	flag.Parse()
 
+	var warning_msg []ValidatorMessage
+	var err_msg []ValidatorMessage
 	if len(*caseID) > 0 {
 		validateByCaseID(*caseID)
 	} else if len(*caseFile) > 0 {
 		validateByFile(*caseFile)
 	} else if len(*caseDir) > 0 {
-		validateByDir(*caseDir)
+		warning_msg, err_msg = validateByDir(*caseDir, *caseName)
 	} else {
 		fmt.Println("Please input the test case")
+		return
+	}
+	if len(err_msg) > 0 {
+		fmt.Printf("The case is invalid, there are %d error(errors) and %d warning(warnings)", len(err_msg), len(warning_msg))
+		fmt.Println("Please see the details:")
+		fmt.Println(err_msg)
+		fmt.Println(warning_msg)
+	} else if len(warning_msg) > 0 {
+		fmt.Printf("The case is OK, but there are %d warning(warnings)", len(warning_msg))
+		fmt.Println("Please see the details:")
+		fmt.Println(warning_msg)
+	} else {
+		fmt.Println("Good case.")
 	}
 }
