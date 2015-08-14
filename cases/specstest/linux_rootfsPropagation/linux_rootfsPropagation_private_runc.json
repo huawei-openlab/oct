@@ -9,9 +9,10 @@
         "Requires": [
             {
                 
-	       "Class":"operationOS", 
+	       "Class":"OperationOS", 
 	        "Type": "os",
-	        "Distribution": "Ubuntu14.04",
+	        "Distribution": "Ubuntu",
+			"Version": "14.04",
 	        "Resource": {
 	            "CPU": 1,
 	            "Memory": "12GB",

@@ -8,9 +8,10 @@
   "Explains": "Test whether the container supports to mount a filesystem",
   "Requires": [
     {
-      "Class": "operationOS",
+      "Class": "OperationOS",
       "Type": "os",
-      "Distribution": "Ubuntu14.04",
+      "Distribution": "Ubuntu",
+      "Version": "14.04",
       "Resource": {
         "CPU": 4,
         "Memory": "16GB",
