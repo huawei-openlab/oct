@@ -49,7 +49,7 @@
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "runc"
+      "Cmd": "cd ./../../source/ ; runc"
     }
   ],
   "Collects": [
