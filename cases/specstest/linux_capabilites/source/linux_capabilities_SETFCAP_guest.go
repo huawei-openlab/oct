@@ -17,6 +17,7 @@ package main
 import (
 	"encoding/json"
 
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -36,14 +37,18 @@ func linuxCapabilitiesTestSETFCAP() {
 	_, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux Capabilities SETFCAP set the SETFCAP Capability error, %v", err)
+		fmt.Println("[Specstest] linux Capabilities SETFCAP set the SETFCAP Capability error, %v", err)
 		testResult.Capabilities["SETFCAP"] = "failed"
+		fmt.Println("testResult.Capabilities[SETFCAP] = failed")
 	} else {
 		testResult.Capabilities["SETFCAP"] = "pass"
+		fmt.Println("testResult.Capabilities[SETFCAP] = pass")
 	}
 
 	jsonString, err := json.Marshal(testResult)
 	if err != nil {
 		log.Fatalf("Convert to json err, error:  %v\n", err)
+		fmt.Println("Convert to json err, error:  %v\n", err)
 		return
 	}
 
