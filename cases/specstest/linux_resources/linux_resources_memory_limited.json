@@ -5,32 +5,30 @@
         "Description": "Test runc  whether it supports the linux memory size limited",
         "Group": "Specstest/linux_resources/",
         "License": "Apache 2.0",
-        "Explains" "Test runc by see whether it can constrain the  cgroup memory size"
+        "Explains" :"Test runc by see whether it can constrain the  cgroup memory size",
         "Requires": [
             {
-                
-	       "Class":"operationOS", 
+	       "Class":"OperationOS", 
 	        "Type": "os",
-	        "Distribution": "Ubuntu14.04",
+	        "Distribution": "Ubuntu",
+		"Version": "14.04",
 	        "Resource": {
 	            "CPU": 1,
 	            "Memory": "12GB",
 	            "Disk": "10G"
 	        }
-                
-            }
+            },
             {
-                
                 "Class": "specstest",
                 "Type": "container",
-                "Version": "runc V0.2",
+                "Version": "runc V0.2"
             }
         ],
         "Deploys": [
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/ ; go build linux_resources_memory_limited_host.go ; ./linux_resources_memory_limited_host; go build linux_resources_memory_limited_runcrunner.go; cp ./linux_resources_memory_limited_runcrunner ./../../source/; cd  ./../../source/;./linux_resources_memory_limited_runcrunner",
+                "Cmd": "go build linux_resources_memory_limited_host.go ; ./linux_resources_memory_limited_host; go build linux_resources_memory_limited_runcrunner.go; cp ./linux_resources_memory_limited_runcrunner ./../../source/; cd  ./../../source/;./linux_resources_memory_limited_runcrunner",
                 "Containers": [
                     {
                         "Object": "specs",
@@ -39,12 +37,10 @@
                 ]
             }         
         ],
-        "Collect": [
+        "Collects": [
             {
                 "Object": "hostA",
                 "Files": ["/tmp/testtool/linux_resources_memory_limited.json"]
             }
         ]
-    
 }
-
