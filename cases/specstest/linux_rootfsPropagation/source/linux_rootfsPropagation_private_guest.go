@@ -26,10 +26,16 @@ type TestResult struct {
 func rootfsPropagationTestPrivate() {
 
 	//touch a new file and test whether it can be seen from the host machine
-	cmd := exec.Command("/bin/sh", "-c", "echo \"YouCanSeeThisContent\" > /rootfsPropagationTestPrivate.txt")
+	cmd := exec.Command("/bin/sh", "-c", "touch /rootfsPropagationTestPrivate.txt")
 	_, err := cmd.Output()
 	if err != nil {
-		log.Fatalf("[Specstest] linux rootfsPropagation private test touch the file error, %v", err)
+		log.Fatalf("[Specstest] linux rootfsPropagation private test:touch the file error, %v", err)
+	}
+
+	cmd1 := exec.Command("/bin/sh", "-c", "echo \"YouCanSeeThisContent\" > /rootfsPropagationTestPrivate.txt")
+	_, err1 := cmd1.Output()
+	if err1 != nil {
+		log.Fatalf("[Specstest] linux rootfsPropagation private test:write text into file error, %v", err)
 	}
 }
 
