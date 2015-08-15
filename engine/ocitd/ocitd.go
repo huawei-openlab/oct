@@ -52,7 +52,6 @@ func GetResult(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
 	file, err := os.Open(realurl)
 	defer file.Close()
 	if err != nil {
@@ -92,7 +91,13 @@ func RunCommand(cmd string, dir string) {
 	}
 	os.Chdir(dir)
 
-	C.CSystem(C.CString(cmd))
+	debugging := true
+	if debugging {
+		c := exec.Command("/bin/sh", "-c", cmd)
+		c.Run()
+	} else {
+		C.CSystem(C.CString(cmd))
+	}
 	return
 
 	// Golang bug? cannot get the standard output

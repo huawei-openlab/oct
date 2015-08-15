@@ -3,7 +3,6 @@ package casevalidator
 import (
 	"../libocit"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -340,8 +339,6 @@ func ValidateByDir(caseDir string, caseName string) (warning_msg []ValidatorMess
 	content := libocit.ReadFile(json_file)
 
 	json.Unmarshal([]byte(content), &tc)
-
-	fmt.Println(json_dir)
 
 	prop_msgs := checkProp(tc)
 	for index := 0; index < len(prop_msgs); index++ {
