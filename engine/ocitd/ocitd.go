@@ -13,7 +13,7 @@ import (
 	"os/exec"
 	"path"
 
-//	"strings"
+	//	"strings"
 )
 
 /*
@@ -94,7 +94,12 @@ func RunCommand(cmd string, dir string) {
 	debugging := true
 	if debugging {
 		c := exec.Command("/bin/sh", "-c", cmd)
-		c.Run()
+		c.Stderr = os.Stderr
+		c.Stdout = os.Stdout
+		c.Stdin = os.Stdin
+		if err := cmd.Run(); err != nil {
+			log.Fatalf("Ocitd run cmd %v error", cmd)
+		}
 	} else {
 		C.CSystem(C.CString(cmd))
 	}
