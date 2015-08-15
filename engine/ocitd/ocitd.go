@@ -97,7 +97,7 @@ func RunCommand(cmd string, dir string) {
 		c.Stderr = os.Stderr
 		c.Stdout = os.Stdout
 		c.Stdin = os.Stdin
-		if err := cmd.Run(); err != nil {
+		if err := c.Run(); err != nil {
 			log.Fatalf("Ocitd run cmd %v error", cmd)
 		}
 	} else {
