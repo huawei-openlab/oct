@@ -52,7 +52,7 @@
       "Cmd": "runc"
     }
   ],
-  "Collect": [
+  "Collects": [
     {
       "Object": "hostA",
       "Files": [

@@ -41,10 +41,7 @@
             {
                 "Object": "hostA",
                 "Class": "OperationOS",
-                "Cmd": "cd ./source/",
-                "Cmd": "go build version_host.go",
-                "Cmd": "./version_host",
-                "Cmd": "./test_version_error.sh > /tmp/testtool/version_error_out.txt",
+                "Cmd": "go build version_host.go; ./version_host; ./test_version_error.sh > /tmp/testtool/version_error_out.txt",
                 "Containers": [
                     {
                         "Object": "specs",
