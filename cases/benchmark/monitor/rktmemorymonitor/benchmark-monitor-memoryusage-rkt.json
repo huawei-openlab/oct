@@ -1,0 +1,67 @@
+{
+  "Name": "Benchmark-Test-Monitor-RKT",
+  "Summary": "test with cadvisor tool",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Monitor RKT memory via cadvistor",
+  "Group": "Performance/Benchmark/monitor/rktmemorymonitor/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "Ubuntu",
+      "Versioin": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "memoryusage",
+      "Type": "container",
+      "Distribution": "RKT",
+      "Version": "0.7"
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/memory_usage.go",
+        "./source/host_deploy.sh",
+        "./source/rkt_deploy.sh"
+      ],
+      "Cmd": "/rkt_deploy.sh;./host_deploy.sh",
+      "Containers": [
+        {
+          "Object": "memory",
+          "Class": "memoryusage"
+        }
+      ]
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./memory_usage rkt",
+      "Containers": [
+        {
+          "Object": "memory",
+          "Class": "memoryusage"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "./source/rkt_memory.json"
+      ]
+    }
+  ]
+}

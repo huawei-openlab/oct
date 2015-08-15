@@ -1,0 +1,72 @@
+{
+  "Name": "Benchmark-Test-Monitor-docker",
+  "Summary": "test with cadvisor tool",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Monitor memory via cadvistor",
+  "Group": "Performance/Benchmark/monitor/dockermemorymonitor/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Versioin": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "cpuusage",
+      "Type": "container",
+      "Distribution": "Docker",
+      "Version": "1.0",
+      "Files": [
+        "./source/Dockerfile"
+      ]
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/Dockerfile",
+        "./source/memory_usage.go",
+        "./source/deadloop.sh",
+        "./source/host_deploy.sh",
+        "./source/docker_deploy.sh"
+      ],
+      "Cmd": " ./docker_deploy.sh;./host_deploy.sh",
+      "Containers": [
+        {
+          "Object": "memory",
+          "Class": "memoryusage"
+        }
+      ]
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./memory_usage docker",
+      "Containers": [
+        {
+          "Object": "memory",
+          "Class": "memoryusage"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "./source/docker_memory.json"
+      ]
+    }
+  ]
+}
