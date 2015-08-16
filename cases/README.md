@@ -4,13 +4,8 @@
 ```
 
 - We provide a 'casevalidator' for case writers, Read the [HowTO](../engine/tools/casevalidator/HowTO.md) to check if your case was valid.
-- The cases in this oct repo is good to use, if you want to try any of them, please read the [Test Case Server][../engine/tcserver/README.md).
+- The cases in this oct repo is good to use, if you want to try any of them, please read the [Test Case Server](../engine/tcserver/README.md).
 
-```
-{ //"Description" part,
-  "Requires": {}, "Deploys":{}, "Run": {}, "Collects": {}
-}
-```
 
 ### "Description" part
 The case developer should fill in the following informations:
