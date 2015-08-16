@@ -46,8 +46,8 @@ func rootfsPropagationTestPrivate() {
 	}
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Process.Args = []string{("./" + guestProgrammeFileName)}
-	mountpropagationtype := "private"
-	linuxspec.Linux.RootfsPropagation = mountpropagationtype
+	linuxspec.Spec.Root.Readonly = false
+	linuxspec.Linux.RootfsPropagation = "private"
 	err = configconvert.LinuxSpecToConfig(configjsonFilePath, linuxspec)
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfsmountpropagation private test:writing config error, %v", err)
