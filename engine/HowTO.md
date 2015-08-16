@@ -22,4 +22,4 @@ cd ..
 ```
 The raw result will be store at /tmp/testserver_cache/%(taskID)
 
-For other test case, please refer to [Test Case Server](tcserver/README.md) to generate them.
+For other test cases, please refer to [Test Case Server](tcserver/README.md) to generate them.
