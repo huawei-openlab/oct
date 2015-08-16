@@ -3,7 +3,7 @@
 #Fetch build docker image
 echo -n "Build docker image"
 printf "\n"
-docker build -t memorymonitor .
+docker build -t memoryusage .
 printf "\n"
 
 b=''
@@ -18,7 +18,7 @@ printf "\n"
 #Start docker container
 echo -n "Start docker container"
 printf "\n"
-docker run -d memorymonitor
+docker run -d memoryusage
 printf "\n"
 
 b=''

@@ -50,14 +50,10 @@ do
 done
 printf "\n"
 
-#Compile  memorymonitor on host
-echo  "Compile memorymonitor.go"
+#Compile  memory_usage on host
+echo  "Compile memory_usage.go"
 cd $pre_dir
-if [ -n $2 ] ;
-	then
-	go build $2
-fi
-#go build memorymonitor.go
+go build memory_usage.go
 printf "\n"
 
 b=''

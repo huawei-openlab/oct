@@ -45,7 +45,7 @@ func LinuxSpecToConfig(filePath string, linuxspec *specs.LinuxSpec) error {
 		return err
 	}
 	//var fd os.File
-	fd, err1 := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC, 0777)
+	fd, err1 := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0777)
 	if err1 != nil {
 		log.Fatalf(" open file err, %v", err1)
 	}
