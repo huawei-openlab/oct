@@ -39,8 +39,8 @@ mv oct/cases/specstest/source/specsnewest oct/cases/specstest/source/specs
 mv oct/cases/specstest/source/config_newest.json oct/cases/specstest/source/config.json
 ```
 
-- Prepare testcase   
-The official way of doing this is mentioned here [HowTO](../../engine/tcserver/README.md).
+####Prepare testcase   
+The `official` way of doing this is mentioned here [HowTO](../../engine/tcserver/README.md).
 
 But you can also do it by hand, taking the 'process' case for example:
 
