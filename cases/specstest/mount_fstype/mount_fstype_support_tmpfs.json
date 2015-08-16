@@ -10,26 +10,29 @@
     {
       "Class": "OperationOS",
       "Type": "os",
-      "Distribution": "Ubuntu",
+      "Distribution": "ubuntu",
       "Version": "14.04",
       "Resource": {
-        "CPU": 4,
-        "Memory": "16GB",
-        "Disk": "200G"
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
       }
     },
     {
       "Class": "specstest",
       "Type": "container",
-      "Version": "runc V0.2",
-      "Files": ""
+      "Distribution": "runc",
+      "Version": "0.2",
+      "Files": [
+        "./source/config.json"
+      ]
     }
   ],
   "Deploys": [
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "./source/mount_fstype_runc.sh  tmpfs> /tmp/testtool/mount_fstype_host.txt",
+      "Cmd": "go build mount_fstype_host.go;./mount_fstype_host --fs tmpfs ; cp mount_fstype_runcrunner.sh ./../../source/ ",
       "Containers": [
         {
           "Object": "specs",
@@ -38,11 +41,18 @@
       ]
     }
   ],
+    "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": " cd  ./../../source/;./mount_fstype_runcrunner.sh tmpfs"
+    }
+  ],
   "Collects": [
     {
       "Object": "hostA",
       "Files": [
-        "/tmp/testtool/mount_fstype_host.txt"
+        "/tmp/testtool/mount_fstype_out.json"
       ]
     }
   ]
