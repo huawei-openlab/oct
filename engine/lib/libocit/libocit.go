@@ -277,7 +277,7 @@ func ReceiveFile(w http.ResponseWriter, r *http.Request, cache_url string) (real
 }
 
 // file name filelist is like this: './source/file'
-func TarFilelist(filelist []string, case_dir string, object_name string) (tar_url string) {
+func TarFileList(filelist []string, case_dir string, object_name string) (tar_url string) {
 	tar_url = path.Join(case_dir, object_name) + ".tar.gz"
 	fw, err := os.Create(tar_url)
 	if err != nil {
@@ -332,7 +332,7 @@ func GetDirFiles(base_dir string, dir string) (files []string) {
 func TarDir(case_dir string) (tar_url string) {
 	files := GetDirFiles(case_dir, "")
 	case_name := path.Base(case_dir)
-	tar_url = TarFilelist(files, case_dir, case_name)
+	tar_url = TarFileList(files, case_dir, case_name)
 	return tar_url
 }
 
