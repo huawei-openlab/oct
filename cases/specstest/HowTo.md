@@ -40,8 +40,10 @@ mv oct/cases/specstest/source/config_newest.json oct/cases/specstest/source/conf
 ```
 
 - Prepare testcase   
+The official way of doing this is mentioned here [HowTO](../../engine/tcserver/README.md).
 
-Testcase 'process' for example,
+But you can also do it by hand, taking the 'process' case for example:
+
 ``` bash
 cd oct/cases/specstest/
 mkdir tmp_dir
