@@ -57,7 +57,7 @@ func testVersion() {
 
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Version = oriSpecVersion
-	linuxspec.Spec.Process.Terminal = true
+	linuxspec.Spec.Process.Terminal = false
 	linuxspec.Spec.Process.User.UID = 1
 	linuxspec.Spec.Process.User.GID = 1
 	linuxspec.Spec.Process.User.AdditionalGids = nil
