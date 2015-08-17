@@ -47,7 +47,7 @@ func testRootReadonlyTrue() {
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Spec.Root.Readonly = true
 	linuxspec.Spec.Process.Args[0] = "./root_readonly_true_guest"
-	linuxspec.Spec.Process.Terminal = true
+	linuxspec.Spec.Process.Terminal = false
 	linuxspec.Spec.Process.User.UID = 0
 	linuxspec.Spec.Process.User.GID = 0
 	linuxspec.Spec.Process.User.AdditionalGids = nil
