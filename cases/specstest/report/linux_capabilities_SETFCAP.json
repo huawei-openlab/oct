@@ -1,0 +1,5 @@
+{
+  "Linuxspec.Linux.Capabilities": {
+    "SETFCAP": "pass"
+  }
+}

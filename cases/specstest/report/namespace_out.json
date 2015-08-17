@@ -1,0 +1,18 @@
+{
+  "Linuxspec.Spec.Namespaces.pid": {
+    "path": [
+      {
+        "/proc/1/ns/pid": "passed"
+      },
+      {
+        "proc/1/ns/ipc": "passed"
+      },
+      {
+        "proc/1/ns/uts": "passed"
+      },
+      {
+        "proc/1/ns/net": "passed"
+      }
+    ]
+  }
+}

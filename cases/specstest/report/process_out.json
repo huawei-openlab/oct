@@ -1,0 +1,26 @@
+{
+  "Linuxspec.Spec.Process": {
+    "terminal": {
+      "true": "passed"
+    },
+    "user": {
+      "uid": {
+        "1": "passed"
+      },
+      "gid": {},
+      "additionalGids": {
+        "nil": "passed"
+      }
+    },
+    "args": {
+      "./process_guest": "passed"
+    },
+    "env": {
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin": "passed",
+      "TERM=xterm": "passed"
+    },
+    "cwd": {
+      "/testtool": "passed"
+    }
+  }
+}
