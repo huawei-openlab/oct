@@ -36,6 +36,9 @@ Refers to [Cases/README](Cases/README.md)
 - PASS provider
 - Any container user
 
+### Try OCT
+Refers to [How to use OCT](engine/HowTO.md)
+
 ### How to involve
 If any issues are encountered while using the oct project, several avenues are available for support:
 <table>
