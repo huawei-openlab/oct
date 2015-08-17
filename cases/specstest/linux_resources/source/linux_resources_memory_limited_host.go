@@ -24,7 +24,7 @@ func resourcesMemoryLimited() {
 
 	//set file path
 	configjsonFilePath := "./../../source/config.json"
-	guestProgrammeFileName := ""
+	guestProgrammeFileName := "linux_resources_memory_limited_guest"
 	outputFileName := "linux_resources_memory_limited"
 
 	//setup the guest enviroment
@@ -42,6 +42,7 @@ func resourcesMemoryLimited() {
 	}
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
 	linuxspec.Process.Terminal = false
+	linuxspec.Process.Args = []string{("./" + guestProgrammeFileName)}
 	linuxspec.Linux.Resources.Memory.Limit = 204800
 	err = configconvert.LinuxSpecToConfig(configjsonFilePath, linuxspec)
 	if err != nil {
