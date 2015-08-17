@@ -76,7 +76,7 @@ You can also use the temporary script for convenience, taking the 'process' case
 
 ``` bash
 ./startserver.sh
-./runtestcase.sh
+./runtestcase.sh -f process
 ```
 
 
