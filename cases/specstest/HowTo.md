@@ -70,6 +70,16 @@ cd ../ocitd
 cd oct/engine/scheduler
 ./scheduler process.tar.gz
 ```
+
+You can also use the temporary script for convenience, taking the 'process' case for example:
+   
+
+``` bash
+./startserver.sh
+./runtestcase.sh
+```
+
+
 - Get Result     
 
 See the output of the last command in last step, it have pointed out the output place.
