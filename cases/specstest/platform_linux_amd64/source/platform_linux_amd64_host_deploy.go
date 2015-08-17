@@ -38,7 +38,7 @@ func testPlatform() {
 		log.Fatalf("[Specstest] platform linux amd64 test: build test programme error, %v", err)
 	}
 
-	cmd = exec.Command("/bin/sh", "-c", "mv test_platform_linux_amd64 /tmp/testtool/")
+	cmd = exec.Command("/bin/sh", "-c", "mv test_platform_linux_amd64 ./../../source")
 	_, err = cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] platform linux amd64 test:: mv test programme error, %v", err)
