@@ -1,0 +1,5 @@
+{
+  "Linuxspec.Mounts.Filesystem": {
+    "tmpfs": "success"
+  }
+}
