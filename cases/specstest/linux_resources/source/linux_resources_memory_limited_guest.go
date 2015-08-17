@@ -20,11 +20,14 @@ import (
 )
 
 func resourcesMemoryLimited() {
-	cmd := exec.Command("/bin/sh", "-c", "echo \"runc container start sucess\" ")
-	_, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("[Specstest] linux resources memory limited test: start runc error, %v", err)
+	for i := 1; i >= 0; {
+		cmd := exec.Command("/bin/sh", "-c", "echo \"runc container keep running\" ")
+		_, err := cmd.Output()
+		if err != nil {
+			log.Fatalf("[Specstest] linux resources memory limited test:  runc running error, %v", err)
+		}
 	}
+
 }
 
 func main() {
