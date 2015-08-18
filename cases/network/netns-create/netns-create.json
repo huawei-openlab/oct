@@ -1,5 +1,6 @@
 {
-  "Name": "Network-netns-create",
+  "Name": "netns-create",
+  "Version": "1.0.0",
   "Summary": "Test network namespace create function",
   "Owner": "chengtiesheng@huawei.com",
   "Description": "Test network namespace create function",
@@ -24,16 +25,16 @@
       "Object": "hostA",
       "Class": "OperationOS",
       "Files": [
-        "./source/netns_create.go",
+        "./source/netns_create.go"
       ],
-      "Cmd": "go build netns_create.go; ./netns_create",
+      "Cmd": "go build netns_create.go"
     }
   ],
   "Run": [
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "cd ./../../source/ ; ./netns_create"
+      "Cmd": "./netns_create"
     }
   ],
   "Collects": [
