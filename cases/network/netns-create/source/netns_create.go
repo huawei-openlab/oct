@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "log"
     "encoding/json"
     "os"
@@ -10,7 +9,7 @@ import (
 )
 
 type netnsResult struct {
-     netns_Create map[string]string `json:"Network.Spec.Netns.Create"`
+     Netns_create map[string]string `json:"Network.Spec.Netns.Netns_create"`
 }
 
 func main() {
@@ -23,19 +22,16 @@ func main() {
     defer origns.Close()
  
     result := new(netnsResult)
-    result.netns_Create = make(map[string]string)
+    result.Netns_create = make(map[string]string)
 
     // Create a new network namespace
     newns, err := netns.New()
     defer newns.Close()
     if err != nil {
         log.Fatalf("Create network namspace failed: %v\n", err)
-        result.netns_Create["false"] = "failed"
-        fmt.Println(result)
+        result.Netns_create["res"] = "failed"
     } else {
-        fmt.Println("Create network namespace successfully!")
-        result.netns_Create["false"] = "passed"
-        fmt.Println(result)
+        result.Netns_create["res"] = "passed"
     }
 
     jsonStr, err := json.Marshal(result)
@@ -43,14 +39,14 @@ func main() {
         log.Fatalf("Convert to json error: %v\n", err)
         return
     }
-    fmt.Println(jsonStr)
 
     foutfile := "netns-create-res.json"
     fout, err := os.Create(foutfile)
+    defer fout.Close()
+
     if err != nil {
         log.Fatal(err)
     } else {
-        fmt.Println(jsonStr)
         fout.WriteString(string(jsonStr))
     }
 
