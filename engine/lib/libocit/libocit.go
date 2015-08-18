@@ -377,6 +377,53 @@ func UntarFile(cache_url string, filename string) {
 	}
 }
 
+func ReadCaseFromTar(tar_url string) (content string) {
+	_, err := os.Stat(tar_url)
+	if err != nil {
+		fmt.Println("cannot find the file ", tar_url)
+		return content
+	}
+
+	fr, err := os.Open(tar_url)
+	if err != nil {
+		fmt.Println("fail in open file ", tar_url)
+		return content
+	}
+	defer fr.Close()
+	gr, err := gzip.NewReader(fr)
+	if err != nil {
+		fmt.Println("fail in using gzip")
+		return content
+	}
+	defer gr.Close()
+	tr := tar.NewReader(gr)
+	for {
+		h, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		fileSuffix := path.Ext(h.Name)
+		if fileSuffix == ".json" {
+			var tc TestCase
+			buf := bytes.NewBufferString("")
+			buf.ReadFrom(tr)
+			file_content := buf.String()
+			json.Unmarshal([]byte(file_content), &tc)
+			if len(tc.Name) > 1 {
+				content = file_content
+				break
+			} else {
+				continue
+			}
+		}
+	}
+
+	return content
+}
+
 //file_url is the default file, suffix is the potential file
 func ReadTar(tar_url string, file_url string, suffix string) (content string) {
 	_, err := os.Stat(tar_url)
