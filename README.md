@@ -26,7 +26,7 @@ The oct(open container testing) project aims to promote the [Open Container Init
     It uses the github as the static test case database.
     
 ## TestCase specification
-Refers to [Cases/README](Cases/README.md) 
+Refers to [cases/README](cases/README.md) 
 
 ## Who should join
 - Container project developer
