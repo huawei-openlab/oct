@@ -21,7 +21,7 @@ The defailed information of each container type is listed as below:
 
 | *Container Type* | *Distribution* | *Container File* |
 | -------| ------ | ------- |
-|specstest|runc0.2|[Dockerfile](#dockerfile) |
+|specstest|runc0.2| |
 
 After running the `Command` in each OS and container, we get two results.
 
