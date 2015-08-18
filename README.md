@@ -66,3 +66,9 @@ If any issues are encountered while using the oct project, several avenues are a
 - Read the [README](README.md) for build and test instructions
 - Read the [APIs](engine/API.md) to test each service
 - Play with the project, submit bugs, submit patches!
+
+### Quick look of the testing report
+
+The [testing report](cases/report) will keep updating.
+
+
