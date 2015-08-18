@@ -1,5 +1,6 @@
 {
-  "Name": "Network-netns-del",
+  "Name": "netns-del",
+  "Version": "1.0.0",
   "Summary": "Test network namespace delete function",
   "Owner": "chengtiesheng@huawei.com",
   "Description": "Test network namespace delete function",
@@ -24,16 +25,16 @@
       "Object": "hostA",
       "Class": "OperationOS",
       "Files": [
-        "./source/netns_del.go",
+        "./source/netns_del.go"
       ],
-      "Cmd": "go build netns_del.go; ./netns_del",
+      "Cmd": "go build netns_del.go"
     }
   ],
   "Run": [
     {
       "Object": "hostA",
       "Class": "OperationOS",
-      "Cmd": "cd ./../../source/ ; ./netns_del"
+      "Cmd": "./netns_del"
     }
   ],
   "Collects": [
