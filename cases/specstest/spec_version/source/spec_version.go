@@ -18,40 +18,55 @@ import (
 	configconvert "./../../source/configconvert"
 	hostsetup "./../../source/hostsetup"
 	specs "./../../source/specs"
+
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 )
 
-func testVersion() {
-	programmeString := "demo"
+func setupEnv(testValue string) error {
+	programmeString := ""
 	outputFile := ""
+	//testFile := "test_version_correct"
 	err := hostsetup.SetupEnv(programmeString, outputFile)
 	if err != nil {
-		log.Fatalf("Specstest version test: hostsetup.SetupEnv error, %v", err)
+		return err
 	}
-	fmt.Println("Host enviroment setting up for runc is already!")
+
 	var filePath string
 	filePath = "./../../source/config.json"
-
-	errSpecVersion := "0.1.0"
 	var linuxspec *specs.LinuxSpec
 	linuxspec, err = configconvert.ConfigToLinuxSpec(filePath)
 	if err != nil {
-		log.Fatalf("Specstest version test: readconfig error, %v", err)
+		return err
 	}
 
-	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
-	linuxspec.Spec.Version = errSpecVersion
-	linuxspec.Spec.Process.Args[0] = "./" + programmeString
+	linuxspec.Spec.Root.Path = "./../../source/rootfs_rootconfig"
+	linuxspec.Spec.Version = testValue
+	// Args take runc to run "ls" and then exit, we should not need "ls" here, but Args should not be nil
+	linuxspec.Spec.Process.Args[0] = "ls"
 	err = configconvert.LinuxSpecToConfig(filePath, linuxspec)
-
-	if err != nil {
-		log.Fatalf("Specstest version test: writeconfig error, %v", err)
-	}
-	fmt.Println("Host enviroment for runc is already!")
-
+	return err
 }
 
-func main() {
-	testVersion()
+func startRunc(configFile string) error {
+	cmd := exec.Command("runc", configFile)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	err := cmd.Run()
+	return err
+}
+
+func testVersion(testValue string) error {
+	err := setupEnv(testValue)
+	if err != nil {
+		log.Fatalf("[Specstest] version = %s setupEnv failed, err = %v...", testValue, err)
+	} else {
+		fmt.Println("[Specstest] version = %s setupEnv sucess ...", testValue)
+	}
+	configFile := "./../../source/config.json"
+	err = startRunc(configFile)
+	return err
 }

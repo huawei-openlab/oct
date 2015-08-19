@@ -15,38 +15,52 @@
 package main
 
 import (
+	specs "./../../source/specs"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"os/exec"
+	//"os/exec"
 )
 
 type TestResult struct {
 	Version map[string]string `json:"Linuxspec.Spec.Version"`
 }
 
-func testVersionCorrect() {
-
+func main() {
 	testResult := new(TestResult)
 	testResult.Version = make(map[string]string)
 
-	cmd := exec.Command("runc")
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	if err := cmd.Run(); err != nil {
-		testResult.Version["pre-draft"] = "failed"
+	passString := "passed"
+	failedString := "failed"
+	//Do version test when value is correct
+	testValue := specs.Version
+	err := testVersion(testValue)
+	if err != nil {
+		fmt.Printf("[Specstest] Version = %s testVersion err = %v ... \n", testValue, err)
+		testResult.Version[testValue] = failedString
 	} else {
-		testResult.Version["pre-draft"] = "passed"
+		testResult.Version[testValue] = passString
 	}
 
+	//Do version test when value is err
+	testValue = specs.Version + "_err"
+	err = testVersion(testValue)
+	if err != nil {
+		fmt.Printf("[Specstest] Version = %s testVersion err = %v ... \n", testValue, err)
+		testResult.Version[testValue] = passString
+	} else {
+		testResult.Version[testValue] = failedString
+	}
+
+	// Write result to ouput json file.
 	jsonString, err := json.Marshal(testResult)
 	if err != nil {
-		log.Fatalf("Convert to json err, error:  %v\n", err)
+		log.Fatalf("[Specstest] testResult = %v convert to json err err = %v\n", testResult, err)
 		return
 	}
 
-	foutfile := "/tmp/testtool/version_correct_out.json"
+	foutfile := "/tmp/testtool/spec_version.json"
 	fout, err := os.Create(foutfile)
 	defer fout.Close()
 
@@ -55,8 +69,4 @@ func testVersionCorrect() {
 	} else {
 		fout.WriteString(string(jsonString))
 	}
-}
-
-func main() {
-	testVersionCorrect()
 }

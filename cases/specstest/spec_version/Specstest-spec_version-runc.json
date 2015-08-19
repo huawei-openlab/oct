@@ -24,7 +24,7 @@
       "Distribution": "runc",
       "Version": "0.2",
       "Files": [
-        "./source/config.json"
+        "./../../source/config.json"
       ]
     }
   ],
@@ -37,7 +37,7 @@
         "./source/test_version_correct.go",
         "./source/demo.go"
       ],
-      "Cmd": "go build version_host.go ; ./version_host ; cd ./../../source/ ; ./test_version_correct",
+      "Cmd": "go build -o test_version ; ./test_version",
       "Containers": [
         {
           "Object": "specs",
@@ -50,7 +50,7 @@
     {
       "Object": "hostA",
       "Files": [
-        "/tmp/testtool/version_correct_out.json"
+        "/tmp/testtool/spec_version.json"
       ]
     }
   ]
