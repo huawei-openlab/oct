@@ -37,10 +37,10 @@ func setupConfig(testValue bool, configFile string, rootPath string) error {
 	return err
 }
 
-func testRoot(testValue bool, rootPath string) (string, error) {
+func testRoot(testValue bool, rootPath string) (bool, error) {
 	configFile := "./../../source/config.json"
 	err := setupConfig(testValue, configFile, rootPath)
-	var retString string
+	var retString bool
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v setupEnv failed, err = %v...", testValue, err)
 	} else {
@@ -51,19 +51,13 @@ func testRoot(testValue bool, rootPath string) (string, error) {
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v startRunc failed, err = %v...", testValue, err)
 	}
-
-	if testValue == true {
-		if strings.Contains(output, "(ro,") {
-			retString = "passed"
-		} else {
-			retString = "failed"
-		}
+	if testValue == true && strings.Contains(output, "(ro,") {
+		retString = true
+	} else if testValue == false && strings.Contains(output, "(rw,") {
+		retString = true
 	} else {
-		if strings.Contains(output, "(ro,") {
-			retString = "failed"
-		} else {
-			retString = "passed"
-		}
+		retString = false
 	}
+
 	return retString, err
 }

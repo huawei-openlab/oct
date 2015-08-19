@@ -52,21 +52,31 @@ func main() {
 	//Start readonly == true test
 	testValue := true
 	rootPath := "./../../source/rootfs_rootconfig"
-	ret, err := testRoot(testValue, rootPath)
+	retBool, err := testRoot(testValue, rootPath)
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v testRoot failed, err = %v...", testValue, err)
 	}
-	testResult.Root.Path[rootPath] = ret
-	testResult.Root.Readonly["true"] = ret
+	if retBool == true {
+		testResult.Root.Path[rootPath] = "passed"
+		testResult.Root.Readonly["true"] = "passed"
+	} else {
+		testResult.Root.Path[rootPath] = "failed"
+		testResult.Root.Readonly["false"] = "failed"
+	}
 
 	// Start readonly == false test
 	testValue = false
-	ret, err = testRoot(testValue, rootPath)
+	retBool, err = testRoot(testValue, rootPath)
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v testRoot failed, err = %v...", testValue, err)
 	}
-	testResult.Root.Path[rootPath] = ret
-	testResult.Root.Readonly["false"] = ret
+	if retBool == true {
+		testResult.Root.Path[rootPath] = "passed"
+		testResult.Root.Readonly["false"] = "passed"
+	} else {
+		testResult.Root.Path[rootPath] = "failed"
+		testResult.Root.Readonly["false"] = "failed"
+	}
 
 	jsonString, err := json.Marshal(testResult)
 	if err != nil {
