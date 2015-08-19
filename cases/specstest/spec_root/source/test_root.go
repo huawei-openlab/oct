@@ -56,7 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v testRoot failed, err = %v...", testValue, err)
 	}
-	testResult.Root.Path[rootPath] = rootPath
+	testResult.Root.Path[rootPath] = ret
 	testResult.Root.Readonly["true"] = ret
 
 	// Start readonly == false test
@@ -65,7 +65,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("[Specstest] root.readonly = %v testRoot failed, err = %v...", testValue, err)
 	}
-	testResult.Root.Path[rootPath] = rootPath
+	testResult.Root.Path[rootPath] = ret
 	testResult.Root.Readonly["false"] = ret
 
 	jsonString, err := json.Marshal(testResult)
