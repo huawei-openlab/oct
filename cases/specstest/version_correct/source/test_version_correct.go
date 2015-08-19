@@ -46,7 +46,7 @@ func testVersionCorrect() {
 		return
 	}
 
-	foutfile := "/tmp/testtool/version_correct_out.txt"
+	foutfile := "/tmp/testtool/version_correct_out.json"
 	fout, err := os.Create(foutfile)
 	defer fout.Close()
 

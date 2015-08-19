@@ -37,7 +37,7 @@
         "./source/test_version_correct.go",
         "./source/demo.go"
       ],
-      "Cmd": "go build version_host.go ; ./version_host ; cd ./../source/ ; ./test_version_correct",
+      "Cmd": "go build version_host.go ; ./version_host ; cd ./../../source/ ; ./test_version_correct",
       "Containers": [
         {
           "Object": "specs",
