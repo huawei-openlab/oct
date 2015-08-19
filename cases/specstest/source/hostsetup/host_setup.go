@@ -9,18 +9,19 @@ import (
 func SetupEnv(guestFile string, outputFile string) error {
 	var cmd *exec.Cmd
 	var err error
+
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /tmp/testtool")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("Specstest root readonly test: mkdir testtool dir error, %v", err)
+	}
+
 	if guestFile != "" {
 		fmt.Println("Build guest programme...................")
 		cmd = exec.Command("/bin/sh", "-c", "go build "+guestFile+".go")
 		_, err = cmd.Output()
 		if err != nil {
 			log.Fatalf("Specstest root readonly test: build guest programme error, %v", err)
-		}
-
-		cmd = exec.Command("/bin/sh", "-c", "mkdir -p /tmp/testtool")
-		_, err = cmd.Output()
-		if err != nil {
-			log.Fatalf("Specstest root readonly test: mkdir testtool dir error, %v", err)
 		}
 		cmd = exec.Command("/bin/sh", "-c", "mv "+guestFile+" /tmp/testtool/")
 		_, err = cmd.Output()
