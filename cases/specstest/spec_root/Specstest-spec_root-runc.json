@@ -24,7 +24,7 @@
       "Distribution": "runc",
       "Version": "0.2",
       "Files": [
-        "./source/config.json"
+        "./../../source/config.json"
       ]
     }
   ],
@@ -33,10 +33,10 @@
       "Object": "hostA",
       "Class": "OperationOS",
       "Files": [
-        "./source/root_readonly_true_host.go",
-        "./source/root_readonly_true_guest.go"
+        "./source/test_root.go",
+        "./source/spec_root.go"
       ],
-      "Cmd": "go build root_readonly_true_host.go ; ./root_readonly_true_host",
+      "Cmd": "go build -o test_root ; ./test_root",
       "Containers": [
         {
           "Object": "specs",
@@ -45,18 +45,11 @@
       ]
     }
   ],
-  "Run": [
-    {
-      "Object": "hostA",
-      "Class": "OperationOS",
-      "Cmd": "cd ./../../source/ ; runc"
-    }
-  ],
   "Collects": [
     {
       "Object": "hostA",
       "Files": [
-        "/tmp/testtool/readonly_true_out.json"
+        "/tmp/testtool/spec_root.json"
       ]
     }
   ]
