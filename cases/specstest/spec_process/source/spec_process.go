@@ -70,8 +70,9 @@ func setResult(testResult *TestResult, key []string, res string) {
 	testResult.Process.Terminal[key[0]] = res
 	testResult.Process.User.UID[key[1]] = res
 	testResult.Process.User.GID[key[2]] = res
-	testResult.Process.Env[key[3]] = res
+	testResult.Process.User.AdditionalGids[key[3]] = res
 	testResult.Process.Env[key[4]] = res
-	testResult.Process.Cwd[key[5]] = res
-	testResult.Process.Args[key[6]] = res
+	testResult.Process.Env[key[5]] = res
+	testResult.Process.Cwd[key[6]] = res
+	testResult.Process.Args[key[7]] = res
 }
