@@ -40,7 +40,7 @@ curl localhost:8011/case/5e1bde28cdf2ea66b41c7a7508f744cf > version_correct.tar.
 ```
 The version_correct.tar.gz file could used by the `Schedular` service to and the whole testing will be completed after that.
 
-###Struct
+###How do the case files been organized
 The ideal case struct should be like this:
 
 ```
@@ -99,3 +99,5 @@ In the `flexiable format`, we need to configurate the `Test Case Server`, for ex
 
 ###submit
 Before submit case to the repo, please use the [Case Validator Tool](../tools/casevalidator/HowTO.md) to check its validation.
+
+After that, please submit to this OCT repo and put your case under the 'cases' directory.
