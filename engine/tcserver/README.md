@@ -2,7 +2,7 @@
 It reads the `cases` directory from this `oct` project, checks the validation and provides [APIs](API.md).
 
 - [How to use the `tcserver`](#howto)
-- [How does the test case organized](#struct)
+- [How does the test case organized](#how-do-the-case-files-been-organized)
 - [How to submit a test case](#submit)
 
 ###HowTo
