@@ -26,7 +26,7 @@ The oct(open container testing) project aims to promote the [Open Container Init
     It uses the github as the static test case database.
     
 ## TestCase specification
-Refers to [Cases/README](Cases/README.md) 
+Refers to [cases/README](cases/README.md) 
 
 ## Who should join
 - Container project developer
@@ -35,6 +35,9 @@ Refers to [Cases/README](Cases/README.md)
 - IASS provider
 - PASS provider
 - Any container user
+
+### Try OCT
+Refers to [How to use OCT](engine/HowTO.md)
 
 ### How to involve
 If any issues are encountered while using the oct project, several avenues are available for support:
@@ -63,3 +66,9 @@ If any issues are encountered while using the oct project, several avenues are a
 - Read the [README](README.md) for build and test instructions
 - Read the [APIs](engine/API.md) to test each service
 - Play with the project, submit bugs, submit patches!
+
+### Quick look of the testing report
+
+The [testing report](cases/report) will keep updating.
+
+

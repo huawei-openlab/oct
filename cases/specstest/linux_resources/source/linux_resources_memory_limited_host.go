@@ -15,8 +15,8 @@ package main
 import (
 	configconvert "./../../source/configconvert"
 	hostsetup "./../../source/hostsetup"
+	specs "./../../source/specs"
 	"fmt"
-	specs "github.com/opencontainers/specs"
 	"log"
 )
 
@@ -41,6 +41,7 @@ func resourcesMemoryLimited() {
 		log.Fatalf("[Specstest] linux resources memory limited test: reading config error, %v", err)
 	}
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
+	linuxspec.Process.Terminal = false
 	linuxspec.Process.Args = []string{("./" + guestProgrammeFileName)}
 	linuxspec.Linux.Resources.Memory.Limit = 204800
 	err = configconvert.LinuxSpecToConfig(configjsonFilePath, linuxspec)

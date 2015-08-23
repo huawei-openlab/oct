@@ -277,7 +277,7 @@ func ReceiveFile(w http.ResponseWriter, r *http.Request, cache_url string) (real
 }
 
 // file name filelist is like this: './source/file'
-func TarFilelist(filelist []string, case_dir string, object_name string) (tar_url string) {
+func TarFileList(filelist []string, case_dir string, object_name string) (tar_url string) {
 	tar_url = path.Join(case_dir, object_name) + ".tar.gz"
 	fw, err := os.Create(tar_url)
 	if err != nil {
@@ -332,7 +332,7 @@ func GetDirFiles(base_dir string, dir string) (files []string) {
 func TarDir(case_dir string) (tar_url string) {
 	files := GetDirFiles(case_dir, "")
 	case_name := path.Base(case_dir)
-	tar_url = TarFilelist(files, case_dir, case_name)
+	tar_url = TarFileList(files, case_dir, case_name)
 	return tar_url
 }
 
@@ -375,6 +375,53 @@ func UntarFile(cache_url string, filename string) {
 			fw.Close()
 		}
 	}
+}
+
+func ReadCaseFromTar(tar_url string) (content string) {
+	_, err := os.Stat(tar_url)
+	if err != nil {
+		fmt.Println("cannot find the file ", tar_url)
+		return content
+	}
+
+	fr, err := os.Open(tar_url)
+	if err != nil {
+		fmt.Println("fail in open file ", tar_url)
+		return content
+	}
+	defer fr.Close()
+	gr, err := gzip.NewReader(fr)
+	if err != nil {
+		fmt.Println("fail in using gzip")
+		return content
+	}
+	defer gr.Close()
+	tr := tar.NewReader(gr)
+	for {
+		h, err := tr.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		fileSuffix := path.Ext(h.Name)
+		if fileSuffix == ".json" {
+			var tc TestCase
+			buf := bytes.NewBufferString("")
+			buf.ReadFrom(tr)
+			file_content := buf.String()
+			json.Unmarshal([]byte(file_content), &tc)
+			if len(tc.Name) > 1 {
+				content = file_content
+				break
+			} else {
+				continue
+			}
+		}
+	}
+
+	return content
 }
 
 //file_url is the default file, suffix is the potential file

@@ -39,9 +39,11 @@ mv oct/cases/specstest/source/specsnewest oct/cases/specstest/source/specs
 mv oct/cases/specstest/source/config_newest.json oct/cases/specstest/source/config.json
 ```
 
-- Prepare testcase   
+####Prepare testcase   
+The `official` way of doing this is mentioned here [HowTO](../../engine/tcserver/README.md).
 
-Testcase 'process' for example,
+But you can also do it by hand, taking the 'process' case for example:
+
 ``` bash
 cd oct/cases/specstest/
 mkdir tmp_dir
@@ -68,6 +70,16 @@ cd ../ocitd
 cd oct/engine/scheduler
 ./scheduler process.tar.gz
 ```
+
+You can also use the temporary script for convenience, taking the 'process' case for example:
+   
+
+``` bash
+./startserver.sh
+./runtestcase.sh -f process
+```
+
+
 - Get Result     
 
 See the output of the last command in last step, it have pointed out the output place.

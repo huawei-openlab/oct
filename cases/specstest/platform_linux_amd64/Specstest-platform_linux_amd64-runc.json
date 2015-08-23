@@ -34,7 +34,7 @@
         "./source/demo.go",
         "./source/test_platform_linux_amd64.go"
       ],
-      "Cmd": "go build platform_linux_amd64_host_deploy.go ; ./platform_linux_amd64_host_deploy ; cd ./../source/ ;  ./test_platform_linux_amd64",
+      "Cmd": "go build platform_linux_amd64_host_deploy.go ; ./platform_linux_amd64_host_deploy ; cd ./../../source/ ;  ./test_platform_linux_amd64",
       "Containers": [
         {
           "Object": "specs",
@@ -47,7 +47,7 @@
     {
       "Object": "hostA",
       "Files": [
-        "/tmp/testtool/platform_linux_amd64_out.txt"
+        "/tmp/testtool/platform_linux_amd64_out.json"
       ]
     }
   ]

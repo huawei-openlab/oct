@@ -1,0 +1,10 @@
+{
+  "Linuxspec.Spec.Platform": {
+    "OS": {
+      "linux": "passed"
+    },
+    "Arch": {
+      "amd64": "passed"
+    }
+  }
+}

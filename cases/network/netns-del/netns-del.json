@@ -1,0 +1,48 @@
+{
+  "Name": "netns-del",
+  "Version": "1.0.0",
+  "Summary": "Test network namespace delete function",
+  "Owner": "chengtiesheng@huawei.com",
+  "Description": "Test network namespace delete function",
+  "Group": "network/netns-del/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Version": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/netns_del.go"
+      ],
+      "Cmd": "go build netns_del.go"
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./netns_del"
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "netns-create-del.json"
+      ]
+    }
+  ]
+}

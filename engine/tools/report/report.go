@@ -97,7 +97,13 @@ func generate_result_file(case_dir string, ts_demo libocit.TestCase) (content st
 			basename_without_json := strings.Replace(basename, ".json", "", 1)
 			content += "\n###" + basename_without_json + "\n"
 			content += "```\n"
-			content += libocit.ReadFile(path.Join(case_dir, collect.Files[f_index]))
+
+			_, err := os.Stat(collect.Files[f_index])
+			if err != nil {
+				content += libocit.ReadFile(path.Join(case_dir, collect.Files[f_index]))
+			} else {
+				content += libocit.ReadFile(collect.Files[f_index])
+			}
 			content += "\n```\n\n"
 		}
 	}

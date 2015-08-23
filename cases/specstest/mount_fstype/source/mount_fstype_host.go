@@ -42,9 +42,10 @@ func testFsTypeSupport(fstest string) {
 	if err != nil {
 		log.Fatalf("[Specstest] mount filesystem support test: reading config error, %v", err)
 	}
-	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
+	linuxspec.Process.Cwd = "/"
+	linuxspec.Process.Args = []string{"bash", "-c", "exit"}
 	mountsorigin := specs.Mount{"proc", "proc", "/proc", ""}
-	mountsadd := specs.Mount{fstest, "/tmp/test", "/testfs", ""}
+	mountsadd := specs.Mount{fstest, fstest, "/testfs", ""}
 	mountsnew := []specs.Mount{mountsorigin, mountsadd}
 	linuxspec.Mounts = mountsnew
 	err = configconvert.LinuxSpecToConfig(configjsonFilePath, linuxspec)

@@ -1,14 +1,11 @@
-The testcase should be written in JSON format, including five parts:
-
+##The testcase should be written in JSON format, including five parts:
+```
   "Description" part, "Requires", "Deploy", "Run" and "Collect". 
-  
-We provide a 'casevalidator' for case writers, Read the [HowTO](../engine/tools/casevalidator/HowTO.md) to check if your case was valid.
- 
 ```
-{ //"Description" part,
-  "Requires": {}, "Deploys":{}, "Run": {}, "Collects": {}
-}
-```
+
+- We provide a 'casevalidator' for case writers, Read the [HowTO](../engine/tools/casevalidator/HowTO.md) to check if your case was valid.
+- The cases in this oct repo is good to use, if you want to try any of them, please read the [Test Case Server](../engine/tcserver/README.md).
+
 
 ### "Description" part
 The case developer should fill in the following informations:

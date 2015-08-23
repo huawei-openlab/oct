@@ -41,6 +41,7 @@ func linuxCapabilitiesTestSETFCAP() {
 		log.Fatalf("[Specstest] linux Capabilities SETFCAP test: reading config error, %v", err)
 	}
 	linuxspec.Spec.Root.Path = "./rootfs_rootconfig"
+	linuxspec.Process.Args = []string{("./" + guestProgrammeFileName)}
 	capbilitestest := []string{"SETFCAP"}
 	linuxspec.Linux.Capabilities = capbilitestest
 	err = configconvert.LinuxSpecToConfig(configjsonFilePath, linuxspec)

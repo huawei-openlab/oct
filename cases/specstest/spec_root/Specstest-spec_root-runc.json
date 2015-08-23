@@ -1,0 +1,56 @@
+{
+  "Name": "Specstest-root_readonly_true-runc",
+  "Summary": "test based opencontainers/specs",
+  "Owner": "linzhinan@huawei.com",
+  "Description": "Test runc when spec root:readonly == true",
+  "Group": "Specstest/root_readonly_true/",
+  "License": "Apache 2.0",
+  "Explains": "Test runc when spec root:readonly == true",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Version": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "specstest",
+      "Type": "container",
+      "Distribution": "runc",
+      "Version": "0.2",
+      "Files": [
+        "./../../source/config.json"
+      ]
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/test_root.go",
+        "./source/spec_root.go"
+      ],
+      "Cmd": "go build -o test_root ; ./test_root",
+      "Containers": [
+        {
+          "Object": "specs",
+          "Class": "specstest"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "/tmp/testtool/spec_root.json"
+      ]
+    }
+  ]
+}

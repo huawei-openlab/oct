@@ -219,7 +219,7 @@ func ReceiveTask(w http.ResponseWriter, r *http.Request) {
 	//  untar it, the test case will be put into taskID/config.json
 	// Should always use 'config.json'
 	// content := libocit.ReadTar(real_url, "config.json", "")
-	content := libocit.ReadTar(real_url, "", ".json")
+	content := libocit.ReadCaseFromTar(real_url)
 	if pub_config.Debug {
 		fmt.Println(content)
 	}

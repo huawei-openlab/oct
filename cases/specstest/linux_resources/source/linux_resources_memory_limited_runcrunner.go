@@ -14,11 +14,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type TestResult struct {
@@ -26,22 +26,21 @@ type TestResult struct {
 }
 
 func resourcesMemoryLimited() {
-	//excute the runc
-	cmd := exec.Command("runc")
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("Start: %v", err)
-		fmt.Println("Start: %v", err)
-	}
 
+	go startrunc()
+
+	//cat the file touched inside the container verify whether the mount propagation works
+	readdata()
+
+}
+func readdata() {
 	// init the output json file
 	testResult := new(TestResult)
 	testResult.Memory = make(map[string]string)
 
-	//cat the file touched inside the container verify whether the mount propagation works
-	cmd1 := exec.Command("cat", "/sys/fs/cgroup/memory/user/1000.user/c2.session/runc_test/memory.limit_in_bytes")
+	time.Sleep(3 * time.Second)
+	log.Println("sleep 3 seonds")
+	cmd1 := exec.Command("bash", "-c", "cat  /sys/fs/*/*/*/*/*/source/memory.limit_in_bytes")
 	cmdouput, err1 := cmd1.Output()
 	var comparestring, cmdout string
 	comparestring = "204800"
@@ -55,7 +54,6 @@ func resourcesMemoryLimited() {
 			testResult.Memory["Memory.Limit"] = "failed"
 		}
 	}
-
 	//output the json file
 	jsonString, err := json.Marshal(testResult)
 	if err != nil {
@@ -72,6 +70,19 @@ func resourcesMemoryLimited() {
 	} else {
 		fout.WriteString(string(jsonString))
 	}
+}
+
+func startrunc() {
+	//excute the runc
+	log.Println("entering runc")
+	cmd := exec.Command("runc")
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Start: %v", err)
+	}
+
 }
 
 func main() {

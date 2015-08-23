@@ -3,6 +3,7 @@
 *.a
 *.so
 
+
 # Folders
 _obj
 _test
@@ -19,6 +20,18 @@ _cgo_export.*
 
 _testmain.go
 
+
 *.exe
 *.test
 *.prof
+
+
+cases/specstest/*.tar.gz
+engine/containerpool/containerpool
+engine/ocitd/ocitd
+engine/scheduler/*.tar.gz
+engine/scheduler/scheduler
+engine/tcserver/tcserver
+engine/testserver/testserver
+engine/tools/casevalidator/casevalidator
+engine/tools/report/report

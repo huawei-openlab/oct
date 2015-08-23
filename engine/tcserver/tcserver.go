@@ -2,6 +2,7 @@ package main
 
 import (
 	"../lib/libocit"
+	"../lib/casevalidator"
 	"../lib/routes"
 	"bytes"
 	"encoding/json"
@@ -18,16 +19,22 @@ import (
 
 type TCServerConf struct {
 	GitRepo  string
-	CaseDir  string
-	Group    []string
+	CaseFolderName  string
+	Groups    []Group
 	CacheDir string
 	Port     int
 }
 
+type Group struct {
+	Name string
+	LibFolderName string
+}
+
 type MetaUnit struct {
 	ID     string
-	Group  string
 	Name   string
+	GroupDir string
+	LibFolderName string
 	Status string
 	//0 means not tested
 	TestedTime       int64
@@ -57,21 +64,15 @@ func RefreshRepo() {
 	fmt.Println("Refresh done")
 }
 
-//TODO, since case validation is not implemented now, return 0 means the case is invalid
 func LastModified(case_dir string) (last_modified int64) {
-	config_url := path.Join(case_dir, "config.json")
-	fi, err := os.Stat(config_url)
 	last_modified = 0
-	if err != nil {
-		return last_modified
-	} else {
-		last_modified = fi.ModTime().Unix()
-	}
-	files, _ := ioutil.ReadDir(path.Join(config_url, "source"))
+	files, _ := ioutil.ReadDir(case_dir)
 	for _, file := range files {
 		if file.IsDir() {
-			//This case format is not suggested
-			continue
+			sub_lm := LastModified(path.Join(case_dir, file.Name()))
+			if last_modified < sub_lm {
+				last_modified = sub_lm
+			}
 		} else {
 			if last_modified < file.ModTime().Unix() {
 				last_modified = file.ModTime().Unix()
@@ -81,12 +82,77 @@ func LastModified(case_dir string) (last_modified int64) {
 	return last_modified
 }
 
+func LoadCase(groupDir string, caseName string, caseLibFolderName string) {
+	caseDir := path.Join(groupDir, caseName)
+	_, err_msgs := casevalidator.ValidateByDir(caseDir, "")
+	if len(err_msgs) == 0 {
+				last_modified := LastModified(caseDir)
+				store_md := libocit.MD5(caseDir)
+				if v, ok := store[store_md]; ok {
+					//Happen when we refresh the repo
+					(*v).LastModifiedTime = last_modified
+					fi, err := os.Stat(path.Join(caseDir, "report.md"))
+					if err != nil {
+						(*v).TestedTime = 0
+					} else {
+						(*v).TestedTime = fi.ModTime().Unix()
+					}
+					if (*v).LastModifiedTime > (*v).TestedTime {
+						(*v).Status = "idle"
+					} else {
+						(*v).Status = "tested"
+					}
+				} else {
+					var meta MetaUnit
+					meta.ID = store_md
+					meta.Name = caseName
+					meta.GroupDir = groupDir
+					meta.LibFolderName = caseLibFolderName
+					fi, err := os.Stat(path.Join(caseDir, "report.md"))
+					if err != nil {
+						meta.TestedTime = 0
+					} else {
+						meta.TestedTime = fi.ModTime().Unix()
+					}
+					meta.LastModifiedTime = last_modified
+					if meta.LastModifiedTime > meta.TestedTime {
+						meta.Status = "idle"
+					} else {
+						meta.Status = "tested"
+					}
+					store[store_md] = &meta
+				}
+	} else {
+		fmt.Println("Error in loading case: ", caseDir, " . Skip it")
+		return
+	}
+}
+
+func LoadCaseGroup(groupDir string, libDir string) {
+	files, _ := ioutil.ReadDir(groupDir)
+	for _, file := range files {
+		if file.IsDir() {
+			if len(libDir) > 0 {
+				if libDir == file.Name() {
+					continue
+				} else {
+					LoadCase(groupDir, file.Name(), libDir)
+				}
+			} else {
+				LoadCase(groupDir, file.Name(), "")
+			}
+		}
+	}
+}
+
 func LoadDB() {
 	RefreshRepo()
 
-	for g_index := 0; g_index < len(pub_config.Group); g_index++ {
+	for g_index := 0; g_index < len(pub_config.Groups); g_index++ {
 		repo_name := strings.Replace(path.Base(pub_config.GitRepo), ".git", "", 1)
-		group_dir := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseDir, pub_config.Group[g_index])
+		group_dir := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseFolderName, pub_config.Groups[g_index].Name)
+		LoadCaseGroup(group_dir, pub_config.Groups[g_index].LibFolderName)
+/*
 		files, _ := ioutil.ReadDir(group_dir)
 		for _, file := range files {
 			if file.IsDir() {
@@ -133,6 +199,7 @@ func LoadDB() {
 				}
 			}
 		}
+*/
 	}
 }
 
@@ -176,9 +243,14 @@ func ListCases(w http.ResponseWriter, r *http.Request) {
 func GetCase(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 	meta := store[id]
-	repo_name := strings.Replace(path.Base(pub_config.GitRepo), ".git", "", 1)
-	case_dir := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseDir, meta.Group, meta.Name)
-	tar_url := libocit.TarDir(case_dir)
+	files := libocit.GetDirFiles(meta.GroupDir, meta.Name)
+	if len(meta.LibFolderName) > 0 {
+		lib_files := libocit.GetDirFiles(meta.GroupDir, meta.LibFolderName)
+		for index := 0; index < len(lib_files); index++ {
+			files = append(files, lib_files[index])
+		}
+	}
+	tar_url := libocit.TarFileList(files, meta.GroupDir, meta.Name)
 
 	file, err := os.Open(tar_url)
 	defer file.Close()
@@ -198,7 +270,7 @@ func GetCaseReport(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get(":ID")
 	meta := store[id]
 	repo_name := strings.Replace(path.Base(pub_config.GitRepo), ".git", "", 1)
-	report_url := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseDir, meta.Group, meta.Name, "report.md")
+	report_url := path.Join(pub_config.CacheDir, repo_name, pub_config.CaseFolderName, meta.GroupDir, meta.Name, "report.md")
 
 	_, err := os.Stat(report_url)
 	if err != nil {

@@ -1,0 +1,48 @@
+{
+  "Name": "netns-get",
+  "Version": "1.0.0",
+  "Summary": "Test network namespace get function",
+  "Owner": "chengtiesheng@huawei.com",
+  "Description": "Test network namespace get function",
+  "Group": "network/netns-get/",
+  "License": "Apache 2.0",
+  "Explains": "",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Version": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/netns_get.go"
+      ],
+      "Cmd": "go build netns_get.go"
+    }
+  ],
+  "Run": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Cmd": "./netns_get"
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "netns-get-res.json"
+      ]
+    }
+  ]
+}
