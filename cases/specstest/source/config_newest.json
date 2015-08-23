@@ -1,22 +1,8 @@
 {
-<<<<<<< HEAD
     "version": "pre-draft",
     "platform": {
-        "os": "",
-        "arch": ""
-=======
-  "version": "pre-draft",
-  "platform": {
-    "os": "linux",
-    "arch": "amd64"
-  },
-  "process": {
-    "terminal": false,
-    "user": {
-      "uid": 0,
-      "gid": 0,
-      "additionalGids": null
->>>>>>> huawei/master
+        "os": "linux",
+        "arch": "amd64"
     },
     "process": {
         "terminal": false,
