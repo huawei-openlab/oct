@@ -18,28 +18,37 @@ package main
 //shoud use github path ,but the whole project is not supported
 import "../../source/specs"
 
-func TestMntPathEmpty() string {
+func setUtsSpec(ns specs.Namespace) specs.LinuxSpec {
+	spec := linuxSpec
+	spec.Linux.Namespaces = append(spec.Linux.Namespaces, ns)
+	spec.Process.Args = append(spec.Process.Args, "/bin/readlink", "/proc/self/ns/uts")
+	return spec
 
-	ns := specs.Namespace{Type: "mount",
-		Path: ""}
-
-	ls := linuxSpec
-	ls.Process.Args = append(ls.Process.Args, "/bin/readlink", "/proc/self/ns/mnt")
-	result, err := TestPathEmpty(&ls, "/proc/*/ns/mnt")
-
-	return MarshalTestResult("TestMntPathEmpty", ns, err, result)
 }
 
-func TestMntPathUnempty() string {
+func TestUtsPathEmpty() string {
 
-	ns := specs.Namespace{Type: "mount",
-		Path: "/proc/1/ns/mnt"}
+	ns := specs.Namespace{Type: "uts",
+		Path: ""}
 
-	ls := linuxSpec
-	ls.Process.Args = append(ls.Process.Args, "/bin/readlink", "/proc/self/ns/mnt")
-	ls.Linux.Namespaces[0] = ns
+	ls := setUtsSpec(ns)
+	result, err := TestPathEmpty(&ls, "/proc/*/ns/uts")
 
+	var testResult TestResult
+	testResult.Set("TestUtsPathEmpty", ns, err, result)
+	return testResult.Marshal()
+}
+
+func TestUtsPathUnempty() string {
+
+	ns := specs.Namespace{Type: "uts",
+		Path: "/proc/1/ns/uts"}
+
+	ls := setUtsSpec(ns)
 	result, err := TestPathUnEmpty(&ls, ns.Path)
-	return MarshalTestResult("TestMntPathUnempty", ns, err, result)
+
+	var testResult TestResult
+	testResult.Set("TestUtsPathUnempty", ns, err, result)
+	return testResult.Marshal()
 
 }
