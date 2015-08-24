@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package linuxnamespace
 
 //import "github.com/opencontainers/specs"
 //shoud use github path ,but the whole project is not supported
-import "../../source/specs"
+import (
+	"github.com/huawei-openlab/oct/cases/specstest/manager"
+	"github.com/opencontainers/specs"
+)
 
 func setUtsSpec(ns specs.Namespace) specs.LinuxSpec {
 	spec := linuxSpec
