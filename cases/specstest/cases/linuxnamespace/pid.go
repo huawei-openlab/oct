@@ -44,7 +44,7 @@ func TestPidPathEmpty() string {
 	ls := setPidSpec(ns)
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/pid")
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestPidPathEmpty", ns, err, result)
 	return testResult.Marshal()
 }
@@ -57,7 +57,7 @@ func TestPidPathUnempty() string {
 	ls := setPidSpec(ns)
 	result, err := TestPathUnEmpty(&ls, ns.Path)
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestPidPathUnempty", ns, err, result)
 	return testResult.Marshal()
 

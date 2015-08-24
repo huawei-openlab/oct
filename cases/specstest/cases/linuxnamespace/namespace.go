@@ -16,14 +16,12 @@ package linuxnamespace
 
 import (
 	"errors"
-	"io/ioutil"
 	"log"
 	"os/exec"
 	"runtime"
 	"strings"
 
 	"github.com/huawei-openlab/oct/cases/specstest/adaptor"
-	"github.com/huawei-openlab/oct/cases/specstest/hostenv"
 	"github.com/huawei-openlab/oct/cases/specstest/manager"
 	"github.com/huawei-openlab/oct/cases/specstest/utils/configconvert"
 	"github.com/opencontainers/specs"
@@ -76,31 +74,23 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 	},
 }
 
-var testSuite TestSuite = TestSuite{Name: "LinuxSpec.Linux.Namespaces"}
+var TestSuiteNP manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Namespaces"}
 
 func init() {
-	testSuite.AddTestCase("TestPidPathEmpty", TestPidPathEmpty)
-	testSuite.AddTestCase("TestPidPathUnempty", TestPidPathUnempty)
+	TestSuiteNP.AddTestCase("TestPidPathEmpty", TestPidPathEmpty)
+	TestSuiteNP.AddTestCase("TestPidPathUnempty", TestPidPathUnempty)
 
-	testSuite.AddTestCase("TestIpcPathEmpty", TestIpcPathEmpty)
-	testSuite.AddTestCase("TestIpcPathUnempty", TestIpcPathUnempty)
+	TestSuiteNP.AddTestCase("TestIpcPathEmpty", TestIpcPathEmpty)
+	TestSuiteNP.AddTestCase("TestIpcPathUnempty", TestIpcPathUnempty)
 
-	testSuite.AddTestCase("TestNetPathEmpty", TestNetPathEmpty)
-	testSuite.AddTestCase("TestNetPathUnempty", TestNetPathUnempty)
+	TestSuiteNP.AddTestCase("TestNetPathEmpty", TestNetPathEmpty)
+	TestSuiteNP.AddTestCase("TestNetPathUnempty", TestNetPathUnempty)
 
-	testSuite.AddTestCase("TestUtsPathEmpty", TestUtsPathEmpty)
-	testSuite.AddTestCase("TestUtsPathUnempty", TestUtsPathUnempty)
+	TestSuiteNP.AddTestCase("TestUtsPathEmpty", TestUtsPathEmpty)
+	TestSuiteNP.AddTestCase("TestUtsPathUnempty", TestUtsPathUnempty)
 
-	testSuite.AddTestCase("TestMntPathEmpty", TestMntPathEmpty)
-	testSuite.AddTestCase("TestMntPathUnempty", TestMntPathUnempty)
-}
-
-func pullImage() {
-	//Pull image
-	err := hostenv.SetupEnv("", "")
-	if err != nil {
-		log.Fatalf(" Pull image error, %v", err)
-	}
+	TestSuiteNP.AddTestCase("TestMntPathEmpty", TestMntPathEmpty)
+	TestSuiteNP.AddTestCase("TestMntPathUnempty", TestMntPathUnempty)
 }
 
 /**
@@ -136,7 +126,7 @@ func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (string
 	//2. get container's pid namespace after executing  runc
 	out, err := adaptor.StartRunc(configfile)
 	if err != nil {
-		return UNSPPORTED, errors.New(string(out) + err.Error())
+		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
 		//log.Fatalf("write config error, %v\n", errors.New(string(out)+err.Error()))
 	}
 	containerNs := strings.TrimSuffix(string(out), "\n")
@@ -155,9 +145,9 @@ func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (string
 	//4. juge if the container's pid namespace is not in host namespaces
 	var result string
 	if strings.Contains(hostNs, containerNs) {
-		result = FAILED
+		result = manager.FAILED
 	} else {
-		result = PASSED
+		result = manager.PASSED
 	}
 
 	return result, nil
@@ -175,9 +165,9 @@ func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (stri
 	}
 
 	//2. get container's pid namespace after executing  runc
-	out, err := runcstart.StartRunc(configfile)
+	out, err := adaptor.StartRunc(configfile)
 	if err != nil {
-		return UNSPPORTED, errors.New(string(out) + err.Error())
+		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
 		//log.Fatalf("write config error, %v\n", errors.New(string(out)+err.Error()))
 	}
 	containerNs := strings.TrimSuffix(string(out), "\n")
@@ -195,23 +185,10 @@ func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (stri
 	//4. juge if the container's pid namespace is in host namespaces
 	var result string
 	if strings.Contains(hostNs, containerNs) {
-		result = PASSED
+		result = manager.PASSED
 	} else {
-		result = FAILED
+		result = manager.FAILED
 	}
 
 	return result, nil
-}
-
-func main() {
-	pullImage()
-
-	testSuite.Run()
-	result := testSuite.GetResult()
-
-	err := ioutil.WriteFile("namespace_out.json", []byte(result), 0777)
-	if err != nil {
-		log.Fatalf("Write file error,%v\n", err)
-	}
-
 }

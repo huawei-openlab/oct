@@ -37,7 +37,7 @@ func TestNetPathEmpty() string {
 	ls := setNetSpec(ns)
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/net")
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestNetPathEmpty", ns, err, result)
 	return testResult.Marshal()
 }
@@ -50,7 +50,7 @@ func TestNetPathUnempty() string {
 	ls := setNetSpec(ns)
 	result, err := TestPathUnEmpty(&ls, ns.Path)
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestNetPathUnempty", ns, err, result)
 	return testResult.Marshal()
 

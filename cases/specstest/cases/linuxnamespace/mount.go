@@ -30,7 +30,7 @@ func TestMntPathEmpty() string {
 	ls.Process.Args = append(ls.Process.Args, "/bin/readlink", "/proc/self/ns/mnt")
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/mnt")
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestMntPathEmpty", ns, err, result)
 	return testResult.Marshal()
 }
@@ -46,7 +46,7 @@ func TestMntPathUnempty() string {
 
 	result, err := TestPathUnEmpty(&ls, ns.Path)
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestMntPathUnempty", ns, err, result)
 	return testResult.Marshal()
 

@@ -57,13 +57,13 @@ func SetupEnv(guestFile string, outputFile string) error {
 	if err != nil {
 		log.Fatalf("Specstest root readonly test: export image error, %v", err)
 	}
-	cmd = exec.Command("/bin/sh", "-c", "mkdir -p ./../../source/rootfs_rootconfig")
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p ./rootfs_rootconfig")
 	_, err = cmd.Output()
 	if err != nil {
 		log.Fatalf("Specstest root readonly test: create rootfs dir error, %v", err)
 	}
 	fmt.Println("Extract rootfs...................")
-	cmd = exec.Command("/bin/sh", "-c", "tar -C ./../../source/rootfs_rootconfig -xf ubuntu.tar")
+	cmd = exec.Command("/bin/sh", "-c", "tar -C ./rootfs_rootconfig -xf ubuntu.tar")
 	_, err = cmd.Output()
 	if err != nil {
 		log.Fatalf("Specstest root readonly test: create rootfs content error, %v", err)
