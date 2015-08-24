@@ -14,6 +14,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"reflect"
 	"strings"
@@ -42,8 +43,27 @@ type TestResult struct {
 	Input interface{} `json:"input"`
 	//funtion return error
 	Err string `json:"error,omitempty"`
-	//test result,true is pass
+	//test result,passed,failed or unspported
 	Result string `json:"result"`
+}
+
+func (this *TestResult) Set(testCaseName string, input interface{}, err error, result string) {
+	this.TestCaseName = testCaseName
+	this.Input = input
+	if err != nil {
+		this.Err = err.Error()
+	} else {
+		this.Err = ""
+	}
+	this.Result = result
+}
+
+func (this *TestResult) Marshal() string {
+	js, err := json.Marshal(*this)
+	if err != nil {
+		log.Fatalf("Marshal error,%v\n", err)
+	}
+	return string(js)
 }
 
 func (this *TestSuite) AddTestCase(testCaseName string, implement interface{}) {

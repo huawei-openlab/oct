@@ -15,7 +15,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -100,35 +99,6 @@ func init() {
 	testSuite.AddTestCase("TestMntPathUnempty", TestMntPathUnempty)
 }
 
-/**
-*convert TestResult struct to json string
- */
-func MarshalTestResult(testCaseName string, input interface{}, err error, result bool) string {
-
-	var rs string
-	if result {
-		rs = PASSED
-	} else {
-		rs = FAILED
-	}
-
-	var errString string = ""
-	if err != nil {
-		errString = err.Error()
-	}
-	tr := TestResult{
-		TestCaseName: testCaseName,
-		Input:        input,
-		Err:          errString,
-		Result:       rs}
-
-	js, err := json.Marshal(tr)
-	if err != nil {
-		log.Fatalf("Marshal error,%v\n", err)
-	}
-	return string(js)
-}
-
 func pullImage() {
 	//Pull image
 	err := hostsetup.SetupEnv("", "")
@@ -159,7 +129,7 @@ func getHostNs(bashCommand string) (string, error) {
 /**
 *container unreused namespace of host
  */
-func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool, error) {
+func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (string, error) {
 	//1. output json file for runc
 	configfile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configfile, linuxSpec)
@@ -170,7 +140,7 @@ func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool, 
 	//2. get container's pid namespace after executing  runc
 	out, err := runcstart.StartRunc(configfile)
 	if err != nil {
-		return false, errors.New(string(out) + err.Error())
+		return UNSPPORTED, errors.New(string(out) + err.Error())
 		//log.Fatalf("write config error, %v\n", errors.New(string(out)+err.Error()))
 	}
 	containerNs := strings.TrimSuffix(string(out), "\n")
@@ -187,11 +157,11 @@ func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool, 
 	}
 
 	//4. juge if the container's pid namespace is not in host namespaces
-	var result bool
+	var result string
 	if strings.Contains(hostNs, containerNs) {
-		result = false
+		result = FAILED
 	} else {
-		result = true
+		result = PASSED
 	}
 
 	return result, nil
@@ -200,7 +170,7 @@ func TestPathEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool, 
 /**
 *container reused namespace of host
  */
-func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool, error) {
+func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (string, error) {
 	//1. output json file for runc
 	configfile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configfile, linuxSpec)
@@ -211,7 +181,7 @@ func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool
 	//2. get container's pid namespace after executing  runc
 	out, err := runcstart.StartRunc(configfile)
 	if err != nil {
-		return false, errors.New(string(out) + err.Error())
+		return UNSPPORTED, errors.New(string(out) + err.Error())
 		//log.Fatalf("write config error, %v\n", errors.New(string(out)+err.Error()))
 	}
 	containerNs := strings.TrimSuffix(string(out), "\n")
@@ -227,11 +197,11 @@ func TestPathUnEmpty(linuxSpec *specs.LinuxSpec, hostNamespacePath string) (bool
 	}
 
 	//4. juge if the container's pid namespace is in host namespaces
-	var result bool
+	var result string
 	if strings.Contains(hostNs, containerNs) {
-		result = true
+		result = PASSED
 	} else {
-		result = false
+		result = FAILED
 	}
 
 	return result, nil
