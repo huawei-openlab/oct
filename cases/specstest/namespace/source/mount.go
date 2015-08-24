@@ -27,7 +27,9 @@ func TestMntPathEmpty() string {
 	ls.Process.Args = append(ls.Process.Args, "/bin/readlink", "/proc/self/ns/mnt")
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/mnt")
 
-	return MarshalTestResult("TestMntPathEmpty", ns, err, result)
+	var testResult TestResult
+	testResult.Set("TestMntPathEmpty", ns, err, result)
+	return testResult.Marshal()
 }
 
 func TestMntPathUnempty() string {
@@ -40,6 +42,9 @@ func TestMntPathUnempty() string {
 	ls.Linux.Namespaces[0] = ns
 
 	result, err := TestPathUnEmpty(&ls, ns.Path)
-	return MarshalTestResult("TestMntPathUnempty", ns, err, result)
+
+	var testResult TestResult
+	testResult.Set("TestMntPathUnempty", ns, err, result)
+	return testResult.Marshal()
 
 }

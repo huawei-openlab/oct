@@ -34,7 +34,9 @@ func TestIpcPathEmpty() string {
 	ls := setIpcSpec(ns)
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/ipc")
 
-	return MarshalTestResult("TestIpcPathEmpty", ns, err, result)
+	var testResult TestResult
+	testResult.Set("TestIpcPathEmpty", ns, err, result)
+	return testResult.Marshal()
 }
 
 func TestIpcPathUnempty() string {
@@ -44,6 +46,8 @@ func TestIpcPathUnempty() string {
 
 	ls := setIpcSpec(ns)
 	result, err := TestPathUnEmpty(&ls, ns.Path)
-	return MarshalTestResult("TestIpcPathUnempty", ns, err, result)
 
+	var testResult TestResult
+	testResult.Set("TestIpcPathUnempty", ns, err, result)
+	return testResult.Marshal()
 }
