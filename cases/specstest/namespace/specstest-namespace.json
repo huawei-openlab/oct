@@ -1,7 +1,7 @@
 {
   "Name": "Specstest-namespace-runc",
   "Summary": "test based opencontainers/specs",
-  "Owner": "linzhinan@huawei.com",
+  "Owner": "liugenping@huawei.com",
   "Description": "Test runc's namespace",
   "Group": "Specstest/namespace/",
   "License": "Apache 2.0",
@@ -32,7 +32,7 @@
       "Files": [
         "../../source/config.json"
       ],
-      "Cmd": "go build namespace.go",
+      "Cmd": "go build namespace.go  ipc.go  network.go pid.go testframe.go uts.go mount.go",
       "Containers": [
         {
           "Object": "specs",
@@ -58,8 +58,7 @@
     {
       "Object": "hostA",
       "Files": [
-        "./source/namespace_config_out.json",
-        "./source/namespace_notconfig_out.json"
+        "./source/namespace_out.json"
       ]
     }
   ]
