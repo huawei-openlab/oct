@@ -11,20 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package main
+package manager
 
 import (
+	"encoding/json"
 	"log"
 	"reflect"
 	"strings"
 )
 
 type TestCase struct {
-	Name      string
+	// Testcase name, assignment in AddTestCase by testcase
+	Name string
+	// Testcase function implement
 	Implement reflect.Value
 }
 
 type TestSuite struct {
+	// Name of testsuit, for example, LinuxSpec.Linux.Namespaces
 	Name       string
 	TestCase   []*TestCase
 	TestResult []string
@@ -36,16 +40,44 @@ const (
 	UNSPPORTED = "unspported"
 )
 
+// TestResult to conver to json output
 type TestResult struct {
 	TestCaseName string `json:"testcasename"`
-	//prepare json string
+	// Json string : input of config
 	Input interface{} `json:"input"`
 	//funtion return error
 	Err string `json:"error,omitempty"`
-	//test result,true is pass
+	//test result,passed,failed or unspported
 	Result string `json:"result"`
 }
 
+// Set the TestResult structure
+// testCaseName : TestCase.Name
+// input : obj of test config, for example, LinuxSpec.Linux.Namespaces
+// err : return value of TestCase.Implement func
+// result : TestSuite.TestResult
+func (this *TestResult) Set(testCaseName string, input interface{}, err error, result string) {
+	this.TestCaseName = testCaseName
+	this.Input = input
+	if err != nil {
+		this.Err = err.Error()
+	} else {
+		this.Err = ""
+	}
+	this.Result = result
+}
+
+// Conver TestResult to json string
+func (this *TestResult) Marshal() string {
+	js, err := json.Marshal(*this)
+	if err != nil {
+		log.Fatalf("Marshal error,%v\n", err)
+	}
+	return string(js)
+}
+
+// Add testcase to TestSuite
+// impliment : TestCase.Implement, function of testcase
 func (this *TestSuite) AddTestCase(testCaseName string, implement interface{}) {
 	for _, tc := range this.TestCase {
 		if tc.Name == testCaseName || tc.Implement == reflect.ValueOf(implement) {
@@ -58,6 +90,7 @@ func (this *TestSuite) AddTestCase(testCaseName string, implement interface{}) {
 	this.TestCase = append(this.TestCase, tc)
 }
 
+// Run testcases in TestSuite
 func (this *TestSuite) Run() {
 
 	for _, tc := range this.TestCase {
@@ -69,6 +102,8 @@ func (this *TestSuite) Run() {
 		}
 	}
 }
+
+// Merge jsonstring of each testcases in TestSuite into one json string
 func (this *TestSuite) GetResult() string {
 
 	result := "{\"" + this.Name + "\":["
