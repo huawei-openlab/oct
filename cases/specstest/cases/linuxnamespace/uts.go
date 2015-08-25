@@ -37,7 +37,7 @@ func TestUtsPathEmpty() string {
 	ls := setUtsSpec(ns)
 	result, err := TestPathEmpty(&ls, "/proc/*/ns/uts")
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestUtsPathEmpty", ns, err, result)
 	return testResult.Marshal()
 }
@@ -50,7 +50,7 @@ func TestUtsPathUnempty() string {
 	ls := setUtsSpec(ns)
 	result, err := TestPathUnEmpty(&ls, ns.Path)
 
-	var testResult TestResult
+	var testResult manager.TestResult
 	testResult.Set("TestUtsPathUnempty", ns, err, result)
 	return testResult.Marshal()
 
