@@ -1,0 +1,56 @@
+{
+  "Name": "Specstest-mount_fstype_tmpfs",
+  "Summary": "test based opencontainers/specs",
+  "Owner": "wangqilin2@huawei.com",
+  "Description": "Test runc whether it can mount the tmpfs filesystem",
+  "Group": "Specstest/mount_fstype/",
+  "License": "Apache 2.0",
+  "Explains": "Test whether the container supports to mount a filesystem",
+  "Requires": [
+    {
+      "Class": "OperationOS",
+      "Type": "os",
+      "Distribution": "ubuntu",
+      "Version": "14.04",
+      "Resource": {
+        "CPU": 1,
+        "Memory": "1GB",
+        "Disk": "2G"
+      }
+    },
+    {
+      "Class": "specstest",
+      "Type": "container",
+      "Distribution": "runc",
+      "Version": "0.2",
+      "Files": [
+        "./source/config.json"
+      ]
+    }
+  ],
+  "Deploys": [
+    {
+      "Object": "hostA",
+      "Class": "OperationOS",
+      "Files": [
+        "./source/mount_guest.go",
+        "./source/mount.go"
+      ],
+      "Cmd": "go build mount.go;./mount",
+      "Containers": [
+        {
+          "Object": "specs",
+          "Class": "specstest"
+        }
+      ]
+    }
+  ],
+  "Collects": [
+    {
+      "Object": "hostA",
+      "Files": [
+        "/tmp/testtool/spec_mount_out.json"
+      ]
+    }
+  ]
+}
