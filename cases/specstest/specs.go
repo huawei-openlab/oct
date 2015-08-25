@@ -19,6 +19,7 @@ import (
 	"log"
 
 	"github.com/huawei-openlab/oct/cases/specstest/cases/linuxnamespace"
+	"github.com/huawei-openlab/oct/cases/specstest/cases/specversion"
 	"github.com/huawei-openlab/oct/cases/specstest/hostenv"
 )
 
@@ -33,7 +34,16 @@ func main() {
 
 	err = ioutil.WriteFile("namespace_out.json", []byte(result), 0777)
 	if err != nil {
-		log.Fatalf("Write file error,%v\n", err)
+		log.Fatalf("Write namespace out file error,%v\n", err)
+	}
+
+	// spec.version test
+	specversion.TestSuiteVersion.Run()
+	result = specversion.TestSuiteVersion.GetResult()
+
+	err = ioutil.WriteFile("Version_out.json", []byte(result), 0777)
+	if err != nil {
+		log.Fatalf("Write version out file error,%v\n", err)
 	}
 
 }
