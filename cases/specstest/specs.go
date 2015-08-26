@@ -19,6 +19,7 @@ import (
 	"log"
 
 	"github.com/huawei-openlab/oct/cases/specstest/cases/linuxnamespace"
+	"github.com/huawei-openlab/oct/cases/specstest/cases/specmount"
 	"github.com/huawei-openlab/oct/cases/specstest/cases/specversion"
 	"github.com/huawei-openlab/oct/cases/specstest/hostenv"
 )
@@ -44,6 +45,14 @@ func main() {
 	err = ioutil.WriteFile("Version_out.json", []byte(result), 0777)
 	if err != nil {
 		log.Fatalf("Write version out file error,%v\n", err)
+	}
+
+	// spec.mount test
+	specmount.TestSuiteMount.Run()
+	result = specmount.TestSuiteMount.GetResult()
+	err = ioutil.WriteFile("Mount_out.json", []byte(result), 0777)
+	if err != nil {
+		log.Fatalf("Write mount out file error,%v\n", err)
 	}
 
 }
