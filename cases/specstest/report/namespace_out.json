@@ -1,1 +1,85 @@
-{"LinuxSpec.Linux.Namespaces":[{"testcasename":"TestPidPathEmpty","input":{"type":"pid","path":""},"result":"passed"},{"testcasename":"TestPidPathUnempty","input":{"type":"pid","path":"/proc/1/ns/pid"},"result":"passed"},{"testcasename":"TestIpcPathEmpty","input":{"type":"ipc","path":""},"result":"passed"},{"testcasename":"TestIpcPathUnempty","input":{"type":"ipc","path":"/proc/1/ns/ipc"},"result":"passed"},{"testcasename":"TestNetPathEmpty","input":{"type":"network","path":""},"result":"passed"},{"testcasename":"TestNetPathUnempty","input":{"type":"network","path":"/proc/1/ns/net"},"result":"passed"},{"testcasename":"TestUtsPathEmpty","input":{"type":"uts","path":""},"result":"passed"},{"testcasename":"TestUtsPathUnempty","input":{"type":"uts","path":"/proc/1/ns/uts"},"result":"passed"},{"testcasename":"TestMntPathEmpty","input":{"type":"mount","path":""},"result":"passed"},{"testcasename":"TestMntPathUnempty","input":{"type":"mount","path":"/proc/1/ns/mnt"},"error":"time=\"2015-08-24T20:15:25+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-08-24T20:15:25+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1","result":"unspported"}]}
+{
+  "LinuxSpec.Linux.Namespaces": [
+    {
+      "testcasename": "TestPidPathEmpty",
+      "input": {
+        "type": "pid",
+        "path": ""
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestPidPathUnempty",
+      "input": {
+        "type": "pid",
+        "path": "/proc/1/ns/pid"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestIpcPathEmpty",
+      "input": {
+        "type": "ipc",
+        "path": ""
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestIpcPathUnempty",
+      "input": {
+        "type": "ipc",
+        "path": "/proc/1/ns/ipc"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestNetPathEmpty",
+      "input": {
+        "type": "network",
+        "path": ""
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestNetPathUnempty",
+      "input": {
+        "type": "network",
+        "path": "/proc/1/ns/net"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestUtsPathEmpty",
+      "input": {
+        "type": "uts",
+        "path": ""
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestUtsPathUnempty",
+      "input": {
+        "type": "uts",
+        "path": "/proc/1/ns/uts"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestMntPathEmpty",
+      "input": {
+        "type": "mount",
+        "path": ""
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestMntPathUnempty",
+      "input": {
+        "type": "mount",
+        "path": "/proc/1/ns/mnt"
+      },
+      "error": "time=\"2015-08-26T11:26:04+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-08-26T11:26:04+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1",
+      "result": "unspported"
+    }
+  ]
+}

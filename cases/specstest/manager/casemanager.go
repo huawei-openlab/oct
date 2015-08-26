@@ -38,6 +38,7 @@ const (
 	PASSED     = "passed"
 	FAILED     = "failed"
 	UNSPPORTED = "unspported"
+	UNKNOWNERR = "unknowErr"
 )
 
 // TestResult to conver to json output

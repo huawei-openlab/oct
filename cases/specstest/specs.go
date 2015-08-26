@@ -18,6 +18,8 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/huawei-openlab/oct/cases/specstest/cases/specplatform"
+	"github.com/huawei-openlab/oct/cases/specstest/cases/specroot"
 	"github.com/huawei-openlab/oct/cases/specstest/cases/linuxnamespace"
 	"github.com/huawei-openlab/oct/cases/specstest/cases/specmount"
 	"github.com/huawei-openlab/oct/cases/specstest/cases/specversion"
@@ -53,6 +55,21 @@ func main() {
 	err = ioutil.WriteFile("Mount_out.json", []byte(result), 0777)
 	if err != nil {
 		log.Fatalf("Write mount out file error,%v\n", err)
+	}
+
+	specroot.TestSuiteRoot.Run()
+	result = specroot.TestSuiteRoot.GetResult()
+
+	err = ioutil.WriteFile("Root_out.json", []byte(result), 0777)
+	if err != nil {
+		log.Fatalf("Write Root out file error,%v\n", err)
+	}
+
+	specplatform.TestSuitePlatform.Run()
+	result = specplatform.TestSuitePlatform.GetResult()
+	err = ioutil.WriteFile("Platform_out.json", []byte(result), 0777)
+	if err != nil {
+		log.Fatalf("Write Platform out file error,%v\n", err)
 	}
 
 }
