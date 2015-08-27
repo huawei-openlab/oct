@@ -35,12 +35,16 @@ func main() {
 					Name:  "config",
 					Usage: "Config file to validate",
 				},
+				cli.StringFlag{
+                                        Name:  "runtime",
+                                        Usage: "Runtime file to validate",
+                                },
                                 cli.StringFlag{
 					Name: "layout",
 					Usage: "Directory layout to validate",
                                 },
 			},
-			Action: validate,
+			Action: validateProcess,
 		},
 	}
 

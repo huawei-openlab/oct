@@ -45,27 +45,27 @@ var (
 	ErrNoRun = errors.New("no runtime json file found in layout")
 )
 
-func validate(context *cli.Context) {
-    args := context.String("config")
-    
-    if len(args) == 0 {
-        args = context.String("layout")
-        if len(args) == 0 {
-            cli.ShowCommandHelp(context, "validate")
-            return
-        } else {
-           err := validateLayout(args) 
-           if err != nil {
-				fmt.Printf("%s: invalid image layout: %v\n", args, err)
-			} else {
-				fmt.Printf("%s: valid image layout\n", args)
-			}           
-        }
-    } else {
-               validateConfigFile(args)
-    }
+func validateProcess(context *cli.Context) {
+	if args := context.String("config"); len(args) != 0 {
+		validateConfigFile(args)
+	} else if args := context.String("runtime"); len(args) != 0 {
+		validateRuntime(args)
+	} else if args := context.String("layout"); len(args) != 0 {
+		err := validateLayout(args)
+		if err != nil {
+			fmt.Printf("%s: invalid image layout: %v\n", args, err)
+		} else {
+			fmt.Printf("%s: valid image layout\n", args)
+ 		}
 
+	} else {
+		cli.ShowCommandHelp(context, "validate")
+		return
+	}
+}
 
+func validateRuntime(path string) {
+	fmt.Printf("%s: valid runtime config file\n", path)
 }
 
 func validateLayout(path string) error {
