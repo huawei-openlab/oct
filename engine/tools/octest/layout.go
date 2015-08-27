@@ -24,6 +24,13 @@ import (
 	"strings"
 )
 
+type validateRes struct {
+	cfgOK bool
+	runOK bool
+	rfsOK bool
+	config io.Reader
+	runtime io.Reader
+}
 func validateLayout(path string) error {
         fi, err := os.Stat(path)
 	if err != nil {
@@ -33,8 +40,7 @@ func validateLayout(path string) error {
 		return fmt.Errorf("given path %q is not a directory", path)
 	}
 	var flist []string
-	var cfgOK, runOK, rfsOK bool
-	var config, runtime io.Reader
+	var res validateRes
 	walkLayout := func(fpath string, fi os.FileInfo, err error) error {
 		rpath, err := filepath.Rel(path, fpath)
 		if err != nil {
@@ -43,22 +49,22 @@ func validateLayout(path string) error {
 		switch rpath {
 		case ".":
 		case ConfigFile:
-			config, err = os.Open(fpath)
+			res.config, err = os.Open(fpath)
 			if err != nil {
 				return err
 			}
-			cfgOK = true
+			res.cfgOK = true
 		case RuntimeFile:
-			runtime, err = os.Open(fpath)
+			res.runtime, err = os.Open(fpath)
 			if err != nil {
 				return err
 			}
-			runOK = true
+			res.runOK = true
 		case RootfsDir:
 			if !fi.IsDir() {
 				return errors.New("rootfs is not a directory")
 			}
-			rfsOK = true
+			res.rfsOK = true
 		default:
 			flist = append(flist, rpath)
 		}
@@ -67,32 +73,32 @@ func validateLayout(path string) error {
 	if err := filepath.Walk(path, walkLayout); err != nil {
 		return err
 	}
-	return checkLayout(cfgOK, config, runOK, runtime, rfsOK, flist)
+	return checkLayout(res, flist)
 }
 
-func checkLayout(cfgOK bool, config io.Reader, runOK bool, runtime io.Reader, rfsOK bool, files []string) error {
+func checkLayout(res validateRes, files []string) error {
 	defer func() {
-		if rc, ok := config.(io.Closer); ok {
+		if rc, ok := res.config.(io.Closer); ok {
 			rc.Close()
 		}
-		if rc, ok := runtime.(io.Closer); ok {
+		if rc, ok := res.runtime.(io.Closer); ok {
 			rc.Close()
 		}		
 	}()
-	if !cfgOK {
+	if !res.cfgOK {
 		return ErrNoConfig
 	}
-	if !runOK {
+	if !res.runOK {
 		return ErrNoRun 
 	}
-	if !rfsOK {
+	if !res.rfsOK {
 		return ErrNoRootFS
 	}
-	_, err := ioutil.ReadAll(config)
+	_, err := ioutil.ReadAll(res.config)
 	if err != nil {
 		return fmt.Errorf("error reading the layout: %v", err)
 	}
-	_, err = ioutil.ReadAll(runtime)
+	_, err = ioutil.ReadAll(res.runtime)
         if err != nil {
                 return fmt.Errorf("error reading the layout: %v", err)
         }

@@ -19,8 +19,8 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+// It is a cli framework.
 func main() {
-
 	app := cli.NewApp()
 	app.Name = "oct"
 	app.Usage = "Tools for OCI specs test"
@@ -49,5 +49,7 @@ func main() {
 	}
 
 	app.Run(os.Args)
+
+	return
 }
 
