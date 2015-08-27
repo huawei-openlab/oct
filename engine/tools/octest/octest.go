@@ -1,4 +1,4 @@
-// Copyright 2015 The appc Authors
+// Copyright 2015 The oct Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,12 +35,16 @@ func main() {
 					Name:  "config",
 					Usage: "Config file to validate",
 				},
+				cli.StringFlag{
+                                        Name:  "runtime",
+                                        Usage: "Runtime file to validate",
+                                },
                                 cli.StringFlag{
 					Name: "layout",
 					Usage: "Directory layout to validate",
                                 },
 			},
-			Action: validate,
+			Action: validateProcess,
 		},
 	}
 

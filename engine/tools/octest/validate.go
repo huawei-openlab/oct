@@ -34,6 +34,7 @@ import (
 const (
 	// Path to config file inside the layout
 	ConfigFile = "config.json"
+	RuntimeFile = "runtime.json"
 	// Path to rootfs directory inside the layout
 	RootfsDir = "rootfs"
 )
@@ -41,29 +42,30 @@ const (
 var (
 	ErrNoRootFS   = errors.New("no rootfs found in layout")
 	ErrNoConfig = errors.New("no config json file found in layout")
+	ErrNoRun = errors.New("no runtime json file found in layout")
 )
 
-func validate(context *cli.Context) {
-    args := context.String("config")
-    
-    if len(args) == 0 {
-        args = context.String("layout")
-        if len(args) == 0 {
-            cli.ShowCommandHelp(context, "validate")
-            return
-        } else {
-           err := validateLayout(args) 
-           if err != nil {
-				fmt.Printf("%s: invalid image layout: %v\n", args, err)
-			} else {
-				fmt.Printf("%s: valid image layout\n", args)
-			}           
-        }
-    } else {
-               validateConfigFile(args)
-    }
+func validateProcess(context *cli.Context) {
+	if args := context.String("config"); len(args) != 0 {
+		validateConfigFile(args)
+	} else if args := context.String("runtime"); len(args) != 0 {
+		validateRuntime(args)
+	} else if args := context.String("layout"); len(args) != 0 {
+		err := validateLayout(args)
+		if err != nil {
+			fmt.Printf("%s: invalid image layout: %v\n", args, err)
+		} else {
+			fmt.Printf("%s: valid image layout\n", args)
+ 		}
 
+	} else {
+		cli.ShowCommandHelp(context, "validate")
+		return
+	}
+}
 
+func validateRuntime(path string) {
+	fmt.Printf("%s: valid runtime config file\n", path)
 }
 
 func validateLayout(path string) error {
@@ -75,8 +77,8 @@ func validateLayout(path string) error {
 		return fmt.Errorf("given path %q is not a directory", path)
 	}
 	var flist []string
-	var imOK, rfsOK bool
-	var im io.Reader
+	var cfgOK, runOK, rfsOK bool
+	var config, runtime io.Reader
 	walkLayout := func(fpath string, fi os.FileInfo, err error) error {
 		rpath, err := filepath.Rel(path, fpath)
 		if err != nil {
@@ -85,11 +87,17 @@ func validateLayout(path string) error {
 		switch rpath {
 		case ".":
 		case ConfigFile:
-			im, err = os.Open(fpath)
+			config, err = os.Open(fpath)
 			if err != nil {
 				return err
 			}
-			imOK = true
+			cfgOK = true
+		case RuntimeFile:
+			runtime, err = os.Open(fpath)
+			if err != nil {
+				return err
+			}
+			runOK = true
 		case RootfsDir:
 			if !fi.IsDir() {
 				return errors.New("rootfs is not a directory")
@@ -103,25 +111,35 @@ func validateLayout(path string) error {
 	if err := filepath.Walk(path, walkLayout); err != nil {
 		return err
 	}
-	return checkLayout(imOK, im, rfsOK, flist)
+	return checkLayout(cfgOK, config, runOK, runtime, rfsOK, flist)
 }
 
-func checkLayout(imOK bool, im io.Reader, rfsOK bool, files []string) error {
+func checkLayout(cfgOK bool, config io.Reader, runOK bool, runtime io.Reader, rfsOK bool, files []string) error {
 	defer func() {
-		if rc, ok := im.(io.Closer); ok {
+		if rc, ok := config.(io.Closer); ok {
 			rc.Close()
 		}
+		if rc, ok := runtime.(io.Closer); ok {
+			rc.Close()
+		}		
 	}()
-	if !imOK {
+	if !cfgOK {
 		return ErrNoConfig
+	}
+	if !runOK {
+		return ErrNoRun 
 	}
 	if !rfsOK {
 		return ErrNoRootFS
 	}
-	_, err := ioutil.ReadAll(im)
+	_, err := ioutil.ReadAll(config)
 	if err != nil {
 		return fmt.Errorf("error reading the layout: %v", err)
 	}
+	_, err = ioutil.ReadAll(runtime)
+        if err != nil {
+                return fmt.Errorf("error reading the layout: %v", err)
+        }
 		
 	for _, f := range files {
 		if !strings.HasPrefix(f, "rootfs") {
