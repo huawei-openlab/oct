@@ -24,7 +24,7 @@ import (
 	// "github.com/huawei-openlab/oct/tools/specstest/cases/specplatform"
 	// "github.com/huawei-openlab/oct/tools/specstest/cases/specroot"
 	// "github.com/huawei-openlab/oct/tools/specstest/cases/specversion"
-	"github.com/huawei-openlab/oct/cases/specstest/hostenv"
+	"github.com/huawei-openlab/oct/tools/specstest/hostenv"
 )
 
 func main() {
