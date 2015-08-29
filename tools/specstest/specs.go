@@ -18,12 +18,12 @@ import (
 	"io/ioutil"
 	"log"
 
-	// "github.com/huawei-openlab/oct/cases/specstest/cases/linuxnamespace"
-	"github.com/huawei-openlab/oct/cases/specstest/cases/linuxresources"
-	// "github.com/huawei-openlab/oct/cases/specstest/cases/specmount"
-	// "github.com/huawei-openlab/oct/cases/specstest/cases/specplatform"
-	// "github.com/huawei-openlab/oct/cases/specstest/cases/specroot"
-	// "github.com/huawei-openlab/oct/cases/specstest/cases/specversion"
+	// "github.com/huawei-openlab/oct/tools/specstest/cases/linuxnamespace"
+	"github.com/huawei-openlab/oct/tools/specstest/cases/linuxresources"
+	// "github.com/huawei-openlab/oct/tools/specstest/cases/specmount"
+	// "github.com/huawei-openlab/oct/tools/specstest/cases/specplatform"
+	// "github.com/huawei-openlab/oct/tools/specstest/cases/specroot"
+	// "github.com/huawei-openlab/oct/tools/specstest/cases/specversion"
 	"github.com/huawei-openlab/oct/cases/specstest/hostenv"
 )
 
