@@ -21,9 +21,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/huawei-openlab/oct/cases/specstest/adaptor"
-	"github.com/huawei-openlab/oct/cases/specstest/manager"
-	"github.com/huawei-openlab/oct/cases/specstest/utils/configconvert"
+	"github.com/huawei-openlab/oct/tools/specstest/adaptor"
+	"github.com/huawei-openlab/oct/tools/specstest/manager"
+	"github.com/huawei-openlab/oct/tools/specstest/utils/configconvert"
 	"github.com/opencontainers/specs"
 )
 

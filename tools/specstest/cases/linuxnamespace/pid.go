@@ -17,7 +17,7 @@ package linuxnamespace
 //import "github.com/opencontainers/specs"
 //shoud use github path ,but the whole project is not supported
 import (
-	"github.com/huawei-openlab/oct/cases/specstest/manager"
+	"github.com/huawei-openlab/oct/tools/specstest/manager"
 	"github.com/opencontainers/specs"
 )
 

@@ -15,7 +15,7 @@
 package linuxrlimits
 
 import (
-	"github.com/huawei-openlab/oct/cases/specstest/manager"
+	"github.com/huawei-openlab/oct/tools/specstest/manager"
 	"github.com/opencontainers/specs"
 	"strconv"
 )

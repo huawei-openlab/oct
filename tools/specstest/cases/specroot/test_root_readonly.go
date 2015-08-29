@@ -15,7 +15,7 @@
 package specroot
 
 import (
-	"github.com/huawei-openlab/oct/cases/specstest/manager"
+	"github.com/huawei-openlab/oct/tools/specstest/manager"
 )
 
 func TestReadOnlyTrue() string {
