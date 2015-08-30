@@ -18,7 +18,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/huawei-openlab/oct/tools/specstest/cases/linuxnamespace"
-	"io/ioutil"
 	"log"
 	//"github.com/huawei-openlab/oct/tools/specstest/cases/linuxresources"
 	"github.com/huawei-openlab/oct/tools/specstest/cases/specmount"
@@ -26,6 +25,7 @@ import (
 	"github.com/huawei-openlab/oct/tools/specstest/cases/specroot"
 	"github.com/huawei-openlab/oct/tools/specstest/cases/specversion"
 	"github.com/huawei-openlab/oct/tools/specstest/hostenv"
+	"github.com/huawei-openlab/oct/tools/specstest/utils"
 )
 
 var specsRev = flag.String("specs", "", "Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id")
@@ -46,6 +46,7 @@ func main() {
 	if *specsRev != "" && *runcRev != "" {
 		hostenv.UpateSpecsRev(*specsRev)
 		hostenv.UpateRuncRev(*runcRev)
+		fmt.Println("It is going to do specs test on runc revesion commit %v specs revesion commit %v", *specsRev, *runcRev)
 	}
 
 	err := hostenv.SetupEnv("", "")
@@ -56,7 +57,7 @@ func main() {
 	linuxnamespace.TestSuiteNP.Run()
 	result := linuxnamespace.TestSuiteNP.GetResult()
 
-	err = ioutil.WriteFile("namespace_out.json", []byte(result), 0777)
+	err = utils.ByteOutput("namespace_out.json", result)
 	if err != nil {
 		log.Fatalf("Write namespace out file error,%v\n", err)
 	}
@@ -65,7 +66,7 @@ func main() {
 	specversion.TestSuiteVersion.Run()
 	result = specversion.TestSuiteVersion.GetResult()
 
-	err = ioutil.WriteFile("Version_out.json", []byte(result), 0777)
+	err = utils.ByteOutput("Version_out.json", result)
 	if err != nil {
 		log.Fatalf("Write version out file error,%v\n", err)
 	}
@@ -73,22 +74,21 @@ func main() {
 	// // spec.mount test
 	specmount.TestSuiteMount.Run()
 	result = specmount.TestSuiteMount.GetResult()
-	err = ioutil.WriteFile("Mount_out.json", []byte(result), 0777)
+	err = utils.ByteOutput("Mount_out.json", result)
 	if err != nil {
 		log.Fatalf("Write mount out file error,%v\n", err)
 	}
 
 	specroot.TestSuiteRoot.Run()
 	result = specroot.TestSuiteRoot.GetResult()
-
-	err = ioutil.WriteFile("Root_out.json", []byte(result), 0777)
+	err = utils.ByteOutput("Root_out.json", result)
 	if err != nil {
 		log.Fatalf("Write Root out file error,%v\n", err)
 	}
 
 	specplatform.TestSuitePlatform.Run()
 	result = specplatform.TestSuitePlatform.GetResult()
-	err = ioutil.WriteFile("Platform_out.json", []byte(result), 0777)
+	err = utils.ByteOutput("Platform_out.json", result)
 	if err != nil {
 		log.Fatalf("Write Platform out file error,%v\n", err)
 	}
