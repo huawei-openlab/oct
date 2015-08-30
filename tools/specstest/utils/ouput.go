@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-func ByteOutput(fileName string, result string) error {
+func StringOutput(fileName string, result string) error {
 	filePath := "./tools/specstest/report/" + fileName
 	fout, err := os.Create(filePath)
 	defer fout.Close()

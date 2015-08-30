@@ -57,7 +57,7 @@ func main() {
 	linuxnamespace.TestSuiteNP.Run()
 	result := linuxnamespace.TestSuiteNP.GetResult()
 
-	err = utils.ByteOutput("namespace_out.json", result)
+	err = utils.StringOutput("namespace_out.json", result)
 	if err != nil {
 		log.Fatalf("Write namespace out file error,%v\n", err)
 	}
@@ -66,7 +66,7 @@ func main() {
 	specversion.TestSuiteVersion.Run()
 	result = specversion.TestSuiteVersion.GetResult()
 
-	err = utils.ByteOutput("Version_out.json", result)
+	err = utils.StringOutput("Version_out.json", result)
 	if err != nil {
 		log.Fatalf("Write version out file error,%v\n", err)
 	}
@@ -74,21 +74,21 @@ func main() {
 	// // spec.mount test
 	specmount.TestSuiteMount.Run()
 	result = specmount.TestSuiteMount.GetResult()
-	err = utils.ByteOutput("Mount_out.json", result)
+	err = utils.StringOutput("Mount_out.json", result)
 	if err != nil {
 		log.Fatalf("Write mount out file error,%v\n", err)
 	}
 
 	specroot.TestSuiteRoot.Run()
 	result = specroot.TestSuiteRoot.GetResult()
-	err = utils.ByteOutput("Root_out.json", result)
+	err = utils.StringOutput("Root_out.json", result)
 	if err != nil {
 		log.Fatalf("Write Root out file error,%v\n", err)
 	}
 
 	specplatform.TestSuitePlatform.Run()
 	result = specplatform.TestSuitePlatform.GetResult()
-	err = utils.ByteOutput("Platform_out.json", result)
+	err = utils.StringOutput("Platform_out.json", result)
 	if err != nil {
 		log.Fatalf("Write Platform out file error,%v\n", err)
 	}
