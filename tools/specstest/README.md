@@ -21,12 +21,13 @@ cd oct
 ```
 Binary "specs" is buit now.
 - Using    
-Use "specs" to run,
+Use binary "specs" to run,
 Usage of ./specs:     
-  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id
+  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id        
   -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id
 
 ``` bash
+su root
 ./specs -runc=<specified runc revision> -specs=<specified specs revision>
 # Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 ```
