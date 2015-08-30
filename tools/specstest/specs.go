@@ -46,7 +46,7 @@ func main() {
 	if *specsRev != "" && *runcRev != "" {
 		hostenv.UpateSpecsRev(*specsRev)
 		hostenv.UpateRuncRev(*runcRev)
-		fmt.Println("It is going to do specs test on runc revesion commit %v specs revesion commit %v", *specsRev, *runcRev)
+		fmt.Printf("It is going to do specs test on runc revesion commit %v specs revesion commit %v \n", *specsRev, *runcRev)
 	}
 
 	err := hostenv.SetupEnv("", "")
