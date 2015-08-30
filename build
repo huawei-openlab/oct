@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+export GOOS GOARCH
+
+echo "Building specstest..."
+echo $REPO_PATH
+go build -o ./specs  ./tools/specstest
+
