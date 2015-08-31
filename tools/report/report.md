@@ -18,7 +18,6 @@ The defailed information is listed as below:
 
 | *OS Name* | *Distribution* | *Resource* | *Container*| *Deploy/Testing Command* |
 | -------| ------ | --------- | -------- | --------|
-
 |hostA|CentOS7|CPU 1, Memory 2GB, Disk 100G|iperf_server(iperf3), iperf_client(iperf3)| ./iperf_test.sh|
 
 
@@ -26,7 +25,6 @@ The defailed information of each container type is listed as below:
 
 | *Container Type* | *Distribution* | *Container File* |
 | -------| ------ | ------- |
-
 |iperf3|Docker1|[Dockerfile](#Dockerfile)|
 
 
