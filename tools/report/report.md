@@ -18,7 +18,6 @@ The defailed information is listed as below:
 
 | *OS Name* | *Distribution* | *Resource* | *Container*| *Deploy/Testing Command* |
 | -------| ------ | --------- | -------- | --------|
-
 |hostA|CentOS7|CPU 1, Memory 2GB, Disk 100G|iperf_server(iperf3), iperf_client(iperf3)| ./iperf_test.sh|
 
 
@@ -26,19 +25,18 @@ The defailed information of each container type is listed as below:
 
 | *Container Type* | *Distribution* | *Container File* |
 | -------| ------ | ------- |
-
-|iperf3|Docker1|[Dockerfile](#Dockerfile)|
+|iperf3|Docker1|[Dockerfile](#dockerfile)|
 
 
 After running the `Command` in each OS and container, we get 2 result(s).
 
 
-* [iperf-tcp-result.json](#iperf-tcp-result.json)
+* [iperf-tcp-result.json](#iperf-tcp-result)
 
-* [iperf-udp-result.json](#iperf-udp-result.json)
+* [iperf-udp-result.json](#iperf-udp-result)
 
 
-###TestCase
+###testCase
 
 ```
 {
@@ -104,7 +102,7 @@ After running the `Command` in each OS and container, we get 2 result(s).
 
 
 
-###Dockerfile
+###dockerfile
 
 ```
 FROM ubuntu:14.04
@@ -132,8 +130,7 @@ ENTRYPOINT ["/usr/local/bin/iperf3"]
 
 
 
-
-###iperf-tcp-result.json
+###iperf-tcp-result
 
 ```
 Server JSON output:
@@ -357,8 +354,7 @@ Server JSON output:
 ```
 
 
-
-###iperf-udp-result.json
+###iperf-udp-result
 
 ```
 Server JSON output:
@@ -659,6 +655,4 @@ Server JSON output:
 }
 
 ```
-
-
 

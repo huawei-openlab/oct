@@ -1,16 +1,18 @@
 package main
 
 import (
-	"../../lib/libocit"
 	"encoding/json"
+	"github.com/huawei-openlab/oct-engine/lib/libocit"
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"text/template"
 )
 
 type TCFile struct {
 	Name    string
+	Tag     string
 	Content string
 }
 
@@ -25,6 +27,7 @@ type ContainerDetail struct {
 	Class        string
 	Distribution string
 	ConfigFile   string
+	ConfigTag    string
 }
 
 type CaseBody struct {
@@ -73,6 +76,7 @@ func generate_resource(ts_demo libocit.TestCase) (cb CaseBody) {
 				//FIXME: Just want to use container generating file : 'Dockerfile' now
 				if path.Base(req.Files[f_index]) == "Dockerfile" {
 					cd.ConfigFile = path.Base(req.Files[f_index])
+					cd.ConfigTag = strings.ToLower(path.Base(req.Files[f_index]))
 					break
 				}
 			}
@@ -100,6 +104,7 @@ func main() {
 	//Summary and Files info
 	cb := generate_resource(tc)
 	cb.TestCase.Name = "TestCase"
+	cb.TestCase.Tag = "testCase"
 	cb.TestCase.Content = content
 
 	for index := 0; index < len(tc.Requires); index++ {
@@ -112,7 +117,8 @@ func main() {
 				//FIXME: Just want to use container generating file : 'Dockerfile' now
 				if path.Base(req.Files[f_index]) == "Dockerfile" {
 					var c_file TCFile
-					c_file.Name = "Dockerfile"
+					c_file.Name = path.Base(req.Files[f_index])
+					c_file.Tag = strings.ToLower(path.Base(req.Files[f_index]))
 					c_file.Content = libocit.ReadFile(req.Files[f_index])
 					cb.Files = append(cb.Files, c_file)
 					break
@@ -126,6 +132,9 @@ func main() {
 			var c_file TCFile
 			file_name := tc.Collects[index].Files[f_index]
 			c_file.Name = path.Base(file_name)
+			//FIXME: How to convert file to a 'http#' recognized link?
+			c_file.Tag = strings.ToLower(c_file.Name)
+			c_file.Tag = strings.Replace(c_file.Tag, ".json", "", 1)
 			c_file.Content = libocit.ReadFile(file_name)
 			cb.Collects = append(cb.Collects, c_file)
 		}
