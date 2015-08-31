@@ -99,7 +99,4 @@ ocp-testing/Cases/Benchmark/sysbench/xxx/source/Dockerfile,
 # Install sysbench
 RUN sudo apt-get update
 RUN sudo apt-get install sysbench -y
-# Install sysbench
-RUN sudo apt-get update
-RUN sudo apt-get install sysbench -y
 ```
