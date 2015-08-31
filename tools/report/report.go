@@ -3,145 +3,140 @@ package main
 import (
 	"../../lib/libocit"
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 	"strconv"
-	"strings"
+	"text/template"
 )
 
-var pub_casedir string
-
-func generate_head(ts_demo libocit.TestCase) (content string) {
-	content = "## " + ts_demo.Name + "-" + ts_demo.Version + "\n"
-	content += "[Test Case](#testcase) " + ts_demo.Description + "\n\n"
-	content += "```\n"
-	content += "Owner: " + ts_demo.Owner + "\n"
-	content += "License: " + ts_demo.License + "\n"
-	content += "Group: " + ts_demo.Group + "\n"
-	content += "```\n\n"
-
-	return content
+type TCFile struct {
+	Name    string
+	Content string
 }
 
-func generate_resource(ts_demo libocit.TestCase) (content string) {
-	num := len(ts_demo.Deploys)
-	content = "The case has " + strconv.Itoa(num) + " host operation system(s):\n\n"
+type HostDetail struct {
+	Object       string
+	Distribution string
+	Resource     string
+	Containers   string
+	Command      string
+}
+type ContainerDetail struct {
+	Class        string
+	Distribution string
+	ConfigFile   string
+}
 
-	for index := 0; index < num; index++ {
-		deploy := ts_demo.Deploys[index]
-		content += "'" + deploy.Object + "' has " + strconv.Itoa(len(deploy.Containers)) + " container(s) deployed.\n\n"
-	}
-	content += "The defailed information is listed as below:\n\n"
+type CaseBody struct {
+	HostDetails      []HostDetail
+	ContainerDetails []ContainerDetail
+	TestCase         TCFile
+	Files            []TCFile
+	Collects         []TCFile
+}
 
-	content += "| *OS Name* | *Distribution* | *Resource* | *Container*| *Deploy/Testing Command* |\n"
-	content += "| -------| ------ | --------- | -------- | --------|\n"
-	for index := 0; index < num; index++ {
+func generate_resource(ts_demo libocit.TestCase) (cb CaseBody) {
+	for index := 0; index < len(ts_demo.Deploys); index++ {
+		var hd HostDetail
 		deploy := ts_demo.Deploys[index]
-		var version string
-		var resource string
-		var container string
 		for r_index := 0; r_index < len(ts_demo.Requires); r_index++ {
 			req := ts_demo.Requires[r_index]
 			if req.Class == deploy.Class {
-				version = req.Distribution + req.Version
-				resource = "CPU " + strconv.Itoa(req.Resource.CPU) + ", Memory " + req.Resource.Memory + ", Disk " + req.Resource.Disk
+				hd.Distribution = req.Distribution + req.Version
+				hd.Resource = "CPU " + strconv.Itoa(req.Resource.CPU) + ", Memory " + req.Resource.Memory + ", Disk " + req.Resource.Disk
 				break
 			}
 		}
-		container = ""
+		hd.Containers = ""
 		for c_index := 0; c_index < len(deploy.Containers); c_index++ {
-			if len(container) > 1 {
-				container += ", "
+			if len(hd.Containers) > 1 {
+				hd.Containers += ", "
 			}
-			container += deploy.Containers[c_index].Object + "(" + deploy.Containers[c_index].Class + ")"
+			hd.Containers += deploy.Containers[c_index].Object + "(" + deploy.Containers[c_index].Class + ")"
 
 		}
-		content += "|" + deploy.Object + "|" + version + "|" + resource + "|" + container + "|\"" + deploy.Cmd + "\"|\n"
+		hd.Object = deploy.Object
+		hd.Command = deploy.Cmd
+		cb.HostDetails = append(cb.HostDetails, hd)
 	}
 
-	content += "\nThe defailed information of each container type is listed as below:\n\n"
-	content += "| *Container Type* | *Distribution* | *Container File* |\n"
-	content += "| -------| ------ | ------- |\n"
 	for index := 0; index < len(ts_demo.Requires); index++ {
 		req := ts_demo.Requires[index]
 		if req.Type != "container" {
 			continue
 		}
-		content += "|" + req.Class + "|" + req.Distribution + req.Version + "|" + "[Dockerfile](#dockerfile) |\n"
-	}
-	return content
-}
-
-func generate_result_link(ts_demo libocit.TestCase) (content string) {
-	content = "\nAfter running the `Command` in each OS and container, we get two results.\n\n"
-
-	for index := 0; index < len(ts_demo.Collects); index++ {
-		collect := ts_demo.Collects[index]
-		for f_index := 0; f_index < len(collect.Files); f_index++ {
-			basename := path.Base(collect.Files[f_index])
-			basename_without_json := strings.Replace(basename, ".json", "", 1)
-			content += "* [" + basename + "](#" + basename_without_json + ") \n"
-		}
-	}
-
-	return content
-}
-
-func generate_result_file(case_dir string, ts_demo libocit.TestCase) (content string) {
-	for index := 0; index < len(ts_demo.Collects); index++ {
-		collect := ts_demo.Collects[index]
-		for f_index := 0; f_index < len(collect.Files); f_index++ {
-
-			basename := path.Base(collect.Files[f_index])
-			basename_without_json := strings.Replace(basename, ".json", "", 1)
-			content += "\n###" + basename_without_json + "\n"
-			content += "```\n"
-
-			_, err := os.Stat(collect.Files[f_index])
-			if err != nil {
-				content += libocit.ReadFile(path.Join(case_dir, collect.Files[f_index]))
-			} else {
-				content += libocit.ReadFile(collect.Files[f_index])
+		var cd ContainerDetail
+		cd.Class = req.Class
+		cd.Distribution = req.Distribution + req.Version
+		if len(req.Files) > 0 {
+			for f_index := 0; f_index < len(req.Files); f_index++ {
+				//FIXME: Just want to use container generating file : 'Dockerfile' now
+				if path.Base(req.Files[f_index]) == "Dockerfile" {
+					cd.ConfigFile = path.Base(req.Files[f_index])
+					break
+				}
 			}
-			content += "\n```\n\n"
+		}
+		cb.ContainerDetails = append(cb.ContainerDetails, cd)
+	}
+	return cb
+}
+func main() {
+	var tc libocit.TestCase
+
+	//Head info
+	content := libocit.ReadFile("template.json")
+	json.Unmarshal([]byte(content), &tc)
+
+	tmpl, err := template.ParseFiles("./template/head.md")
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.Execute(os.Stdout, tc)
+	if err != nil {
+		panic(err)
+	}
+
+	//Summary and Files info
+	cb := generate_resource(tc)
+	cb.TestCase.Name = "TestCase"
+	cb.TestCase.Content = content
+
+	for index := 0; index < len(tc.Requires); index++ {
+		req := tc.Requires[index]
+		if req.Type != "container" {
+			continue
+		}
+		if len(req.Files) > 0 {
+			for f_index := 0; f_index < len(req.Files); f_index++ {
+				//FIXME: Just want to use container generating file : 'Dockerfile' now
+				if path.Base(req.Files[f_index]) == "Dockerfile" {
+					var c_file TCFile
+					c_file.Name = "Dockerfile"
+					c_file.Content = libocit.ReadFile(req.Files[f_index])
+					cb.Files = append(cb.Files, c_file)
+					break
+				}
+			}
 		}
 	}
-	return content
-}
 
-func main() {
-	var ts_demo libocit.TestCase
-	var case_file string
+	for index := 0; index < len(tc.Collects); index++ {
+		for f_index := 0; f_index < len(tc.Collects[index].Files); f_index++ {
+			var c_file TCFile
+			file_name := tc.Collects[index].Files[f_index]
+			c_file.Name = path.Base(file_name)
+			c_file.Content = libocit.ReadFile(file_name)
+			cb.Collects = append(cb.Collects, c_file)
+		}
 
-	arg_num := len(os.Args)
-	if arg_num < 2 {
-		fmt.Println("Please input the testcase dir")
-		return
-	} else {
-		case_file = os.Args[1]
 	}
-
-	pub_casedir = path.Dir(case_file)
-	test_json_str := libocit.ReadFile(case_file)
-	json.Unmarshal([]byte(test_json_str), &ts_demo)
-
-	content := generate_head(ts_demo)
-	content += generate_resource(ts_demo)
-
-	content += generate_result_link(ts_demo)
-
-	content += "\n\n###TestCase\n"
-	content += "```\n"
-	content += test_json_str
-	content += "```\n\n"
-
-	content += "\n\n###Dockerfile\n"
-	content += "```\n"
-	content += libocit.ReadFile(path.Join(pub_casedir, "./source/Dockerfile"))
-	content += "```\n\n"
-
-	content += generate_result_file(pub_casedir, ts_demo)
-
-	fmt.Println(content)
+	tmpl, err = template.ParseFiles("template/body.md")
+	if err != nil {
+		panic(err)
+	}
+	err = tmpl.Execute(os.Stdout, cb)
+	if err != nil {
+		panic(err)
+	}
 }

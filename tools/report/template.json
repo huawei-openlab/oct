@@ -16,7 +16,7 @@
                     "Class": "operOS",
                     "Type": "os",
             		    "Distribution": "CentOS",
-		                "Version": 7,
+		                "Version": "7",
                     "Resource": {
                         "CPU": 1,
                         "Memory": "2GB",
@@ -27,7 +27,7 @@
                     "Class": "iperf3",
 		    "Type": "container",
 		    "Distribution": "Docker",
-                    "Version": 1,
+                    "Version": "1",
 		    "Files": ["./source/Dockerfile"]
             }
         ],
