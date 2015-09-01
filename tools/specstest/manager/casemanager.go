@@ -20,6 +20,11 @@ import (
 	"strings"
 )
 
+//Top level manger to organize the testsuite
+type TestManager struct {
+	TestSuite []*TestSuite
+}
+
 type TestCase struct {
 	// Testcase name, assignment in AddTestCase by testcase
 	Name string
@@ -50,6 +55,18 @@ type TestResult struct {
 	Err string `json:"error,omitempty"`
 	//test result,passed,failed or unspported
 	Result string `json:"result"`
+}
+
+var Manager *TestManager = new(TestManager)
+
+// Add testSuite to TestManger
+func (this *TestManager) AddTestSuite(testSuite TestSuite) {
+	for _, ts := range this.TestSuite {
+		if ts.Name == testSuite.Name {
+			log.Fatalf("Existing same testsuite : %v", ts.Name)
+		}
+	}
+	this.TestSuite = append(this.TestSuite, &testSuite)
 }
 
 // Set the TestResult structure

@@ -78,6 +78,7 @@ var TestSuiteMount manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.M
 // TODO
 func init() {
 	TestSuiteMount.AddTestCase("TestMountTmpfs", TestMountTmpfs)
+	manager.Manager.AddTestSuite(TestSuiteMount)
 }
 
 func setMount(fsName string, fsSrc string, fsDes string, fsOpt string) specs.LinuxSpec {

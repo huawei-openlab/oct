@@ -78,6 +78,7 @@ var TestSuiteLinuxSelinuxLabel manager.TestSuite = manager.TestSuite{Name: "Linu
 
 func init() {
 	TestSuiteLinuxSelinuxLabel.AddTestCase("TestLinuxSelinuxProcessLabel", TestLinuxSelinuxProcessLabel)
+	manager.Manager.AddTestSuite(TestSuiteLinuxSelinuxLabel)
 }
 
 func setSElinuxLabel(label string) specs.LinuxSpec {

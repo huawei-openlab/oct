@@ -81,6 +81,7 @@ var TestSuiteVersion manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec
 func init() {
 	TestSuiteVersion.AddTestCase("TestVersionCorrect", TestVersionCorrect)
 	TestSuiteVersion.AddTestCase("TestVersionError", TestVersionError)
+	manager.Manager.AddTestSuite(TestSuiteVersion)
 }
 
 func setVersion(testValue string) specs.LinuxSpec {

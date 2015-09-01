@@ -1,0 +1,22 @@
+{
+  "LinuxSpec.Spec.Mount": [
+    {
+      "testcasename": "TestMountTmpfs",
+      "input": [
+        {
+          "type": "proc",
+          "source": "proc",
+          "destination": "/proc",
+          "options": ""
+        },
+        {
+          "type": "tmpfs",
+          "source": "tmpfs",
+          "destination": "/mountTest",
+          "options": ""
+        }
+      ],
+      "result": "passed"
+    }
+  ]
+}

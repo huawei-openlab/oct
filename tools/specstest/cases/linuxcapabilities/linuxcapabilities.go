@@ -73,6 +73,7 @@ var TestSuiteLinuxCapabilities manager.TestSuite = manager.TestSuite{Name: "Linu
 // TODO
 func init() {
 	TestSuiteLinuxCapabilities.AddTestCase("TestLinuxCapabilitiesSETFCAP", TestLinuxCapabilitiesSETFCAP)
+	manager.Manager.AddTestSuite(TestSuiteLinuxCapabilities)
 }
 
 func setCapability(capabilityname string) specs.LinuxSpec {

@@ -77,6 +77,7 @@ var TestSuiteLinuxRlimits manager.TestSuite = manager.TestSuite{Name: "LinuxSpec
 func init() {
 	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNPROCSoft", TestRlimitNPROCSoft)
 	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNPROCHard", TestRlimitNPROCHard)
+	manager.Manager.AddTestSuite(TestSuiteLinuxRlimits)
 }
 
 func setRlimits(testrlimits specs.Rlimit) specs.LinuxSpec {

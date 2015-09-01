@@ -78,7 +78,7 @@
         "type": "mount",
         "path": "/proc/1/ns/mnt"
       },
-      "error": "time=\"2015-08-26T11:26:04+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-08-26T11:26:04+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1",
+      "error": "time=\"2015-09-01T15:25:05+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-09-01T15:25:05+08:00\" level=warning msg=\"open /sys/fs/cgroup/freezer/user/1000.user/c2.session/specstest/freezer.state: no such file or directory\" \ntime=\"2015-09-01T15:25:05+08:00\" level=warning msg=\"open /sys/fs/cgroup/devices/user/1000.user/c2.session/specstest/cgroup.procs: no such file or directory\" \ntime=\"2015-09-01T15:25:05+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1",
       "result": "unspported"
     }
   ]
