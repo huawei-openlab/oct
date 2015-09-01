@@ -5,7 +5,8 @@ import (
 )
 
 func StringOutput(fileName string, result string) error {
-	filePath := "./tools/specstest/report/" + fileName
+	filePath := "./report/" + fileName
+	// filePath := "./tools/specstest/report/" + fileName
 	fout, err := os.Create(filePath)
 	defer fout.Close()
 
