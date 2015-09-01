@@ -35,8 +35,7 @@ import (
 
 var specsRev = flag.String("specs", "", "Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id")
 var runcRev = flag.String("runc", "", "Specify runc Revision from opencontainers/specs to be tested, in the form of commit id")
-
-/*var output = flag.String("o", "./report/specs.json", "Specify filePath to install the test result, file with result should be in json format")*/
+var output = flag.String("o", "./report/", "Specify filePath to install the test result linuxspec.json")
 
 func main() {
 
@@ -48,6 +47,13 @@ func main() {
 
 	if *runcRev == "" {
 		fmt.Println("It is going to test specs on newest revision")
+	}
+
+	if *output == "" {
+		*output = "./report/"
+		fmt.Println("Used default output place, please get result in this project on localhost: oct/tools/specstest/report/linuxspec.json")
+	} else {
+		fmt.Printf("Please get result file linuxspec.json in the path : %v\n", *output)
 	}
 
 	if *specsRev != "" && *runcRev != "" {
@@ -96,6 +102,11 @@ func main() {
 			log.Fatalf("Write %v out file error,%v\n", ts.Name, err)
 		}
 
+	}
+	result := manager.Manager.GetTotalResult()
+	err = utils.SpecifyOutput(*output, result)
+	if err != nil {
+		log.Fatalf("Write %v out file error,%v\n", *output, err)
 	}
 	/*
 		specroot.TestSuiteRoot.Run()
