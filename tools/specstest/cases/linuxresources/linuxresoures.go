@@ -79,6 +79,7 @@ var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSp
 
 func init() {
 	TestSuiteLinuxResources.AddTestCase("TestMemoryLimit", TestMemoryLimit)
+	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
 
 func setResources(resources specs.Resources) specs.LinuxSpec {

@@ -83,6 +83,7 @@ func init() {
 	TestSuiteRoot.AddTestCase("TestReadOnlyTrue", TestReadOnlyTrue)
 	TestSuiteRoot.AddTestCase("TestReadOnlyFalse", TestReadOnlyFalse)
 	TestSuiteRoot.AddTestCase("TestPathError", TestPathError)
+	manager.Manager.AddTestSuite(TestSuiteRoot)
 }
 
 func setRoot(readonlyValue bool, path string) specs.LinuxSpec {

@@ -17,19 +17,26 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/huawei-openlab/oct/tools/specstest/cases/linuxnamespace"
-	"log"
-	//"github.com/huawei-openlab/oct/tools/specstest/cases/linuxresources"
-	"github.com/huawei-openlab/oct/tools/specstest/cases/specmount"
-	"github.com/huawei-openlab/oct/tools/specstest/cases/specplatform"
-	"github.com/huawei-openlab/oct/tools/specstest/cases/specroot"
-	"github.com/huawei-openlab/oct/tools/specstest/cases/specversion"
+	// _ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxcapabilities"
+	_ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxnamespace"
+	// _ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxresources"
+	// _ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxrlimits"
+	// _ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxselinuxlabel"
+	// _ "github.com/huawei-openlab/oct/tools/specstest/cases/linuxsysctl"
+	_ "github.com/huawei-openlab/oct/tools/specstest/cases/specmount"
+	_ "github.com/huawei-openlab/oct/tools/specstest/cases/specplatform"
+	_ "github.com/huawei-openlab/oct/tools/specstest/cases/specroot"
+	_ "github.com/huawei-openlab/oct/tools/specstest/cases/specversion"
 	"github.com/huawei-openlab/oct/tools/specstest/hostenv"
+	"github.com/huawei-openlab/oct/tools/specstest/manager"
 	"github.com/huawei-openlab/oct/tools/specstest/utils"
+	"log"
 )
 
 var specsRev = flag.String("specs", "", "Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id")
 var runcRev = flag.String("runc", "", "Specify runc Revision from opencontainers/specs to be tested, in the form of commit id")
+
+/*var output = flag.String("o", "./report/specs.json", "Specify filePath to install the test result, file with result should be in json format")*/
 
 func main() {
 
@@ -54,45 +61,57 @@ func main() {
 		log.Fatalf(" Pull image error, %v", err)
 	}
 
-	linuxnamespace.TestSuiteNP.Run()
+	/*linuxnamespace.TestSuiteNP.Run()
 	result := linuxnamespace.TestSuiteNP.GetResult()
 
 	err = utils.StringOutput("namespace_out.json", result)
 	if err != nil {
 		log.Fatalf("Write namespace out file error,%v\n", err)
 	}
-
+	*/
 	// // spec.version test
-	specversion.TestSuiteVersion.Run()
+	/*specversion.TestSuiteVersion.Run()
 	result = specversion.TestSuiteVersion.GetResult()
 
 	err = utils.StringOutput("Version_out.json", result)
 	if err != nil {
 		log.Fatalf("Write version out file error,%v\n", err)
-	}
+	}*/
 
 	// // spec.mount test
-	specmount.TestSuiteMount.Run()
+	/*specmount.TestSuiteMount.Run()
 	result = specmount.TestSuiteMount.GetResult()
 	err = utils.StringOutput("Mount_out.json", result)
 	if err != nil {
 		log.Fatalf("Write mount out file error,%v\n", err)
-	}
+	}*/
+	// manager * TestManager = new(TestManager)
 
-	specroot.TestSuiteRoot.Run()
-	result = specroot.TestSuiteRoot.GetResult()
-	err = utils.StringOutput("Root_out.json", result)
-	if err != nil {
-		log.Fatalf("Write Root out file error,%v\n", err)
-	}
+	for _, ts := range manager.Manager.TestSuite {
+		ts.Run()
+		result := ts.GetResult()
+		outputJson := ts.Name + ".json"
+		err := utils.StringOutput(outputJson, result)
+		if err != nil {
+			log.Fatalf("Write %v out file error,%v\n", ts.Name, err)
+		}
 
-	specplatform.TestSuitePlatform.Run()
+	}
+	/*
+		specroot.TestSuiteRoot.Run()
+		result := specroot.TestSuiteRoot.GetResult()
+		err = utils.StringOutput("Root_out.json", result)
+		if err != nil {
+			log.Fatalf("Write Root out file error,%v\n", err)
+		}*/
+
+	/*specplatform.TestSuitePlatform.Run()
 	result = specplatform.TestSuitePlatform.GetResult()
 	err = utils.StringOutput("Platform_out.json", result)
 	if err != nil {
 		log.Fatalf("Write Platform out file error,%v\n", err)
 	}
-
+	*/
 	//linux resources test
 	/*linuxresources.TestSuiteLinuxResources.Run()
 	result := linuxresources.TestSuiteLinuxResources.GetResult()

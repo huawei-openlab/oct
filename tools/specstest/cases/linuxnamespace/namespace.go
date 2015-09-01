@@ -91,6 +91,7 @@ func init() {
 
 	TestSuiteNP.AddTestCase("TestMntPathEmpty", TestMntPathEmpty)
 	TestSuiteNP.AddTestCase("TestMntPathUnempty", TestMntPathUnempty)
+	manager.Manager.AddTestSuite(TestSuiteNP)
 }
 
 /**

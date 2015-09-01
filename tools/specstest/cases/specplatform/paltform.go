@@ -62,6 +62,7 @@ var TestSuitePlatform manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spe
 func init() {
 	TestSuitePlatform.AddTestCase("TestPlatformCorrect", TestPlatformCorrect)
 	TestSuitePlatform.AddTestCase("TestPlatformErr", TestPlatformErr)
+	manager.Manager.AddTestSuite(TestSuitePlatform)
 }
 
 func setPlatform(osValue string, archValue string) specs.LinuxSpec {
