@@ -17,3 +17,15 @@ func StringOutput(fileName string, result string) error {
 		return nil
 	}
 }
+
+func SpecifyOutput(filePath string, result string) error {
+	fileName := filePath + "linuxspec.json"
+	fout, err := os.Create(fileName)
+	defer fout.Close()
+	if err != nil {
+		return err
+	} else {
+		fout.WriteString(result)
+		return nil
+	}
+}

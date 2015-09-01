@@ -132,3 +132,13 @@ func (this *TestSuite) GetResult() string {
 	result = result + "]}"
 	return result
 }
+
+func (this *TestManager) GetTotalResult() string {
+	result := "{\" linuxspec  \":["
+	for _, ts := range this.TestSuite {
+		result = result + ts.GetResult() + ","
+	}
+	result = strings.TrimSuffix(result, ",")
+	result = result + "]}"
+	return result
+}

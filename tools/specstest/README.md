@@ -22,15 +22,16 @@ cd oct
 Binary "specs" is buit now.
 - Using    
 Use binary "specs" to run,
-Usage of ./specs:     
+Usage of ./specs:        
+  -o="./report/": Specify filePath to install the test result linuxspec.json     
   -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id        
   -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id
 
 ``` bash
 su root
-./specs -runc=<specified runc revision> -specs=<specified specs revision>
-# Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
+./specs -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
 ```
+#### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 
 - Getting Result     
 Get result from [oct/tools/specstest/report](./report/), result is written in json format.
