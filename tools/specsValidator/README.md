@@ -11,11 +11,11 @@ The specsValidator aims to test containers runtime compatible with  [opencontain
 1. Install the go-lang env, set the GOPATH and GOROOT properly, reuquired go-lang version is V1.4.2      
 
 - Building
-
+It just guide people to use the specsValidator tool in the project seprately.
 ``` bash
-go get -d  github.com/huawei-openlab/oct
-cd $GOPATH/github.com/huawei-openlab/oct
-./build
+go get -d  github.com/huawei-openlab/oct/tools/specsValidator
+cd $GOPATH/github.com/huawei-openlab/oct/tools/specsValidator
+go build specs.go
 ```
 Binary "specs" is buit now.
 - Using    
