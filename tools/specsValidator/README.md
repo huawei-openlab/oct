@@ -19,7 +19,7 @@ if anyone wan to use it accross the whole proeject, please go through the [oct/R
 ``` bash
 $       go get -d  github.com/huawei-openlab/oct/tools/specsValidator
 $       cd $GOPATH/github.com/huawei-openlab/oct/tools/specsValidator
-$       godep build .
+$       godep go build .
 ```
 Binary "specs" is buit now.
 - Using    
