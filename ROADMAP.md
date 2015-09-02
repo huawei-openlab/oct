@@ -13,4 +13,4 @@ This document defines the high-level goals of the ocp-testing project. See [Proj
 Project Planning
 ================
 
-[Project Pages](https://github.com/huawei-openlab/ocp-testing/wiki) define the goals for each Milestone.
+[Project Pages](https://github.com/huawei-openlab/oct/wiki) define the goals for each Milestone.
