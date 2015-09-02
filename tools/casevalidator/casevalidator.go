@@ -1,9 +1,9 @@
 package main
 
 import (
-	"../../lib/casevalidator"
 	"flag"
 	"fmt"
+	"github.com/huawei-openlab/oct-engine/lib/libocit"
 )
 
 // The case now could be like this:
@@ -45,13 +45,13 @@ func main() {
 	var caseID = flag.String("id", "", "input the 'case id' provided by 'Test Case server', please make sure the the tcserver is running.")
 	flag.Parse()
 
-	var warning_msg []casevalidator.ValidatorMessage
-	var err_msg []casevalidator.ValidatorMessage
+	var warning_msg []libocit.ValidatorMessage
+	var err_msg []libocit.ValidatorMessage
 	if len(*caseID) > 0 {
 	} else if len(*caseFile) > 0 {
-		casevalidator.ValidateByFile(*caseFile)
+		libocit.ValidateByFile(*caseFile)
 	} else if len(*caseDir) > 0 {
-		warning_msg, err_msg = casevalidator.ValidateByDir(*caseDir, *caseName)
+		warning_msg, err_msg = libocit.ValidateByDir(*caseDir, *caseName)
 	} else {
 		fmt.Println("Please input the test case")
 		return
