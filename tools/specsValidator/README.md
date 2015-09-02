@@ -13,10 +13,8 @@ The specsValidator aims to test containers runtime compatible with  [opencontain
 - Building
 
 ``` bash
-# create a 'github.com/huawei-openlab' in your GOPATH/src
-cd  github.com/huawei-openlab
-git clone https://github.com/huawei-openlab/oct.git
-cd oct
+go get -d  github.com/huawei-openlab/oct
+cd $GOPATH/github.com/huawei-openlab/oct
 ./build
 ```
 Binary "specs" is buit now.
