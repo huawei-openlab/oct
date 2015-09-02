@@ -31,7 +31,7 @@ Usage of ./specs:
 
 ``` bash
 $       su root
-$       ./specs -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
+$       ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
 ```
 #### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 
