@@ -1,0 +1,1 @@
+{"LinuxSpec.Spec.Platform":[{"testcasename":"TestPlatformCorrect","input":{"os":"linux","arch":"amd64"},"result":"passed"},{"testcasename":"TestPlatformErr","input":{"os":"osErr","arch":"archErr"},"result":"unknowErr"}]}
