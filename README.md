@@ -14,11 +14,11 @@ tools
 Now we have two tools `octest` and `specsValidator`.
 You can join us to develop these tools or add new ones.
 
-### [octest](tools/octest/README.md) - check the static config/bundle
+### [octest](tools/octest/README.md) - spec test (config and bundle)
 - Verify whether a config file (config.json and runtime.json) is compliance with the newest OCI specs.
 - Verify whether a bundle is valid according to the newest OCI specs.
 
-### [specsValidator](tools/specsValidator/README.md) - verify the runtime configurations
+### [specsValidator](tools/specsValidator/README.md) - spec test (config and runtime)
 - Run a container (by `runc`), compare the runtime status with the configuration.
 
 ## Getting Started
