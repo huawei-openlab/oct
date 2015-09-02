@@ -2,10 +2,6 @@
 
 The oct(open container testing) project aims to promote the [Open Container Initiative](http://www.opencontainers.org/) by providing a universal testing lib/tools for all the container projects compliance with [oci specs](https://github.com/opencontainers/specs).
 
-## TestCase specification
-Will split to another project later.
-Refers to [cases/README](cases/README.md) 
-
 ## Who should join
 - Open Container project developer
 
@@ -42,3 +38,4 @@ The [testing report](cases/report) will keep updating.
 
 ### Changes
 The `engine` part is now moved to [oct-engine](https://github.com/huawei-openlab/oct-engine)
+The `cases` part is now moved to [oct-engine/cases](https://github.com/huawei-openlab/oct-engine/cases)
