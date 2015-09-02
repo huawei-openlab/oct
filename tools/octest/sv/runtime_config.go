@@ -62,7 +62,7 @@ type Mount struct {
 	Type string `required`
 	Source string `required`
 	Destination string `required`
-	Options string `required`
+	Options []string `required`
 }
 */
 
@@ -75,8 +75,10 @@ func MountValid(m specs.Mount, msgs []string) (bool, []string) {
 	ret, msgs = StringValid("Mount.Destination", m.Destination, msgs)
 	valid = ret && valid
 
-	ret, msgs = StringValid("Mount.Options", m.Options, msgs)
-	valid = ret && valid
+	if len(m.Options) == 0 {
+		valid = false
+		msgs = append(msgs, "Mount.Options is missing")
+	}
 
 	return valid, msgs
 }
