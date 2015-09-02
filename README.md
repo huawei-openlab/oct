@@ -1,6 +1,6 @@
-# OCT: Test lib/tools for Open Container Specifications
+# OCT: Open Container Testing
 
-The oct(open container testing) project aims to promote the [Open Container Initiative](http://www.opencontainers.org/) by providing a universal testing lib/tools for all the container projects compliance with [oci specs](https://github.com/opencontainers/specs).
+The oct(open container testing) project aims to promote the [Open Container Initiative](http://www.opencontainers.org/) by providing a universal testing `lib/tools` for all the container projects compliance with [oci specs](https://github.com/opencontainers/specs).
 
 The testing tools are all maintained in the `tools` directory.
 
