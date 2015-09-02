@@ -15,8 +15,8 @@
 package main
 
 import (
-	"os"
 	"github.com/codegangsta/cli"
+	"os"
 )
 
 // It is a cli framework.
@@ -27,22 +27,22 @@ func main() {
 	app.Version = "1.0.0"
 	app.Commands = []cli.Command{
 		{
-			Name:  "validate",
+			Name:    "validate",
 			Aliases: []string{"v"},
-			Usage: "Validate container formats: config and layout",
+			Usage:   "Validate container formats: config and bundle",
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "config",
 					Usage: "Config file to validate",
 				},
 				cli.StringFlag{
-                                        Name:  "runtime",
-                                        Usage: "Runtime file to validate",
-                                },
-                                cli.StringFlag{
-					Name: "layout",
-					Usage: "Directory layout to validate",
-                                },
+					Name:  "runtime",
+					Usage: "Runtime file to validate",
+				},
+				cli.StringFlag{
+					Name:  "bundle",
+					Usage: "Directory bundle to validate",
+				},
 			},
 			Action: validateProcess,
 		},
@@ -52,4 +52,3 @@ func main() {
 
 	return
 }
-

@@ -6,4 +6,4 @@ make
 
 ./octest v --config config.json.bad
 
-./octest v --layout layout
+./octest v --bundle bundle

@@ -15,33 +15,34 @@
 package main
 
 import (
-	"fmt"
-	"os"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
 
 type validateRes struct {
-	cfgOK bool
-	runOK bool
-	rfsOK bool
-	config io.Reader
+	cfgOK   bool
+	runOK   bool
+	rfsOK   bool
+	config  io.Reader
 	runtime io.Reader
 }
-func validateLayout(path string) error {
-        fi, err := os.Stat(path)
+
+func validateBundle(path string) error {
+	fi, err := os.Stat(path)
 	if err != nil {
-		return fmt.Errorf("error accessing layout: %v", err)
+		return fmt.Errorf("error accessing bundle: %v", err)
 	}
 	if !fi.IsDir() {
 		return fmt.Errorf("given path %q is not a directory", path)
 	}
 	var flist []string
 	var res validateRes
-	walkLayout := func(fpath string, fi os.FileInfo, err error) error {
+	walkBundle := func(fpath string, fi os.FileInfo, err error) error {
 		rpath, err := filepath.Rel(path, fpath)
 		if err != nil {
 			return err
@@ -70,42 +71,42 @@ func validateLayout(path string) error {
 		}
 		return nil
 	}
-	if err := filepath.Walk(path, walkLayout); err != nil {
+	if err := filepath.Walk(path, walkBundle); err != nil {
 		return err
 	}
-	return checkLayout(res, flist)
+	return checkBundle(res, flist)
 }
 
-func checkLayout(res validateRes, files []string) error {
+func checkBundle(res validateRes, files []string) error {
 	defer func() {
 		if rc, ok := res.config.(io.Closer); ok {
 			rc.Close()
 		}
 		if rc, ok := res.runtime.(io.Closer); ok {
 			rc.Close()
-		}		
+		}
 	}()
 	if !res.cfgOK {
 		return ErrNoConfig
 	}
 	if !res.runOK {
-		return ErrNoRun 
+		return ErrNoRun
 	}
 	if !res.rfsOK {
 		return ErrNoRootFS
 	}
 	_, err := ioutil.ReadAll(res.config)
 	if err != nil {
-		return fmt.Errorf("error reading the layout: %v", err)
+		return fmt.Errorf("error reading the bundle: %v", err)
 	}
 	_, err = ioutil.ReadAll(res.runtime)
-        if err != nil {
-                return fmt.Errorf("error reading the layout: %v", err)
-        }
-		
+	if err != nil {
+		return fmt.Errorf("error reading the bundle: %v", err)
+	}
+
 	for _, f := range files {
 		if !strings.HasPrefix(f, "rootfs") {
-			return fmt.Errorf("unrecognized file path in layout: %q", f)
+			return fmt.Errorf("unrecognized file path in bundle: %q", f)
 		}
 	}
 	return nil

@@ -15,41 +15,41 @@
 package main
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"github.com/codegangsta/cli"
 )
 
 const (
-	// Path to config file inside the layout
-	ConfigFile = "config.json"
+	// Path to config file inside the bundle
+	ConfigFile  = "config.json"
 	RuntimeFile = "runtime.json"
-	// Path to rootfs directory inside the layout
+	// Path to rootfs directory inside the bundle
 	RootfsDir = "rootfs"
 )
 
 var (
-	ErrNoRootFS   = errors.New("no rootfs found in layout")
-	ErrNoConfig = errors.New("no config json file found in layout")
-	ErrNoRun = errors.New("no runtime json file found in layout")
+	ErrNoRootFS = errors.New("no rootfs found in bundle")
+	ErrNoConfig = errors.New("no config json file found in bundle")
+	ErrNoRun    = errors.New("no runtime json file found in bundle")
 )
 
 func validateProcess(context *cli.Context) {
-	//parse --config, --runtime, --layout option
+	//parse --config, --runtime, --bundle option
 	if args := context.String("config"); len(args) != 0 {
 		//validate config.json
 		validateConfigFile(args)
 	} else if args := context.String("runtime"); len(args) != 0 {
 		//validate runtime.json
 		validateRuntime(args)
-	} else if args := context.String("layout"); len(args) != 0 {
-		//validate layout
-		err := validateLayout(args)
+	} else if args := context.String("bundle"); len(args) != 0 {
+		//validate bundle
+		err := validateBundle(args)
 		if err != nil {
-			fmt.Printf("%s: invalid image layout: %v\n", args, err)
+			fmt.Printf("%s: invalid image bundle: %v\n", args, err)
 		} else {
-			fmt.Printf("%s: valid image layout\n", args)
- 		}
+			fmt.Printf("%s: valid image bundle\n", args)
+		}
 
 	} else {
 		cli.ShowCommandHelp(context, "validate")
