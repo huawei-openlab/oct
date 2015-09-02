@@ -1,4 +1,4 @@
-SUBDIR := report casevalidator
+SUBDIR := report casevalidator octest specsValidator
 
 all:  
 	@echo "Start to build." 
