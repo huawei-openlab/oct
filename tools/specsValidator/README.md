@@ -9,13 +9,17 @@ The specsValidator aims to test containers runtime compatible with  [opencontain
 - Prepare
 
 1. Install the go-lang env, set the GOPATH and GOROOT properly, reuquired go-lang version is V1.4.2      
-
-- Building
-It just guide people to use the specsValidator tool in the project seprately.
+2. Install godep tool, like the way below,
 ``` bash
-go get -d  github.com/huawei-openlab/oct/tools/specsValidator
-cd $GOPATH/github.com/huawei-openlab/oct/tools/specsValidator
-go build specs.go
+$       go get github.com/tools/godep
+```
+- Building        
+It just guide people to use the specsValidator tool directly, but not using it in the whole project,         
+if anyone wan to use it accross the whole proeject, please go through the [oct/README.md](./../../README.md)
+``` bash
+$       go get -d  github.com/huawei-openlab/oct/tools/specsValidator
+$       cd $GOPATH/github.com/huawei-openlab/oct/tools/specsValidator
+$       godep build .
 ```
 Binary "specs" is buit now.
 - Using    
@@ -26,8 +30,8 @@ Usage of ./specs:
   -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id
 
 ``` bash
-su root
-./specs -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
+$       su root
+$       ./specs -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
 ```
 #### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 
