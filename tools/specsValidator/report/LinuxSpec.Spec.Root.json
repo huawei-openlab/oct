@@ -1,1 +1,28 @@
-{"LinuxSpec.Spec.Root":[{"testcasename":"TestReadOnlyTrue","input":{"path":"rootfs_rootconfig","readonly":true},"result":"passed"},{"testcasename":"TestReadOnlyFalse","input":{"path":"rootfs_rootconfig","readonly":false},"result":"passed"},{"testcasename":"TestPathError","input":{"path":"rootfs_error","readonly":true},"result":"passed"}]}
+{
+  "LinuxSpec.Spec.Root": [
+    {
+      "testcasename": "TestReadOnlyTrue",
+      "input": {
+        "path": "rootfs_rootconfig",
+        "readonly": true
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestReadOnlyFalse",
+      "input": {
+        "path": "rootfs_rootconfig",
+        "readonly": false
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestPathError",
+      "input": {
+        "path": "rootfs_error",
+        "readonly": true
+      },
+      "result": "passed"
+    }
+  ]
+}
