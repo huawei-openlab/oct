@@ -18,30 +18,31 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/opencontainers/specs"
 	"strconv"
+	"syscall"
 )
 
-func TestRlimitNPROCSoft() string {
+func TestRlimitNOFILESoft() string {
 	var rlimitstest specs.Rlimit = specs.Rlimit{
-		Type: 0,
+		Type: syscall.RLIMIT_NOFILE,
 		Soft: uint64(2048),
-		Hard: uint64(0),
+		Hard: uint64(4096),
 	}
 	var testResult manager.TestResult
 	linuxspec := setRlimits(rlimitstest)
 	result, err := testRlimits(&linuxspec, "-n", strconv.FormatUint(rlimitstest.Soft, 10), true)
-	testResult.Set("TestRlimitNPROCSoft", rlimitstest.Soft, err, result)
+	testResult.Set("TestRlimitNOFILESoft", rlimitstest.Soft, err, result)
 	return testResult.Marshal()
 }
 
-func TestRlimitNPROCHard() string {
+func TestRlimitNOFILEHard() string {
 	var rlimitstest specs.Rlimit = specs.Rlimit{
-		Type: 0,
-		Soft: uint64(0),
+		Type: syscall.RLIMIT_NOFILE,
+		Soft: uint64(1024),
 		Hard: uint64(20480),
 	}
 	var testResult manager.TestResult
 	linuxspec := setRlimits(rlimitstest)
 	result, err := testRlimits(&linuxspec, "-n", strconv.FormatUint(rlimitstest.Hard, 10), false)
-	testResult.Set("TestRlimitNPROCHard", rlimitstest.Hard, err, result)
+	testResult.Set("TestRlimitNOFILEHard", rlimitstest.Hard, err, result)
 	return testResult.Marshal()
 }
