@@ -17,9 +17,9 @@ $       go get github.com/tools/godep
 It just guide people to use the specsValidator tool directly, but not using it in the whole project,         
 if anyone wan to use it accross the whole proeject, please go through the [oct/README.md](./../../README.md)
 ``` bash
-$       go get -d  github.com/huawei-openlab/oct/tools/specsValidator
-$       cd $GOPATH/github.com/huawei-openlab/oct/tools/specsValidator
-$       godep go build .
+$    go get -d  github.com/huawei-openlab/oct/tools/specsValidator
+$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
+$    godep go build .
 ```
 Binary "specs" is buit now.
 - Using    
@@ -30,13 +30,14 @@ Usage of ./specs:
   -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id
 
 ``` bash
-$       su root
-$       ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
+$   su root
+$   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
 ```
 #### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 
-- Getting Result     
-Get result from [oct/tools/specsValidator/report](./report/), result is written in json format.
+- Getting Result    
+If specified the output path with "-o", get reuslt from the path specified,      
+Else get result from [oct/tools/specsValidator/report](./report/), result is written in json format.
 For example, in namespace_out.json
 ``` json
 {
