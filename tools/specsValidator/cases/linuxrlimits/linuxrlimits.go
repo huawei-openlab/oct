@@ -68,6 +68,22 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 				Type: "mount",
 				Path: "",
 			},
+			{
+				Type: "pid",
+				Path: "",
+			},
+			{
+				Type: "network",
+				Path: "",
+			},
+			{
+				Type: "ipc",
+				Path: "",
+			},
+			{
+				Type: "uts",
+				Path: "",
+			},
 		},
 	},
 }
@@ -75,13 +91,14 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 var TestSuiteLinuxRlimits manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Rlimits"}
 
 func init() {
-	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNPROCSoft", TestRlimitNPROCSoft)
-	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNPROCHard", TestRlimitNPROCHard)
+	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNOFILESoft", TestRlimitNOFILESoft)
+	TestSuiteLinuxRlimits.AddTestCase("TestRlimitNOFILEHard", TestRlimitNOFILEHard)
 	manager.Manager.AddTestSuite(TestSuiteLinuxRlimits)
 }
 
 func setRlimits(testrlimits specs.Rlimit) specs.LinuxSpec {
 	linuxSpec.Linux.Rlimits = []specs.Rlimit{testrlimits}
+	linuxSpec.Process.Terminal = true
 	return linuxSpec
 }
 
