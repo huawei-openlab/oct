@@ -3,17 +3,19 @@ package hostenv
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 )
 
 func SetupEnv(guestFile string, outputFile string) error {
 	var cmd *exec.Cmd
 	var err error
-
-	cmd = exec.Command("/bin/sh", "-c", "mkdir -p /tmp/testtool")
+	goPath := os.Getenv("GOPATH")
+	bindPath := goPath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/containerend/"
+	cmd = exec.Command("/bin/sh", "-c", "mkdir -p "+bindPath)
 	_, err = cmd.Output()
 	if err != nil {
-		log.Fatalf("specsValidator root readonly test: mkdir testtool dir error, %v", err)
+		log.Fatalf("specsValidator root readonly test: mkdir %v dir error, %v", bindPath, err)
 	}
 
 	if guestFile != "" {
