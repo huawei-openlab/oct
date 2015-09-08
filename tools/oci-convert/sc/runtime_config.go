@@ -35,7 +35,6 @@ type Hooks struct {
 	Poststop []Hook `optional`
 }
 */
-//FIXME: the hooks is different between oci and aci
 func HooksFrom(image schema.ImageManifest, msgs []string) (specs.Hooks, []string) {
 	var hs specs.Hooks
 	for index := 0; index < len(image.App.EventHandlers); index++ {
