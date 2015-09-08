@@ -27,6 +27,7 @@ import (
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
 	"github.com/huawei-openlab/oct/tools/specsValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"

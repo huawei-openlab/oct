@@ -73,6 +73,9 @@ var TestSuiteProcess manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec
 
 func init() {
 	TestSuiteProcess.AddTestCase("TestBase", TestBase)
+	TestSuiteProcess.AddTestCase("TestUser1000", TestUser1000)
+	TestSuiteProcess.AddTestCase("TestUser1", TestUser1)
+	TestSuiteProcess.AddTestCase("TestUsernil", TestUsernil)
 	manager.Manager.AddTestSuite(TestSuiteProcess)
 	//TestSuiteProcess.AddTestCase("TestUserRoot", TestUserRoot)
 	// TestSuiteProcess.AddTestCase("TestUserNoneRoot", TestUserNoneRoot)
@@ -91,7 +94,6 @@ func setProcess(process specs.Process) specs.LinuxSpec {
 	utils.SetRight(resource, process.User.UID, process.User.GID)
 	//linuxSpec.Spec.Mounts[0].Source = resource
 	utils.SetBind(&linuxSpec, resource)
-	//setBind(&linuxSpec)
 
 	return linuxSpec
 }
