@@ -3,6 +3,7 @@
 package specsValidator
 
 import (
+	"fmt"
 	"github.com/opencontainers/specs"
 )
 
@@ -34,7 +35,28 @@ type Linux struct {
 }
 */
 func LinuxValid(l specs.Linux, msgs []string) (bool, []string) {
-	return true, msgs
+	valid := true
+	for index := 0; index < len(l.Capabilities); index++ {
+		capability := "CAP_" + l.Capabilities[index]
+		if capValid(capability) == false {
+			msgs = append(msgs, fmt.Sprintf("%s is not valid, please `man capabilities`", l.Capabilities[index]))
+			valid = false
+		}
+
+	}
+	switch l.RootfsPropagation {
+	case "":
+	case "slave":
+	case "private":
+	case "shared":
+		break
+	default:
+		valid = false
+		msgs = append(msgs, "RootfsPropagation should limited to 'slave', 'private', or 'shared'")
+		break
+
+	}
+	return valid, msgs
 }
 
 /*

@@ -64,8 +64,8 @@ type Spec struct{
 	Platform Platform `required`
 	Process Process `required`
 	Root Root `required`
-	Hostname string `required`
-	MountPoints []MountPoint `optional`
+	Hostname string `optional`
+	Mounts []MountPoint `optional`
 }
 */
 
@@ -81,12 +81,14 @@ func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
 	ret, msgs = RootValid(s.Root, msgs)
 	valid = ret && valid
 
+	/* hostname is optional now
 	ret, msgs = StringValid("Spec.Hostname", s.Hostname, msgs)
 	valid = ret && valid
+	*/
 
-	if len(s.MountPoints) > 0 {
-		for index := 0; index < len(s.MountPoints); index++ {
-			ret, msgs = MountPointValid(s.MountPoints[index], msgs)
+	if len(s.Mounts) > 0 {
+		for index := 0; index < len(s.Mounts); index++ {
+			ret, msgs = MountPointValid(s.Mounts[index], msgs)
 			valid = ret && valid
 		}
 	}
@@ -100,7 +102,7 @@ type Process struct {
 	User User `required`
 	Args []string `required`
 	Env []string `optonal`
-	Cwd string `required`
+	Cwd string `optional`
 }
 */
 func ProcessValid(p specs.Process, msgs []string) (bool, []string) {
@@ -110,10 +112,10 @@ func ProcessValid(p specs.Process, msgs []string) (bool, []string) {
 		valid = false
 		msgs = append(msgs, "Process.Args is missing")
 	}
-
+	/* Cwd is optional now
 	ret, msgs := StringValid("Process.Cwd", p.Cwd, msgs)
 	valid = ret && valid
-
+	*/
 	return valid, msgs
 }
 

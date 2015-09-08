@@ -1,7 +1,7 @@
 package specsValidator
 
 import (
-//	"github.com/opencontainers/specs"
+	"github.com/opencontainers/specs"
 )
 
 /*
@@ -9,23 +9,32 @@ import (
 type LinuxRuntimeSpec struct {
 	RuntimeSpec
 	// Linux is platform specific configuration for linux based containers.
-	LinuxRuntime Linux `json:"linux"`
+	Linux LinuxRuntime `json:"linux"`
+}
+*/
+
+func LinuxRuntimeSpecValid(lrs specs.LinuxRuntimeSpec, msgs []string) (bool, []string) {
+	valid, msgs := RuntimeSpecValid(lrs.RuntimeSpec, msgs)
+	ret, msgs := LinuxRuntimeValid(lrs.Linux, msgs)
+	valid = ret && valid
+	return valid, msgs
 }
 
+/*
 type LinuxRuntime struct {
-	// UidMapping specifies user mappings for supporting user namespaces on linux.
-	UidMappings []IDMapping `json:"uidMappings"`
-	// UidMapping specifies group mappings for supporting user namespaces on linux.
-	GidMappings []IDMapping `json:"gidMappings"`
+	// UIDMapping specifies user mappings for supporting user namespaces on linux.
+	UIDMappings []IDMapping `optional`
+	// UIDMapping specifies group mappings for supporting user namespaces on linux.
+	GIDMappings []IDMapping `optional`
 	// Rlimits specifies rlimit options to apply to the container's process.
-	Rlimits []Rlimit `json:"rlimits"`
+	Rlimits []Rlimit `optional`
 	// Sysctl are a set of key value pairs that are set for the container on start
 	Sysctl map[string]string `json:"sysctl"`
 	// Resources contain cgroup information for handling resource constraints
 	// for the container
 	Resources Resources `json:"resources"`
 	// Namespaces contains the namespaces that are created and/or joined by the container
-	Namespaces []Namespace `json:"namespaces"`
+	Namespaces []Namespace `optional`
 	// Devices are a list of device nodes that are created and enabled for the container
 	Devices []Device `json:"devices"`
 	// ApparmorProfile specified the apparmor profile for the container.
@@ -37,16 +46,64 @@ type LinuxRuntime struct {
 	// RootfsPropagation is the rootfs mount propagation mode for the container
 	RootfsPropagation string `json:"rootfsPropagation"`
 }
+*/
 
-// Namespace is the configuration for a linux namespace.
-type Namespace struct {
-	// Type is the type of Linux namespace
-	Type string `json:"type"`
-	// Path is a path to an existing namespace persisted on disk that can be joined
-	// and is of the same type
-	Path string `json:"path"`
+func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
+	ret := true
+	valid := true
+	if len(lr.UIDMappings)+len(lr.GIDMappings) > 5 {
+		valid = false
+		msgs = append(msgs, "The UID/GID mapping is limited to 5")
+	}
+
+	for index := 0; index < len(lr.Rlimits); index++ {
+		ret, msgs = RlimitValid(lr.Rlimits[index], msgs)
+		valid = ret && valid
+	}
+
+	ret, msgs = ResourcesValid(lr.Resources, msgs)
+	valid = ret && valid
+
+	for index := 0; index < len(lr.Namespaces); index++ {
+		ret, msgs = NamespaceValid(lr.Namespaces[index], msgs)
+		valid = ret && valid
+	}
+
+	return valid, msgs
 }
 
+/* Namespace is the configuration for a linux namespace.
+type Namespace struct {
+	// Type is the type of Linux namespace
+	Type string `required`
+	// Path is a path to an existing namespace persisted on disk that can be joined
+	// and is of the same type
+	Path string `optional`
+}
+*/
+func NamespaceValid(ns specs.Namespace, msgs []string) (bool, []string) {
+	valid := true
+	switch ns.Type {
+	case "":
+		valid = false
+		msgs = append(msgs, "The type of the namespace should not be empty")
+		break
+	case "pid":
+	case "network":
+	case "mount":
+	case "ipc":
+	case "uts":
+	case "user":
+		break
+	default:
+		valid = false
+		msgs = append(msgs, "The type of the namespace should limited to 'pid/network/mount/ipc/nts/user'")
+		break
+	}
+	return valid, msgs
+}
+
+/*
 // IDMapping specifies UID/GID mappings
 type IDMapping struct {
 	// HostID is the UID/GID of the host user or group
@@ -56,7 +113,14 @@ type IDMapping struct {
 	// Size is the length of the range of IDs mapped between the two namespaces
 	Size int32 `json:"size"`
 }
+*/
 
+func IDMappingValid(idm specs.IDMapping, msgs []string) (bool, []string) {
+	//TODO?
+	return true, msgs
+}
+
+/*
 // Rlimit type and restrictions
 type Rlimit struct {
 	// Type of the rlimit to set
@@ -66,7 +130,17 @@ type Rlimit struct {
 	// Soft is the soft limit for the specified type
 	Soft uint64 `json:"soft"`
 }
+*/
 
+func RlimitValid(r specs.Rlimit, msgs []string) (bool, []string) {
+	if r.Type < 0 || r.Type > 15 {
+		msgs = append(msgs, "Rlimit is invalid")
+		return false, msgs
+	}
+	return true, msgs
+}
+
+/*
 // HugepageLimit structure corresponds to limiting kernel hugepages
 type HugepageLimit struct {
 	Pagesize string `json:"pageSize"`
@@ -152,7 +226,13 @@ type Resources struct {
 	// Network restriction configuration
 	Network Network `json:"network"`
 }
+*/
 
+func ResourcesValid(r specs.Resources, msgs []string) (bool, []string) {
+	return true, msgs
+}
+
+/*
 type Device struct {
 	// Path to the device.
 	Path string `json:"path"`
@@ -168,7 +248,7 @@ type Device struct {
 	FileMode os.FileMode `json:"fileMode"`
 	// UID of the device.
 	UID uint32 `json:"uid"`
-	// Gid of the device.
+	// GID of the device.
 	GID uint32 `json:"gid"`
 }
 

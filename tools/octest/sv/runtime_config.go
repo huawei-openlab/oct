@@ -6,22 +6,20 @@ import (
 
 /*
 type RuntimeSpec struct {
-	Mounts []Mount `required`
+	Mounts map[string]Mount `json:"mounts"`
 	Hooks Hooks `optional`
 }
 */
-func RuntimeValid(rt specs.RuntimeSpec, msgs []string) (bool, []string) {
+func RuntimeSpecValid(rt specs.RuntimeSpec, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
-	if len(rt.Mounts) == 0 {
-		valid = false
-		msgs = append(msgs, "Runtime.Mounts is missing")
-	} else {
-		for index := 0; index < len(rt.Mounts); index++ {
-			ret, msgs = MountValid(rt.Mounts[index], msgs)
-			valid = ret && valid
-		}
+
+	//TODO, key?
+	for _, mount := range rt.Mounts {
+		ret, msgs = MountValid(mount, msgs)
+		valid = ret && valid
 	}
+	//TODO: check the minimal mounts
 
 	ret, msgs = HooksValid(rt.Hooks, msgs)
 	valid = ret && valid
@@ -33,16 +31,12 @@ func RuntimeValid(rt specs.RuntimeSpec, msgs []string) (bool, []string) {
 /*
 type Hook struct {
 	Path string   `requried`
-	Args []string `required`
+	Args []string `optional`
 	Env  []string `optional`
 }
 */
 func HookValid(h specs.Hook, msgs []string) (bool, []string) {
 	valid, msgs := StringValid("Hook.Path", h.Path, msgs)
-	if len(h.Args) == 0 {
-		valid = false
-		msgs = append(msgs, "Hook.Args is missing")
-	}
 
 	return valid, msgs
 }
@@ -54,7 +48,17 @@ type Hooks struct {
 }
 */
 func HooksValid(hs specs.Hooks, msgs []string) (bool, []string) {
-	return true, msgs
+	ret := true
+	valid := true
+	for index := 0; index < len(hs.Prestart); index++ {
+		ret, msgs = HookValid(hs.Prestart[index], msgs)
+		valid = ret && valid
+	}
+	for index := 0; index < len(hs.Poststop); index++ {
+		ret, msgs = HookValid(hs.Poststop[index], msgs)
+		valid = ret && valid
+	}
+	return valid, msgs
 }
 
 /*
@@ -62,7 +66,7 @@ type Mount struct {
 	Type string `required`
 	Source string `required`
 	Destination string `required`
-	Options []string `required`
+	Options []string `optional`
 }
 */
 
@@ -72,13 +76,10 @@ func MountValid(m specs.Mount, msgs []string) (bool, []string) {
 	ret, msgs := StringValid("Mount.Source", m.Source, msgs)
 	valid = ret && valid
 
-	ret, msgs = StringValid("Mount.Destination", m.Destination, msgs)
-	valid = ret && valid
-
-	if len(m.Options) == 0 {
-		valid = false
-		msgs = append(msgs, "Mount.Options is missing")
-	}
-
+	//Missing in new spec?
+	/*
+		ret, msgs = StringValid("Mount.Destination", m.Destination, msgs)
+		valid = ret && valid
+	*/
 	return valid, msgs
 }
