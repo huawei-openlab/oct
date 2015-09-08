@@ -89,7 +89,7 @@ func setProcess(process specs.Process) specs.LinuxSpec {
 	}
 	resource := result + "/src/github.com/huawei-openlab/oct/tools/specsValidator/containerend"
 	utils.SetRight(resource, process.User.UID, process.User.GID)
-	linuxSpec.Spec.Mounts[0].Source = resource
+	//linuxSpec.Spec.Mounts[0].Source = resource
 	utils.SetBind(&linuxSpec, resource)
 	//setBind(&linuxSpec)
 
