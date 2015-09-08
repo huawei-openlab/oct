@@ -15,8 +15,10 @@
 package linuxresources
 
 import (
+	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/opencontainers/specs"
+	"time"
 )
 
 func TestMemoryLimit() string {
@@ -31,9 +33,10 @@ func TestMemoryLimit() string {
 	}
 	linuxspec := setResources(testResourceseMemory)
 	go testResources(&linuxspec)
-	// if err == nil {
+	time.Sleep(time.Second * 3)
+	// defer cleanCgroup()
+	defer adaptor.CleanRunc()
 	result, err := checkConfigurationFromHost("memory.limit_in_bytes", "204800")
-	// }
 	var testResult manager.TestResult
 	testResult.Set("TestMemoryLimit", testResourceseMemory.Memory, err, result)
 	return testResult.Marshal()
