@@ -22,9 +22,11 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
 	"log"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+	"time"
 )
 
 /**
@@ -90,7 +92,7 @@ func setResources(resources specs.Resources) specs.LinuxSpec {
 func testResources(linuxSpec *specs.LinuxSpec) (string, error) {
 	fmt.Println("enter test source")
 	configFile := "./config.json"
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 30s"}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 10s"}
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
@@ -102,9 +104,8 @@ func testResources(linuxSpec *specs.LinuxSpec) (string, error) {
 }
 
 func checkConfigurationFromHost(filename string, configvalue string) (string, error) {
-	cmd := exec.Command("bash", "-c", "cat  /sys/fs/*/*/*/*/*/specsValidator/"+filename)
+	cmd := exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/*/*/*/specsValidator/"+filename)
 	cmdouput, err := cmd.Output()
-	fmt.Println("cmdoutput=" + string(cmdouput))
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, nil
@@ -115,4 +116,20 @@ func checkConfigurationFromHost(filename string, configvalue string) (string, er
 			return manager.FAILED, nil
 		}
 	}
+}
+
+func cleanCgroup() {
+	// cmd := exec.Command("bash", "-c", "rmdir /sys/fs/cgroup/memory/user/1002.user/c2.session/specsValidator")
+	// outPut, err := cmd.Output()
+	var cmd *exec.Cmd
+	time.Sleep(time.Second * 15)
+	cmd = exec.Command("rmdir", "/sys/fs/cgroup/*/user/*/*/specsValidator")
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	outPut, err := cmd.Output()
+	if err != nil {
+		fmt.Println(string(outPut))
+		log.Fatalf("[specsValidator] linux resources test : clean cgroup error , %v", err)
+	}
+	fmt.Println("clean cgroup sucess, ")
 }
