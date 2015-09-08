@@ -1,5 +1,8 @@
 all:
-	go build -o specsValidator
 
+	godep go build -o specsValidator
+
+	$(MAKE) -C containerend
 clean:
 	rm specsValidator
+	$(MAKE) -C containerend clean
