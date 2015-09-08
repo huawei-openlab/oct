@@ -19,7 +19,7 @@ if anyone wan to use it accross the whole proeject, please go through the [oct/R
 ``` bash
 $    go get -d  github.com/huawei-openlab/oct/tools/specsValidator
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
-$    godep go build .
+$    make all
 ```
 Binary "specs" is buit now.
 - Using    
@@ -32,6 +32,7 @@ Usage of ./specs:
 ``` bash
 $   su root
 $   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
+# For example, ./specsValidator -specs=45ae53d4dba8e550942f7384914206103f6d2216
 ```
 #### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
 
