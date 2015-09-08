@@ -21,7 +21,7 @@ import (
 func TestRootfsPropagationPrivate() string {
 	mode := "private"
 	linuxspec := setRootfsPropagation(mode)
-	result, err := testRootfsPropagationHost(&linuxspec, "guest_linuxrootfspropagation")
+	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationPrivate", linuxspec.Linux.RootfsPropagation, err, result)
 	return testResult.Marshal()
@@ -30,7 +30,7 @@ func TestRootfsPropagationPrivate() string {
 func TestRootfsPropagationSlave() string {
 	mode := "slave"
 	linuxspec := setRootfsPropagation(mode)
-	result, err := testRootfsPropagationHost(&linuxspec, "guest_linuxrootfspropagation")
+	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationSlave", linuxspec.Linux.RootfsPropagation, err, result)
 	return testResult.Marshal()
@@ -39,7 +39,7 @@ func TestRootfsPropagationSlave() string {
 func TestRootfsPropagationShare() string {
 	mode := "share"
 	linuxspec := setRootfsPropagation(mode)
-	result, err := testRootfsPropagationHost(&linuxspec, "guest_linuxrootfspropagation")
+	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationShare", linuxspec.Linux.RootfsPropagation, err, result)
 	return testResult.Marshal()
