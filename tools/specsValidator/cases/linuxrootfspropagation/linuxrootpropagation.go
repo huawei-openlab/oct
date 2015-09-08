@@ -17,9 +17,11 @@ package linuxrootfspropagation
 import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
 	"log"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -121,8 +123,14 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 		log.Fatalf("[Specstest] linux rootfs propagation test : touch test file in host error, %v", err)
 	}
 	// set the config parameters relative to this case
+	result := os.Getenv("GOPATH")
+	if result == "" {
+		log.Fatalf("utils.setBind error GOPATH == nil")
+	}
+	resource := result + "/src/github.com/huawei-openlab/oct/tools/specsValidator/containerend"
+	utils.SetRight(resource, linuxSpec.Process.User.UID, linuxSpec.Process.User.GID)
 	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "/testtool/" + guestfilename}
-	testtoolfolder := specs.Mount{"bind", "/tmp/testtool/", "/testtool", "bind"}
+	testtoolfolder := specs.Mount{"bind", resource, "/testtool", "bind"}
 	linuxSpec.Spec.Mounts = append(linuxSpec.Spec.Mounts, testtoolfolder)
 	linuxSpec.Linux.Capabilities = []string{"AUDIT_WRITE", "KILL", "NET_BIND_SERVICE", "SYS_ADMIN"}
 	linuxSpec.Spec.Root.Readonly = false
