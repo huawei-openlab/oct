@@ -1,6 +1,11 @@
-OBJS_NAME = specprocess
+SOURCES:=$(wildcard *.go)
+TARGETLIST:=$(patsubst %.go,%,$(SOURCES))
 all:
-	godep go build $(OBJS_NAME).go
-
+	$(foreach TARGET,${TARGETLIST},godep go build $(TARGET).go;)
+.PHONY:
+	clean
 clean:
-	rm -rf $(OBJS_NAME)
+	$(foreach TARGET,${TARGETLIST},rm -f $(TARGET);)
+
+
+
