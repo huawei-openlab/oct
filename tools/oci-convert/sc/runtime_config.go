@@ -13,8 +13,8 @@ type RuntimeSpec struct {
 */
 func RuntimeFrom(image schema.ImageManifest, msgs []string) (specs.RuntimeSpec, []string) {
 	var rt specs.RuntimeSpec
-
-	rt.Mounts, msgs = RuntimeMountsFrom(image, msgs)
+	//FIXME: upstream changes!
+	//	rt.Mounts, msgs = RuntimeMountsFrom(image, msgs)
 	rt.Hooks, msgs = HooksFrom(image, msgs)
 
 	return rt, msgs

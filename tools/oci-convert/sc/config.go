@@ -15,7 +15,7 @@ type Spec struct{
 	Process Process `required`
 	Root Root `required`
 	Hostname string `required`
-	MountPoints []MountPoint `optional`
+	Mounts []MountPoint `optional`
 }
 */
 
@@ -31,7 +31,7 @@ func SpecFrom(image schema.ImageManifest, msgs []string) (specs.Spec, []string) 
 	s.Hostname = "missing"
 	msgs = append(msgs, "hostname is not exist in aci-0.6.1")
 
-	s.MountPoints, msgs = MountPointsFrom(image, msgs)
+	s.Mounts, msgs = MountPointsFrom(image, msgs)
 
 	return s, msgs
 }
