@@ -18,8 +18,11 @@ import (
 	"errors"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
+	"log"
+	"os"
 	"strings"
 )
 
@@ -35,17 +38,25 @@ func TestSuiteLinuxDevicesFull() string {
 		UID:         0,
 		GID:         0,
 	}
-	linuxspec := setDevices(device)
-	linuxspec.Spec.Process.Args = []string{"/bin/bash", "-c", "echo 'specsvalidator' >/dev/full"}
+	linuxSpec = setDevices(device)
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		log.Fatalf("utils.setBind error GOPATH == nil")
+	}
+	resource := gopath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/containerend"
+	utils.SetRight(resource, linuxSpec.Process.User.UID, linuxSpec.Process.User.GID)
+	testtoolfolder := specs.Mount{"bind", resource, "/testtool", "bind"}
+	linuxSpec.Spec.Mounts = append(linuxSpec.Spec.Mounts, testtoolfolder)
+	linuxSpec.Spec.Process.Args[0] = "/testtool/linuxdevicesfull"
 	configFile := "./config.json"
-	err := configconvert.LinuxSpecToConfig(configFile, &linuxspec)
+	err := configconvert.LinuxSpecToConfig(configFile, &linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	var result string
 	var errout error
 	if err != nil {
 		result = manager.UNSPPORTED
 		errout = errors.New(out + err.Error())
-	} else if strings.EqualFold(strings.TrimSpace(string(out)), "bash: echo: write error: No space left on device") {
+	} else if strings.Contains(strings.TrimSpace(out), "echo: write error: No space left on device") {
 		result = manager.PASSED
 		errout = nil
 	} else {

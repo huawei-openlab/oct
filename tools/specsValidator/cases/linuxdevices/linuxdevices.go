@@ -83,6 +83,17 @@ func init() {
 }
 
 func setDevices(testdevices specs.Device) specs.LinuxSpec {
+	var initdevice specs.Device = specs.Device{
+		Type:        99,
+		Path:        "/dev/null",
+		Major:       1,
+		Minor:       3,
+		Permissions: "rwm",
+		FileMode:    438,
+		UID:         0,
+		GID:         0,
+	}
+	linuxSpec.Linux.Devices = []specs.Device{initdevice}
 	linuxSpec.Linux.Devices = append(linuxSpec.Linux.Devices, testdevices)
 	return linuxSpec
 }
