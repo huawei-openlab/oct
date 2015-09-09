@@ -32,6 +32,20 @@ type validateRes struct {
 	runtime io.Reader
 }
 
+const (
+	// Path to config file inside the bundle
+	ConfigFile  = "config.json"
+	RuntimeFile = "runtime.json"
+	// Path to rootfs directory inside the bundle
+	RootfsDir = "rootfs"
+)
+
+var (
+	ErrNoRootFS = errors.New("no rootfs found in bundle")
+	ErrNoConfig = errors.New("no config json file found in bundle")
+	ErrNoRun    = errors.New("no runtime json file found in bundle")
+)
+
 func validateBundle(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {

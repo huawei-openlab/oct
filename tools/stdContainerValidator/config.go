@@ -23,8 +23,8 @@ import (
 	"os"
 )
 
-func validateConfigFile(path string) {
-	var sp specs.Spec
+func validateConfig(path string) {
+	var sp specs.LinuxSpec
 	content, err := ReadFile(path)
 	if err != nil {
 		return
@@ -33,7 +33,7 @@ func validateConfigFile(path string) {
 
 	var err_msg []string
 
-	ok, err_msg := specsValidator.SpecValid(sp, err_msg)
+	ok, err_msg := specsValidator.LinuxSpecValid(sp, err_msg)
 
 	if ok == false {
 		fmt.Println("The configuration is incomplete, see the details: \n")
