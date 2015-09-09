@@ -12,7 +12,7 @@ so that any compliant runtime can run it without extra dependencies,
 regardless of the underlying machine and the contents of the container.
 ```
 
-Two things needed to tested:
+OCT covers two areas:
 - [Standard Container](#standard-container) 
 - [Compliant Runtime](#compliant-runtime)
 
@@ -32,7 +32,7 @@ A compliant runtime should be the one which could run a standard container `corr
 
 OCT provides a [Compliant Runtime Validator](tools/specsValidator/README.md) tool to varify if a runtime could be called `a compliant runtime`. (OCT tests on `runC` so far.)
 
-###Converting tools
+####Converting tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
 
 ## Getting Started
