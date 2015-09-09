@@ -10,7 +10,7 @@ import (
 /*
 // LinuxSpec is the full specification for linux containers.
 type LinuxSpec struct {
-	Spec `required1
+	Spec `required`
 	// Linux is platform specific configuration for linux based containers.
 	Linux Linux `required`
 }

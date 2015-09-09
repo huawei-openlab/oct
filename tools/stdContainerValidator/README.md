@@ -1,4 +1,4 @@
-The `octest` verifies:
+The `scv` verifies:
 
 ## spec/bundle
 Verify whether a bundle is valid, with all the required files and
@@ -62,11 +62,11 @@ func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
 ```
 
 #How To try
-It is easy to use this tool, we provide a `demo bundle` with an invalid `config.json` file. 
+It is easy to use this tool, we provide a demo-bundle.
 
 
 ```
 make
-./octest v --config bundle/config.json
-./octest v --bundle bundle
+./scv bundle demo-bundle
+
 ```

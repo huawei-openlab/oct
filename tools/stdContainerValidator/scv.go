@@ -15,10 +15,18 @@
 package main
 
 import (
+	"./sv"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"os"
 )
+
+func printErr(msgs []string) {
+	fmt.Println(len(msgs), "errors found:")
+	for index := 0; index < len(msgs); index++ {
+		fmt.Println(msgs[index])
+	}
+}
 
 func parseConfig(context *cli.Context) {
 	if len(context.Args()) > 0 {
@@ -38,11 +46,12 @@ func parseRuntime(context *cli.Context) {
 
 func parseBundle(context *cli.Context) {
 	if len(context.Args()) > 0 {
-		err := validateBundle(context.Args()[0])
-		if err != nil {
-			fmt.Println(err)
-		} else {
+		var msgs []string
+		valid, msgs := specsValidator.LinuxBundleValid(context.Args()[0], msgs)
+		if valid {
 			fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
+		} else {
+			printErr(msgs)
 		}
 	} else {
 		cli.ShowCommandHelp(context, "bundle")
