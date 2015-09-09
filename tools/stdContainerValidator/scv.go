@@ -15,7 +15,7 @@
 package main
 
 import (
-	"./sv"
+	"./libsv"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"os"
@@ -31,11 +31,22 @@ func printErr(msgs []string) {
 func parseBundle(context *cli.Context) {
 	if len(context.Args()) > 0 {
 		var msgs []string
-		valid, msgs := specsValidator.LinuxBundleValid(context.Args()[0], msgs)
-		if valid {
-			fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
+		valid := true
+		os := specsValidator.OSDetect(context.Args()[0])
+		if len(os) == 0 {
+			valid = false
+			fmt.Println("Cannot detect OS in the config.json under the bundle, or maybe miss `config.json`.")
 		} else {
-			printErr(msgs)
+			if os == "linux" {
+				valid, msgs = specsValidator.LinuxBundleValid(context.Args()[0], msgs)
+			} else {
+				valid, msgs = specsValidator.BundleValid(context.Args()[0], msgs)
+			}
+			if valid {
+				fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
+			} else {
+				printErr(msgs)
+			}
 		}
 	} else {
 		cli.ShowCommandHelp(context, "bundle")

@@ -159,19 +159,19 @@ type MountPoint struct {
 }
 */
 //mps:mount points; rmps: runtime mount points
-//We don't check the 'minimal mount points' here, we do it in runtime_config.go
+//We don't check the 'minimal mount points' here, we do it in config_linux.go
 func MountPointsValid(mps []specs.MountPoint, rmps map[string]specs.Mount, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
 	for index := 0; index < len(mps); index++ {
-		if _, ok := rmps[mps[index].Name]; ok == false {
-			valid = false && valid
-			msgs = append(msgs, fmt.Sprintf("%s in config/mount is not exist in runtime/mount", mps[index].Name))
-			continue
-		}
 		ret, msgs = MountPointValid(mps[index], rootfs, msgs)
 		valid = ret && valid
 		if ret == false {
+			continue
+		}
+		if _, ok := rmps[mps[index].Name]; ok == false {
+			valid = false && valid
+			msgs = append(msgs, fmt.Sprintf("%s in config/mount is not exist in runtime/mount", mps[index].Name))
 			continue
 		}
 		//Check if there were duplicated mount name

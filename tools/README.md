@@ -1,7 +1,7 @@
 The tools for open container test will be maintained here.
 
-### [octest](octest/README.md) - specs/(bundle, config)
-The `octest` is a `rolling release` tool which keeps updating with OCI specs.
+### [stdContainerValidator](stdContainerValidator/README.md) - specs/(bundle, config.json, runtime.json)
+The `stdContainerValidator` is a `rolling release` tool which keeps updating with OCI specs.
 
 ### [specValidator](specsValidator/README.md) - specs/(runtime, config)
 The `specValidator` verifies all the specs configurations, so it is a much bigger project

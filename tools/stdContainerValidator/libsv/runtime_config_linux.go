@@ -69,6 +69,27 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
 		valid = ret && valid
 	}
 
+	//minimum devices
+	devices := requiredDevices()
+	for index := 0; index < len(devices); index++ {
+		found := false
+		for dIndex := 0; dIndex < len(lr.Devices); dIndex++ {
+			if lr.Devices[dIndex] == devices[index] {
+				found = true
+				break
+			}
+		}
+		if found == false {
+			msgs = append(msgs, fmt.Sprintf("The required device %s is missing", devices[index]))
+			valid = found && valid
+		}
+	}
+
+	for index := 0; index < len(lr.Devices); index++ {
+		ret, msgs = DeviceValid(lr.Devices[index], msgs)
+		valid = ret && valid
+	}
+
 	return valid, msgs
 }
 
@@ -133,6 +154,7 @@ type Rlimit struct {
 */
 
 func RlimitValid(r specs.Rlimit, msgs []string) (bool, []string) {
+	//FIXME: waiting for upstream to change `type` to string
 	if r.Type < 0 || r.Type > 15 {
 		msgs = append(msgs, "Rlimit is invalid")
 		return false, msgs
@@ -251,7 +273,52 @@ type Device struct {
 	// GID of the device.
 	GID uint32 `json:"gid"`
 }
+*/
 
+func DeviceValid(d specs.Device, msgs []string) (bool, []string) {
+	valid, msgs := StringValid("Device.Path", d.Path, msgs)
+	if valid == false {
+		return valid, msgs
+	}
+
+	switch d.Type {
+	case 'b':
+	case 'c':
+	case 'u':
+		if d.Major <= 0 {
+			msgs = append(msgs, fmt.Sprintf("Device %s type is `b/c/u`, please set the major number", d.Path))
+			valid = false && valid
+		}
+		if d.Minor <= 0 {
+			msgs = append(msgs, fmt.Sprintf("Device %s type is `b/c/u`, please set the minor number", d.Path))
+			valid = false && valid
+		}
+		break
+	case 'p':
+		if d.Major > 0 || d.Minor > 0 {
+			msgs = append(msgs, fmt.Sprintf("Device %s type is `p`, no need to set major/minor number", d.Path))
+			valid = false && valid
+		}
+		break
+	default:
+		msgs = append(msgs, fmt.Sprintf("Device %s type should limited to `b/c/u/p`", d.Path))
+		valid = false && valid
+		break
+	}
+	//TODO, check permission/filemode
+
+	if d.UID <= 0 {
+		msgs = append(msgs, fmt.Sprintf("Device %s UID %d is invalid`", d.Path, d.UID))
+		valid = false && valid
+	}
+	if d.GID <= 0 {
+		msgs = append(msgs, fmt.Sprintf("Device %s GID %d is invalid`", d.Path, d.GID))
+		valid = false && valid
+	}
+	return true, msgs
+}
+
+/*
 // Seccomp represents syscall restrictions
 type Seccomp struct {
 	DefaultAction Action     `json:"defaultAction"`

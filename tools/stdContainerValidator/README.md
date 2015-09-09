@@ -6,16 +6,13 @@ all the required attributes.
 Since the `bundle` spec is not decide yet, now just check if `config.json`,
 `runtime.json` and `rootfs` were accessbile.
 
-## spec/config
-Verify whether a config file is valid, with all the `required` configurations
-and all the required format according to [specs](https://github.com/opencontainers/specs).
-
-The validation work is done by .go files in the `sv` directory.
+The validation work is done by .go files in the `libsv` directory.
 These .go files follows the .go files in [specs](https://github.com/opencontainers/specs) closely
-in order to make the validation clearly:
+in order to make the validation clearly, for example:
 
-### spec/config.go
 ```
+spec/config.go
+
 // Spec is the base configuration for the container.  It specifies platform
 // independent configuration.
 type Spec struct {
@@ -34,8 +31,9 @@ type Spec struct {
 }
 ```
 
-### sv/config.go
 ```
+libsv/config.go
+
 func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
         valid, msgs := checkSemVer(s.Version, msgs)
 

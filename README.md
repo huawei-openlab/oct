@@ -6,15 +6,15 @@ The testing tools are all maintained in the `tools` directory.
 
 ```
 tools
-  |______ octest
+  |______ stdContainerValidator
   |______ specsValidator
 
 ```
 
-Now we have two tools `octest` and `specsValidator`.
+Now we have two tools `stdContainerValidator` and `specsValidator`.
 You can join us to develop these tools or add new ones.
 
-### [octest](tools/octest/README.md) - spec test (config and bundle)
+### [stdContainerValidator](tools/stdContainerValidator/README.md) - spec test (configs and bundle)
 - Verify whether a config file (config.json and runtime.json) is compliance with the newest OCI specs.
 - Verify whether a bundle is valid according to the newest OCI specs.
 

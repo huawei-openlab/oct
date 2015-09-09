@@ -10,16 +10,19 @@ type RuntimeSpec struct {
 	Hooks Hooks `optional`
 }
 */
+
+/*
+Minimal mount path
+https://github.com/opencontainers/specs/issues/95
+*/
 func RuntimeSpecValid(rt specs.RuntimeSpec, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
 
-	//TODO, key?
 	for _, mount := range rt.Mounts {
 		ret, msgs = MountValid(mount, msgs)
 		valid = ret && valid
 	}
-	//TODO: check the minimal mounts
 
 	ret, msgs = HooksValid(rt.Hooks, msgs)
 	valid = ret && valid
@@ -65,21 +68,17 @@ func HooksValid(hs specs.Hooks, msgs []string) (bool, []string) {
 type Mount struct {
 	Type string `required`
 	Source string `required`
-	Destination string `required`
 	Options []string `optional`
 }
 */
 
 func MountValid(m specs.Mount, msgs []string) (bool, []string) {
+	//TODO: should we check the `type`?
+
 	valid, msgs := StringValid("Mount.Type", m.Type, msgs)
 
 	ret, msgs := StringValid("Mount.Source", m.Source, msgs)
 	valid = ret && valid
 
-	//Missing in new spec?
-	/*
-		ret, msgs = StringValid("Mount.Destination", m.Destination, msgs)
-		valid = ret && valid
-	*/
 	return valid, msgs
 }

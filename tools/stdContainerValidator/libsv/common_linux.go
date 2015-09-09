@@ -74,3 +74,30 @@ func rlimitValid(rlimit string) bool {
 	}
 	return false
 }
+
+/*
+https://github.com/appc/spec/blob/master/spec/OS-SPEC.md
+*/
+func requiredPaths() []string {
+	paths := []string{
+		"/proc", //procfs
+		"/sys",  //sysfs
+		//	"/dev/shm",     //tmpfs
+	}
+	return paths
+}
+
+func requiredDevices() []string {
+	devices := []string{
+		"/dev/null",    //device
+		"/dev/zero",    //device
+		"/dev/full",    //device
+		"/dev/random",  //device
+		"/dev/urandom", //device
+		"/dev/tty",     //device
+		"/dev/console", //device
+		"/dev/pts",     //devpts
+		"/dev/ptmx",    //device	Bind-mount or symlink of /dev/pts/ptmx
+	}
+	return devices
+}
