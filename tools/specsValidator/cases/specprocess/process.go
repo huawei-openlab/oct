@@ -100,7 +100,7 @@ func setProcess(process specs.Process) specs.LinuxSpec {
 func testProcess(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
 	configFile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxspec)
-	_, err = adaptor.StartRunc(configFile)
+	output, err := adaptor.StartRunc(configFile)
 	if err != nil {
 		if supported {
 			return manager.UNKNOWNERR, nil
@@ -108,7 +108,7 @@ func testProcess(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
 			return manager.PASSED, nil
 		}
 	}
-	res := checkOut()
+	res := checkOut(output)
 	if res {
 		return manager.PASSED, nil
 	} else {
@@ -117,19 +117,29 @@ func testProcess(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
 
 }
 
-func checkResult(job string, value string) bool {
-	result := utils.GetJob(job, "./containerend_out.txt")
+func getJob(job string, output string) string {
+	as := strings.Split(output, "\n")
+	for _, s := range as {
+		if strings.Contains(s, job) {
+			return s
+		}
+	}
+	return ""
+}
+
+func checkResult(job string, value string, output string) bool {
+	result := getJob(job, output)
 	if strings.Contains(result, value) {
 		return true
 	}
 	return false
 }
 
-func checkOut() bool {
+func checkOut(output string) bool {
 	value := strconv.FormatInt(int64(linuxSpec.Spec.Process.User.UID), 10)
 	job := "Uid"
 	resultTag := false
-	if checkResult(job, value) {
+	if checkResult(job, value, output) {
 		resultTag = true
 	} else {
 		resultTag = false
@@ -137,7 +147,7 @@ func checkOut() bool {
 
 	value = strconv.FormatInt(int64(linuxSpec.Spec.Process.User.GID), 10)
 	job = "Gid"
-	if checkResult(job, value) {
+	if checkResult(job, value, output) {
 		resultTag = true
 	} else {
 		resultTag = false
@@ -147,7 +157,7 @@ func checkOut() bool {
 	job = "Groups"
 	for _, tv := range tmpValue {
 		tvs := strconv.FormatInt(int64(tv), 10)
-		if checkResult(job, tvs) {
+		if checkResult(job, tvs, output) {
 			resultTag = true
 		} else {
 			resultTag = false
