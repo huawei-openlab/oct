@@ -17,7 +17,7 @@ OCT covers two areas:
 - [Compliant Runtime](#compliant-runtime)
 
 ###Standard Container
-A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard `config.json`, one standard `runtime.json` and one standard `rootfs`.
+A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
 
 OCT provides a [Standard Container Validator](tools/stdContainerValidator/README.md) tool to varify if a bundle could be called `a standard container`.
 
@@ -26,11 +26,11 @@ A compliant runtime should be the one which could run a standard container `corr
 
 `Correctly` means running by a runtime, all the mounts, uid, and other informations should be exactly same with what defined in config.json/runtime.json.
 
-`Directly` means a runtime could run a standard container without any extra action, just like `runC`.
+`Directly` means a runtime could run a standard container without any extra action, just like 'runC'.
 
-`Indirectly` means a runtime(runX) could not run a standard container `directly`. RunX needs to get a runX-bundle converted from an oci-bundle first and then runs runX-bundle. [Converting tools](#converting-tools)
+`Indirectly` means a runtime(runX) could not run a standard container directly. RunX needs to get a runX-bundle converted from an oci-bundle first and then runs runX-bundle. [Converting tools](#converting-tools)
 
-OCT provides a [Compliant Runtime Validator](tools/specsValidator/README.md) tool to varify if a runtime could be called `a compliant runtime`. (OCT tests on `runC` so far.)
+OCT provides a [Compliant Runtime Validator](tools/specsValidator/README.md) tool to varify if a runtime could be called `a compliant runtime`. (OCT tests on 'runC' so far.)
 
 ####Converting tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
