@@ -41,12 +41,35 @@ func validateConfig(path string) {
 			fmt.Println(err_msg[index])
 		}
 	} else {
-		fmt.Println("The configuration is Good")
+		fmt.Println("Valid: the configuration file is Good")
 
 	}
 
 }
 
+func validateRuntime(path string) {
+	var sp specs.RuntimeSpec
+	content, err := ReadFile(path)
+	if err != nil {
+		return
+	}
+	json.Unmarshal([]byte(content), &sp)
+
+	var err_msg []string
+
+	ok, err_msg := specsValidator.RuntimeSpecValid(sp, err_msg)
+
+	if ok == false {
+		fmt.Println("The configuration is incomplete, see the details: \n")
+		for index := 0; index < len(err_msg); index++ {
+			fmt.Println(err_msg[index])
+		}
+	} else {
+		fmt.Println("Valid: the configuration file is Good")
+
+	}
+
+}
 func ReadFile(file_url string) (content string, err error) {
 	_, err = os.Stat(file_url)
 	if err != nil {
