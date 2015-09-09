@@ -3,6 +3,8 @@ package specsValidator
 import (
 	"fmt"
 	"github.com/opencontainers/specs"
+	"os"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -69,7 +71,7 @@ type Spec struct{
 }
 */
 
-func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
+func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []string) (bool, []string) {
 	valid, msgs := checkSemVer(s.Version, msgs)
 
 	ret, msgs := PlatformValid(s.Platform, msgs)
@@ -86,12 +88,9 @@ func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
 	valid = ret && valid
 	*/
 
-	if len(s.Mounts) > 0 {
-		for index := 0; index < len(s.Mounts); index++ {
-			ret, msgs = MountPointValid(s.Mounts[index], msgs)
-			valid = ret && valid
-		}
-	}
+	ret, msgs = MountPointsValid(s.Mounts, runtime.Mounts, rootfs, msgs)
+	valid = ret && valid
+
 	return valid, msgs
 }
 
@@ -150,16 +149,60 @@ func PlatformValid(p specs.Platform, msgs []string) (bool, []string) {
 }
 
 /*
-// MountPoint describes a directory that may be fullfilled by a mount in the runtime.json.
+//config.md Each record in this array must have configuration in runtime config.
+/ MountPoint describes a directory that may be fullfilled by a mount in the runtime.json.
 type MountPoint struct {
+	// Name is a unique descriptive identifier for this mount point.
 	Name string `required`
+	// Path specifies the path of the mount. The path and child directories MUST exist, a runtime MUST NOT create directories automatically to a mount point.
 	Path string `required`
 }
 */
-func MountPointValid(mp specs.MountPoint, msgs []string) (bool, []string) {
+//mps:mount points; rmps: runtime mount points
+//We don't check the 'minimal mount points' here, we do it in runtime_config.go
+func MountPointsValid(mps []specs.MountPoint, rmps map[string]specs.Mount, rootfs string, msgs []string) (bool, []string) {
+	ret := true
+	valid := true
+	for index := 0; index < len(mps); index++ {
+		if _, ok := rmps[mps[index].Name]; ok == false {
+			valid = false && valid
+			msgs = append(msgs, fmt.Sprintf("%s in config/mount is not exist in runtime/mount", mps[index].Name))
+			continue
+		}
+		ret, msgs = MountPointValid(mps[index], rootfs, msgs)
+		valid = ret && valid
+		if ret == false {
+			continue
+		}
+		//Check if there were duplicated mount name
+		for dIndex := index + 1; dIndex < len(mps); dIndex++ {
+			if mps[index].Name == mps[dIndex].Name {
+				msgs = append(msgs, fmt.Sprintf("%s in config/mount is duplicated", mps[index].Name))
+				valid = false && valid
+			}
+		}
+	}
+	return valid, msgs
+}
+
+func MountPointValid(mp specs.MountPoint, rootfs string, msgs []string) (bool, []string) {
 	valid, msgs := StringValid("MountPoint.Name", mp.Name, msgs)
 
 	ret, msgs := StringValid("MountPoint.Path", mp.Path, msgs)
 	valid = ret && valid
+
+	mountPath := path.Join(rootfs, mp.Path)
+
+	fi, err := os.Stat(mountPath)
+	if err != nil {
+		msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not exist in rootfs", mp.Name, mp.Path))
+		valid = ret && valid
+	} else {
+		if !fi.IsDir() {
+			msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not a valid directory", mp.Name, mp.Path))
+			valid = ret && valid
+		}
+	}
+
 	return valid, msgs
 }

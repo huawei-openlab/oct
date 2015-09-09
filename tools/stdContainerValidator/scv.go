@@ -28,22 +28,6 @@ func printErr(msgs []string) {
 	}
 }
 
-func parseConfig(context *cli.Context) {
-	if len(context.Args()) > 0 {
-		validateConfig(context.Args()[0])
-	} else {
-		cli.ShowCommandHelp(context, "config")
-	}
-}
-
-func parseRuntime(context *cli.Context) {
-	if len(context.Args()) > 0 {
-		//		validateRuntime(context.Args()[0])
-	} else {
-		cli.ShowCommandHelp(context, "runtime")
-	}
-}
-
 func parseBundle(context *cli.Context) {
 	if len(context.Args()) > 0 {
 		var msgs []string
@@ -74,28 +58,10 @@ func main() {
 	app.Version = "0.1.0"
 	app.Commands = []cli.Command{
 		{
-			Name:    "config",
-			Aliases: []string{"c"},
-			Usage:   "Validate config.json",
-			Action:  parseConfig,
-		},
-		{
-			Name:    "runtime",
-			Aliases: []string{"r"},
-			Usage:   "Validate runtime.json",
-			Action:  parseRuntime,
-		},
-		{
 			Name:    "bundle",
 			Aliases: []string{"b"},
 			Usage:   "Validate if required files exist in a bundle",
 			Action:  parseBundle,
-		},
-		{
-			Name:    "all",
-			Aliases: []string{"a"},
-			Usage:   "Validate all of the bundle, config and runtime",
-			Action:  parseAll,
 		},
 	}
 

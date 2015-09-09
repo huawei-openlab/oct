@@ -16,8 +16,8 @@ type LinuxSpec struct {
 }
 */
 
-func LinuxSpecValid(ls specs.LinuxSpec, msgs []string) (bool, []string) {
-	valid, msgs := SpecValid(ls.Spec, msgs)
+func LinuxSpecValid(ls specs.LinuxSpec, runtime specs.LinuxRuntimeSpec, rootfs string, msgs []string) (bool, []string) {
+	valid, msgs := SpecValid(ls.Spec, runtime.RuntimeSpec, rootfs, msgs)
 
 	ret, msgs := LinuxValid(ls.Linux, msgs)
 	valid = ret && valid
