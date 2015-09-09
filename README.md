@@ -28,11 +28,11 @@ A compliant runtime should be the one which could run a standard container `corr
 
 `Directly` means a runtime could run a standard container without any extra action, just like 'runC'.
 
-`Indirectly` means a runtime(runX) could not run a standard container directly. RunX needs to get a runX-bundle converted from an oci-bundle first and then runs runX-bundle. [Converting tools](#converting-tools)
+`Indirectly` means a runtime(runX) could not run a standard container directly. RunX needs to get a runX-bundle converted from an oci-bundle first and then runs runX-bundle. [Conversion tools](#conversion-tools)
 
 OCT provides a [Compliant Runtime Validator](tools/specsValidator/README.md) tool to varify if a runtime could be called `a compliant runtime`. (OCT tests on 'runC' so far.)
 
-####Converting tools
+####Conversion tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
 
 ## Getting Started
