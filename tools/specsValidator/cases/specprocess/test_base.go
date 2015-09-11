@@ -86,7 +86,7 @@ func TestUsernil() string {
 	return testResult.Marshal()
 }
 
-/*func TestEnvNilFalse() string {
+func TestEnvNilFalse() string {
 	var process specs.Process = specs.Process{
 		Terminal: false,
 		User: specs.User{
@@ -100,7 +100,7 @@ func TestUsernil() string {
 	}
 	linuxspec := setProcess(process)
 	newProcess := linuxspec.Spec.Process
-	result, err := testProcess(&linuxspec, false)
+	result, err := testProcessEnv(&linuxspec, false)
 	var testResult manager.TestResult
 	testResult.Set("TestEnvNil", newProcess, err, result)
 	return testResult.Marshal()
@@ -114,17 +114,17 @@ func TestEnvNilTrue() string {
 			GID:            0,
 			AdditionalGids: nil,
 		},
-		Args: []string{"/bin/bash"},
+		Args: []string{"/bin/bash", "-c", "./specprocessenv"},
 		Env:  nil,
 		Cwd:  "",
 	}
 	linuxspec := setProcess(process)
 	newProcess := linuxspec.Spec.Process
-	result, err := testProcess(&linuxspec, true)
+	result, err := testProcessEnv(&linuxspec, true)
 	var testResult manager.TestResult
 	testResult.Set("TestEnvNil", newProcess, err, result)
 	return testResult.Marshal()
-}*/
+}
 
 func TestEnv() string {
 	var process specs.Process = specs.Process{

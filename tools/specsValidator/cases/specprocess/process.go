@@ -78,6 +78,8 @@ func init() {
 	TestSuiteProcess.AddTestCase("TestUser1", TestUser1)
 	TestSuiteProcess.AddTestCase("TestUsernil", TestUsernil)
 	TestSuiteProcess.AddTestCase("TestEnv", TestEnv)
+	TestSuiteProcess.AddTestCase("TestEnvNilFalse", TestEnvNilFalse)
+	TestSuiteProcess.AddTestCase("TestEnvNilTrue", TestEnvNilTrue)
 	manager.Manager.AddTestSuite(TestSuiteProcess)
 	//TestSuiteProcess.AddTestCase("TestUserRoot", TestUserRoot)
 	// TestSuiteProcess.AddTestCase("TestUserNoneRoot", TestUserNoneRoot)
@@ -105,7 +107,7 @@ func testProcessUser(linuxspec *specs.LinuxSpec, supported bool) (string, error)
 	output, err := adaptor.StartRunc(configFile)
 	if err != nil {
 		if supported {
-			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json")
+			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json" + err.Error())
 		} else {
 			return manager.PASSED, nil
 		}
@@ -125,7 +127,7 @@ func testProcessEnv(linuxspec *specs.LinuxSpec, supported bool) (string, error) 
 	output, err := adaptor.StartRunc(configFile)
 	if err != nil {
 		if supported {
-			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json")
+			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json----" + string(output) + "----" + err.Error())
 		} else {
 			return manager.PASSED, nil
 		}
@@ -135,19 +137,27 @@ func testProcessEnv(linuxspec *specs.LinuxSpec, supported bool) (string, error) 
 	if res {
 		return manager.PASSED, nil
 	} else {
-		return manager.FAILED, errors.New("Env in runtime is not compliant with the specs")
+		return manager.FAILED, errors.New("Env in runtime is not compliant with the specs" + "----" + string(output))
 	}
 }
 
 func checkOutEnv(output string, value []string) bool {
 	//fmt.Println(output)
-
 	var rt *[]bool = new([]bool)
 	for _, va := range value {
 		if strings.Contains(output, va) {
-			*rt = append(*rt, true)
+			if value != nil {
+				*rt = append(*rt, true)
+			} else {
+				*rt = append(*rt, false)
+			}
+
 		} else {
-			*rt = append(*rt, false)
+			if value != nil {
+				*rt = append(*rt, false)
+			} else {
+				*rt = append(*rt, true)
+			}
 		}
 	}
 	var tmp bool
@@ -159,6 +169,7 @@ func checkOutEnv(output string, value []string) bool {
 		}
 	}
 	return tmp
+
 }
 
 func getJob(job string, output string) string {
