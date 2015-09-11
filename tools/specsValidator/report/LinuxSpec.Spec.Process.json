@@ -1,0 +1,101 @@
+{
+  "LinuxSpec.Spec.Process": [
+    {
+      "testcasename": "TestBase",
+      "input": {
+        "terminal": false,
+        "user": {
+          "uid": 0,
+          "gid": 0,
+          "additionalGids": null
+        },
+        "args": [
+          "./specprocess"
+        ],
+        "env": null,
+        "cwd": "/containerend"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestUser1000",
+      "input": {
+        "terminal": false,
+        "user": {
+          "uid": 1000,
+          "gid": 1000,
+          "additionalGids": [
+            0,
+            1000
+          ]
+        },
+        "args": [
+          "./specprocess"
+        ],
+        "env": null,
+        "cwd": "/containerend"
+      },
+      "error": "AddtionalGids in runtime is not compliant with the specs",
+      "result": "failed"
+    },
+    {
+      "testcasename": "TestUser1",
+      "input": {
+        "terminal": false,
+        "user": {
+          "uid": 1,
+          "gid": 1,
+          "additionalGids": [
+            0
+          ]
+        },
+        "args": [
+          "./specprocess"
+        ],
+        "env": null,
+        "cwd": "/containerend"
+      },
+      "error": "AddtionalGids in runtime is not compliant with the specs",
+      "result": "failed"
+    },
+    {
+      "testcasename": "TestUsernil",
+      "input": {
+        "terminal": false,
+        "user": {
+          "uid": 0,
+          "gid": 0,
+          "additionalGids": null
+        },
+        "args": [
+          "./specprocess"
+        ],
+        "env": null,
+        "cwd": "/containerend"
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestEnv",
+      "input": {
+        "terminal": false,
+        "user": {
+          "uid": 0,
+          "gid": 0,
+          "additionalGids": null
+        },
+        "args": [
+          "bash",
+          "-c",
+          "./specprocessenv"
+        ],
+        "env": [
+          "PATH=/containerend:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "TERM=xterm"
+        ],
+        "cwd": "/containerend"
+      },
+      "result": "passed"
+    }
+  ]
+}
