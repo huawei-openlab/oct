@@ -19,7 +19,6 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
-	"log"
 	"runtime"
 	"strings"
 )

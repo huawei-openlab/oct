@@ -93,7 +93,7 @@ const (
 	SHARE   = "share"
 )
 
-var TestSuiteRoot manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.Root"}
+var TestRootfsPropagation manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.RootfsPropagation"}
 
 func init() {
 	cmd := exec.Command("bash", "-c", "mkdir  rootfs_rootconfig/fspropagationtest ")
@@ -101,10 +101,10 @@ func init() {
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : make new folder in host error, %v", err)
 	}
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationPrivate", TestRootfsPropagationPrivate)
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationSlave", TestRootfsPropagationSlave)
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationShare", TestRootfsPropagationShare)
-	manager.Manager.AddTestSuite(TestSuiteRoot)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationPrivate", TestRootfsPropagationPrivate)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationSlave", TestRootfsPropagationSlave)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationShare", TestRootfsPropagationShare)
+	manager.Manager.AddTestSuite(TestRootfsPropagation)
 }
 
 func setRootfsPropagation(mode string) specs.LinuxSpec {
