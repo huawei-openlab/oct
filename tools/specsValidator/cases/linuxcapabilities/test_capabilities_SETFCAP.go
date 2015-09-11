@@ -19,24 +19,15 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
-	"log"
-	"os/exec"
 	"strings"
 )
 
 func TestLinuxCapabilitiesSETFCAP() string {
-	// copy the testbin into container
-	cmd := exec.Command("/bin/sh", "-c", "cp  cases/linuxcapabilities/capabilitytestbin /tmp/testtool")
-	_, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("[specsValidator] linux Capabilities test : init the testbin file error, %v", err)
-	}
-
 	linuxspec := setCapability("SETFCAP")
-	linuxspec.Spec.Process.Args = []string{"/sbin/setcap", "CAP_SETFCAP=eip", "/testtool/capabilitytestbin"}
+	linuxspec.Spec.Process.Args = []string{"/sbin/setcap", "CAP_SETFCAP=eip", "/testtool/linuxcapabilities"}
 	capability := linuxspec.Linux.Capabilities
 	configFile := "./config.json"
-	err = configconvert.LinuxSpecToConfig(configFile, &linuxspec)
+	err := configconvert.LinuxSpecToConfig(configFile, &linuxspec)
 	out, err := adaptor.StartRunc(configFile)
 	var result string
 	var errout error

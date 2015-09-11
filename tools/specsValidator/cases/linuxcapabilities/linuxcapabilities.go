@@ -16,7 +16,10 @@ package linuxcapabilities
 
 import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/opencontainers/specs"
+	"log"
+	"os"
 	"runtime"
 )
 
@@ -78,9 +81,14 @@ func init() {
 
 func setCapability(capabilityname string) specs.LinuxSpec {
 	linuxSpec.Linux.Capabilities = []string{capabilityname}
-	mountsold := linuxSpec.Mounts
-	mountstesttool := specs.Mount{"bind", "/tmp/testtool", "/testtool", "rbind,rw"}
-	linuxSpec.Mounts = append(mountsold, mountstesttool)
+	result := os.Getenv("GOPATH")
+	if result == "" {
+		log.Fatalf("utils.setBind error GOPATH == nil")
+	}
+	resource := result + "/src/github.com/huawei-openlab/oct/tools/specsValidator/containerend"
+	utils.SetRight(resource, linuxSpec.Process.User.UID, linuxSpec.Process.User.GID)
+	testtoolfolder := specs.Mount{"bind", resource, "/testtool", "bind"}
+	linuxSpec.Spec.Mounts = append(linuxSpec.Spec.Mounts, testtoolfolder)
 	linuxSpec.Process.Cwd = "/testtool"
 	return linuxSpec
 }
