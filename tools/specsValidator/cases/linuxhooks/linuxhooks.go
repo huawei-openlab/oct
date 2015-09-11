@@ -55,7 +55,7 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 		},
 		Root: specs.Root{
 			Path:     "rootfs_rootconfig",
-			Readonly: true,
+			Readonly: false,
 		},
 		Process: specs.Process{
 			Terminal: false,
