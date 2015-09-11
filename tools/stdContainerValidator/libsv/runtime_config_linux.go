@@ -1,6 +1,7 @@
 package specsValidator
 
 import (
+	"fmt"
 	"github.com/opencontainers/specs"
 )
 
@@ -74,7 +75,7 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
 	for index := 0; index < len(devices); index++ {
 		found := false
 		for dIndex := 0; dIndex < len(lr.Devices); dIndex++ {
-			if lr.Devices[dIndex] == devices[index] {
+			if lr.Devices[dIndex].Path == devices[index] {
 				found = true
 				break
 			}
@@ -88,6 +89,19 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
 	for index := 0; index < len(lr.Devices); index++ {
 		ret, msgs = DeviceValid(lr.Devices[index], msgs)
 		valid = ret && valid
+	}
+
+	switch lr.RootfsPropagation {
+	case "":
+	case "slave":
+	case "private":
+	case "shared":
+		break
+	default:
+		valid = false
+		msgs = append(msgs, "RootfsPropagation should limited to 'slave', 'private', or 'shared'")
+		break
+
 	}
 
 	return valid, msgs
@@ -154,8 +168,7 @@ type Rlimit struct {
 */
 
 func RlimitValid(r specs.Rlimit, msgs []string) (bool, []string) {
-	//FIXME: waiting for upstream to change `type` to string
-	if r.Type < 0 || r.Type > 15 {
+	if rlimitValid(r.Type) {
 		msgs = append(msgs, "Rlimit is invalid")
 		return false, msgs
 	}
@@ -250,7 +263,10 @@ type Resources struct {
 }
 */
 
-func ResourcesValid(r specs.Resources, msgs []string) (bool, []string) {
+func ResourcesValid(r *specs.Resources, msgs []string) (bool, []string) {
+	if r == nil {
+		return true, msgs
+	}
 	return true, msgs
 }
 

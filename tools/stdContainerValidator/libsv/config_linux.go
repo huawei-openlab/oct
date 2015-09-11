@@ -49,32 +49,19 @@ func LinuxSpecValid(ls specs.LinuxSpec, runtime specs.LinuxRuntimeSpec, rootfs s
 type Linux struct {
 	// Capabilities are linux capabilities that are kept for the container.
 	Capabilities []string `optional`
-	// RootfsPropagation is the rootfs mount propagation mode for the container.
-	RootfsPropagation string `optional`
 }
 */
 func LinuxValid(l specs.Linux, msgs []string) (bool, []string) {
 	valid := true
 	for index := 0; index < len(l.Capabilities); index++ {
-		capability := "CAP_" + l.Capabilities[index]
+		capability := l.Capabilities[index]
 		if capValid(capability) == false {
 			msgs = append(msgs, fmt.Sprintf("%s is not valid, please `man capabilities`", l.Capabilities[index]))
 			valid = false
 		}
 
 	}
-	switch l.RootfsPropagation {
-	case "":
-	case "slave":
-	case "private":
-	case "shared":
-		break
-	default:
-		valid = false
-		msgs = append(msgs, "RootfsPropagation should limited to 'slave', 'private', or 'shared'")
-		break
 
-	}
 	return valid, msgs
 }
 
