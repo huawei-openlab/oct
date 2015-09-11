@@ -2,6 +2,7 @@ The tools for open container test will be maintained here.
 
 ### [stdContainerValidator](stdContainerValidator/README.md) - specs/(bundle, config.json, runtime.json)
 The `stdContainerValidator` is a `rolling release` tool which keeps updating with OCI specs.
+(Compliant with cbda52164745ca5a')
 
 ### [specValidator](specsValidator/README.md) - specs/(runtime, config)
 The `specValidator` verifies all the specs configurations, so it is a much bigger project
