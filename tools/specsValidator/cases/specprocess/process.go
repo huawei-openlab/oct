@@ -1,6 +1,7 @@
 package specprocess
 
 import (
+	"errors"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
@@ -76,6 +77,7 @@ func init() {
 	TestSuiteProcess.AddTestCase("TestUser1000", TestUser1000)
 	TestSuiteProcess.AddTestCase("TestUser1", TestUser1)
 	TestSuiteProcess.AddTestCase("TestUsernil", TestUsernil)
+	TestSuiteProcess.AddTestCase("TestEnv", TestEnv)
 	manager.Manager.AddTestSuite(TestSuiteProcess)
 	//TestSuiteProcess.AddTestCase("TestUserRoot", TestUserRoot)
 	// TestSuiteProcess.AddTestCase("TestUserNoneRoot", TestUserNoneRoot)
@@ -97,24 +99,66 @@ func setProcess(process specs.Process) specs.LinuxSpec {
 
 	return linuxSpec
 }
-func testProcess(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
+func testProcessUser(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
 	configFile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxspec)
 	output, err := adaptor.StartRunc(configFile)
 	if err != nil {
 		if supported {
-			return manager.UNKNOWNERR, nil
+			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json")
 		} else {
 			return manager.PASSED, nil
 		}
 	}
-	res := checkOut(output)
+	res, errMsg := checkOutUser(output)
 	if res {
 		return manager.PASSED, nil
 	} else {
-		return manager.FAILED, nil
+		return manager.FAILED, errors.New(errMsg + " in runtime is not compliant with the specs")
 	}
 
+}
+
+func testProcessEnv(linuxspec *specs.LinuxSpec, supported bool) (string, error) {
+	configFile := "./config.json"
+	err := configconvert.LinuxSpecToConfig(configFile, linuxspec)
+	output, err := adaptor.StartRunc(configFile)
+	if err != nil {
+		if supported {
+			return manager.UNKNOWNERR, errors.New("Can not start runc, maybe runc is not support the specs with this config.json")
+		} else {
+			return manager.PASSED, nil
+		}
+	}
+	value := linuxSpec.Spec.Process.Env
+	res := checkOutEnv(output, value)
+	if res {
+		return manager.PASSED, nil
+	} else {
+		return manager.FAILED, errors.New("Env in runtime is not compliant with the specs")
+	}
+}
+
+func checkOutEnv(output string, value []string) bool {
+	//fmt.Println(output)
+
+	var rt *[]bool = new([]bool)
+	for _, va := range value {
+		if strings.Contains(output, va) {
+			*rt = append(*rt, true)
+		} else {
+			*rt = append(*rt, false)
+		}
+	}
+	var tmp bool
+	for i, r := range *rt {
+		if i == 0 {
+			tmp = r
+		} else {
+			tmp = tmp && r
+		}
+	}
+	return tmp
 }
 
 func getJob(job string, output string) string {
@@ -135,34 +179,73 @@ func checkResult(job string, value string, output string) bool {
 	return false
 }
 
-func checkOut(output string) bool {
+func checkOutUser(output string) (bool, string) {
 	value := strconv.FormatInt(int64(linuxSpec.Spec.Process.User.UID), 10)
 	job := "Uid"
-	resultTag := false
+	var rt1, rt2, rt3 bool
 	if checkResult(job, value, output) {
-		resultTag = true
+		rt1 = true
 	} else {
-		resultTag = false
+		rt1 = false
 	}
 
 	value = strconv.FormatInt(int64(linuxSpec.Spec.Process.User.GID), 10)
 	job = "Gid"
 	if checkResult(job, value, output) {
-		resultTag = true
+		rt2 = true
 	} else {
-		resultTag = false
+		rt2 = false
 	}
 
 	tmpValue := linuxSpec.Spec.Process.User.AdditionalGids
 	job = "Groups"
-	for _, tv := range tmpValue {
-		tvs := strconv.FormatInt(int64(tv), 10)
-		if checkResult(job, tvs, output) {
-			resultTag = true
-		} else {
-			resultTag = false
+
+	if tmpValue != nil {
+		for _, tv := range tmpValue {
+			tvs := strconv.FormatInt(int64(tv), 10)
+			if checkResult(job, tvs, output) {
+				rt3 = true
+			} else {
+				rt3 = false
+			}
 		}
+	} else {
+		result := getJob(job, output)
+		gids := strings.SplitAfter(result, ":")
+		gid := strings.TrimSpace(gids[1])
+		if gid == "" {
+			rt3 = true
+		} else {
+			rt3 = false
+		}
+
+	}
+	var errPart *[]string = new([]string)
+	if !rt1 {
+		*errPart = append(*errPart, "UID")
 	}
 
-	return resultTag
+	if !rt2 {
+		*errPart = append(*errPart, "GID")
+	}
+
+	if !rt3 {
+		*errPart = append(*errPart, "AddtionalGids")
+	}
+
+	rt := rt1 && rt2 && rt3
+	if rt {
+		*errPart = append(*errPart, "")
+	}
+	var rs string
+	if !rt {
+		for i, ep := range *errPart {
+			if i == 0 {
+				rs = ep
+			} else {
+				rs = rs + " | " + ep
+			}
+		}
+	}
+	return rt, rs
 }
