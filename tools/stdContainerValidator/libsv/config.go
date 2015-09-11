@@ -5,58 +5,7 @@ import (
 	"github.com/opencontainers/specs"
 	"os"
 	"path"
-	"strconv"
-	"strings"
 )
-
-// Common functions
-func checkSemVer(version string, msgs []string) (bool, []string) {
-	valid, msgs := StringValid("Spec.Version", version, msgs)
-	if valid {
-		str := strings.Split(version, ".")
-		if len(str) != 3 {
-			valid = false
-		} else {
-			for index := 0; index < len(str); index++ {
-				i, err := strconv.Atoi(str[index])
-				if err != nil {
-					valid = false
-					break
-				} else {
-					if i < 0 {
-						valid = false
-						break
-					}
-				}
-			}
-		}
-		if valid == false {
-			msg := fmt.Sprintf("%s is not a valid version format, please read 'SemVer v2.0.0'", version)
-			msgs = append(msgs, msg)
-		}
-	}
-	return valid, msgs
-}
-
-func StringValid(key string, content string, msgs []string) (bool, []string) {
-	valid := true
-	if len(content) == 0 {
-		valid = false
-		msg := fmt.Sprintf("%s is missing", key)
-		msgs = append(msgs, msg)
-	}
-	return valid, msgs
-}
-
-func SliceValid(key string, content []interface{}, msgs []string) (bool, []string) {
-	valid := true
-	if len(content) == 0 {
-		valid = false
-		msg := fmt.Sprintf("%s is missing", key)
-		msgs = append(msgs, msg)
-	}
-	return valid, msgs
-}
 
 /*
 // Spec is the base configuration for the container.  It specifies platform

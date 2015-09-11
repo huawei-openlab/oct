@@ -1,4 +1,5 @@
 /*generated from:
+seccomp.h
 linux/capability.h
 asm-generic/resource.h
 */
@@ -37,17 +38,15 @@ func capValid(capability string) bool {
 		"CAP_LEASE":            28,
 		"CAP_AUDIT_WRITE":      29,
 		"CAP_AUDIT_CONTROL":    30,
-		"CAP_SETFCAP	": 31,
-		"CAP_MAC_OVERRIDE":  32,
-		"CAP_MAC_ADMIN":     33,
-		"CAP_SYSLOG":        34,
-		"CAP_WAKE_ALARM":    35,
-		"CAP_BLOCK_SUSPEND": 36,
+		"CAP_SETFCAP":          31,
+		"CAP_MAC_OVERRIDE":     32,
+		"CAP_MAC_ADMIN":        33,
+		"CAP_SYSLOG":           34,
+		"CAP_WAKE_ALARM":       35,
+		"CAP_BLOCK_SUSPEND":    36,
 	}
-	if _, ok := caps[capability]; ok {
-		return true
-	}
-	return false
+	_, ok := caps[capability]
+	return ok
 }
 
 func rlimitValid(rlimit string) bool {
@@ -69,10 +68,8 @@ func rlimitValid(rlimit string) bool {
 		"RLIMIT_RTPRIO":     14,
 		"RLIMIT_RTTIME":     15,
 	}
-	if _, ok := rlimits[rlimit]; ok {
-		return true
-	}
-	return false
+	_, ok := rlimits[rlimit]
+	return ok
 }
 
 func requiredPaths() []string {
@@ -97,4 +94,18 @@ func requiredDevices() []string {
 		"/dev/shm",     //tmpfs
 	}
 	return devices
+}
+
+func seccompValid(secc string) bool {
+	seccs := map[string]int{
+		"SCMP_ACT_KILL":  0x00000000,
+		"SCMP_ACT_TRAP":  0x00030000,
+		"SCMP_ACT_ERRNO": 0x00050000,
+		"SCMP_ACT_TRACE": 0x7ff00000,
+		// #define SCMP_ACT_ERRNO(x)       (0x00050000U | ((x) & 0x0000ffffU))
+		// #define SCMP_ACT_TRACE(x)       (0x7ff00000U | ((x) & 0x0000ffffU))
+		"SCMP_ACT_ALLOW": 0x7fff0000,
+	}
+	_, ok := seccs[secc]
+	return ok
 }

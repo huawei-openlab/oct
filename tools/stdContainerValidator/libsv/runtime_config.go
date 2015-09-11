@@ -15,7 +15,7 @@ type RuntimeSpec struct {
 Minimal mount path
 https://github.com/opencontainers/specs/issues/95
 */
-func RuntimeSpecValid(rt specs.RuntimeSpec, msgs []string) (bool, []string) {
+func RuntimeSpecValid(rt specs.RuntimeSpec, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
 

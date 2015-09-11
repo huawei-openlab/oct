@@ -7,6 +7,8 @@ import (
 	"github.com/opencontainers/specs"
 	"os"
 	"path"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -185,5 +187,48 @@ func LinuxBundleValid(bundlePath string, msgs []string) (bool, []string) {
 
 	ret, msgs := LinuxSpecValid(bundle.Config, bundle.Runtime, bundle.Rootfs, msgs)
 	valid = ret && valid
+	return valid, msgs
+}
+
+func StringValid(key string, content string, msgs []string) (bool, []string) {
+	valid := true
+	if len(content) == 0 {
+		valid = false
+		msg := fmt.Sprintf("%s is missing", key)
+		msgs = append(msgs, msg)
+	}
+	return valid, msgs
+}
+
+func checkSemVer(version string, msgs []string) (bool, []string) {
+	valid, msgs := StringValid("Spec.Version", version, msgs)
+	if valid == false {
+		return valid, msgs
+	}
+	if version == specs.Version {
+		return true, msgs
+	}
+
+	str := strings.Split(version, ".")
+	if len(str) != 3 {
+		valid = false
+	} else {
+		for index := 0; index < len(str); index++ {
+			i, err := strconv.Atoi(str[index])
+			if err != nil {
+				valid = false
+				break
+			} else {
+				if i < 0 {
+					valid = false
+					break
+				}
+			}
+		}
+	}
+	if valid == false {
+		msg := fmt.Sprintf("%s is not a valid version format, please read 'SemVer v2.0.0'", version)
+		msgs = append(msgs, msg)
+	}
 	return valid, msgs
 }

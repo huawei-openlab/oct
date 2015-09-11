@@ -3,6 +3,8 @@ package specsValidator
 import (
 	"fmt"
 	"github.com/opencontainers/specs"
+	"os"
+	"path"
 )
 
 /*
@@ -14,9 +16,9 @@ type LinuxRuntimeSpec struct {
 }
 */
 
-func LinuxRuntimeSpecValid(lrs specs.LinuxRuntimeSpec, msgs []string) (bool, []string) {
-	valid, msgs := RuntimeSpecValid(lrs.RuntimeSpec, msgs)
-	ret, msgs := LinuxRuntimeValid(lrs.Linux, msgs)
+func LinuxRuntimeSpecValid(lrs specs.LinuxRuntimeSpec, rootfs string, msgs []string) (bool, []string) {
+	valid, msgs := RuntimeSpecValid(lrs.RuntimeSpec, rootfs, msgs)
+	ret, msgs := LinuxRuntimeValid(lrs.Linux, rootfs, msgs)
 	valid = ret && valid
 	return valid, msgs
 }
@@ -49,7 +51,7 @@ type LinuxRuntime struct {
 }
 */
 
-func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
+func LinuxRuntimeValid(lr specs.LinuxRuntime, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
 	if len(lr.UIDMappings)+len(lr.GIDMappings) > 5 {
@@ -89,6 +91,15 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, msgs []string) (bool, []string) {
 	for index := 0; index < len(lr.Devices); index++ {
 		ret, msgs = DeviceValid(lr.Devices[index], msgs)
 		valid = ret && valid
+	}
+
+	if len(lr.ApparmorProfile) > 0 {
+		profilePath := path.Join(rootfs, "/etc/apparmor.d", lr.ApparmorProfile)
+		_, err := os.Stat(profilePath)
+		if err != nil {
+			msgs = append(msgs, fmt.Sprintf("ApparmorProfile %s is not exist", lr.ApparmorProfile))
+			valid = ret && valid
+		}
 	}
 
 	switch lr.RootfsPropagation {
@@ -254,6 +265,8 @@ type Resources struct {
 	Memory Memory `json:"memory"`
 	// CPU resource restriction configuration
 	CPU CPU `json:"cpu"`
+	// Task resource restriction configuration.
+	Pids Pids `json:"pids"`
 	// BlockIO restriction configuration
 	BlockIO BlockIO `json:"blockIO"`
 	// Hugetlb limit (in bytes)
@@ -340,7 +353,25 @@ type Seccomp struct {
 	DefaultAction Action     `json:"defaultAction"`
 	Syscalls      []*Syscall `json:"syscalls"`
 }
+*/
 
+func SeccompValid(s specs.Seccomp, msgs []string) (bool, []string) {
+	ret := true
+	valid := true
+	if seccompValid(string(s.DefaultAction)) == false {
+		msgs = append(msgs, "Seccomp.DefaultAction is invalid")
+		valid = false && valid
+	}
+	for index := 0; index < len(s.Syscalls); index++ {
+		if s.Syscalls[index] != nil {
+			ret, msgs = SyscallValid(*(s.Syscalls[index]), msgs)
+			valid = ret && valid
+		}
+	}
+	return valid, msgs
+}
+
+/*
 // Action taken upon Seccomp rule match
 type Action string
 
@@ -362,3 +393,14 @@ type Syscall struct {
 	Args   []*Arg `json:"args"`
 }
 */
+
+func SyscallValid(s specs.Syscall, msgs []string) (bool, []string) {
+	valid, msgs := StringValid("Syscall.Name", s.Name, msgs)
+
+	if seccompValid(string(s.Action)) == false {
+		msgs = append(msgs, fmt.Sprintf("Syscall.Action %s is invalid", s.Action))
+		valid = false && valid
+	}
+
+	return valid, msgs
+}
