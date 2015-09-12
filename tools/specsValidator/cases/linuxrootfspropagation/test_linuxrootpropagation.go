@@ -19,28 +19,36 @@ import (
 )
 
 func TestRootfsPropagationPrivate() string {
+	mkdir()
 	mode := "private"
 	linuxspec := setRootfsPropagation(mode)
 	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationPrivate", linuxspec.Linux.RootfsPropagation, err, result)
+	rmdir()
 	return testResult.Marshal()
+
 }
 
 func TestRootfsPropagationSlave() string {
+	mkdir()
 	mode := "slave"
 	linuxspec := setRootfsPropagation(mode)
 	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationSlave", linuxspec.Linux.RootfsPropagation, err, result)
+	rmdir()
 	return testResult.Marshal()
+
 }
 
 func TestRootfsPropagationShare() string {
+	mkdir()
 	mode := "share"
 	linuxspec := setRootfsPropagation(mode)
 	result, err := testRootfsPropagationHost(&linuxspec, "linuxrootfspropagation")
 	var testResult manager.TestResult
 	testResult.Set("TestRootfsPropagationShare", linuxspec.Linux.RootfsPropagation, err, result)
+	rmdir()
 	return testResult.Marshal()
 }
