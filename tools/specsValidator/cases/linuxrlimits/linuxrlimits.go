@@ -55,6 +55,12 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 				Destination: "/proc",
 				Options:     "",
 			},
+			{
+				Type:        "cgroup",
+				Source:      "cgroup",
+				Destination: "/sys/fs/cgroup",
+				Options:     "nosuid,noexec,nodev,relatime,ro",
+			},
 		},
 	},
 	Linux: specs.Linux{
@@ -98,7 +104,6 @@ func init() {
 
 func setRlimits(testrlimits specs.Rlimit) specs.LinuxSpec {
 	linuxSpec.Linux.Rlimits = []specs.Rlimit{testrlimits}
-	linuxSpec.Process.Terminal = true
 	return linuxSpec
 }
 
@@ -109,6 +114,7 @@ func testRlimits(linuxSpec *specs.LinuxSpec, rlimitItem string, value string, is
 	} else {
 		linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "ulimit " + rlimitItem + " -H"}
 	}
+
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {

@@ -93,18 +93,13 @@ const (
 	SHARE   = "share"
 )
 
-var TestSuiteRoot manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.Root"}
+var TestRootfsPropagation manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.RootfsPropagation"}
 
 func init() {
-	cmd := exec.Command("bash", "-c", "mkdir  rootfs_rootconfig/fspropagationtest ")
-	_, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("[Specstest] linux rootfs propagation test : make new folder in host error, %v", err)
-	}
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationPrivate", TestRootfsPropagationPrivate)
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationSlave", TestRootfsPropagationSlave)
-	TestSuiteRoot.AddTestCase("TestRootfsPropagationShare", TestRootfsPropagationShare)
-	manager.Manager.AddTestSuite(TestSuiteRoot)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationPrivate", TestRootfsPropagationPrivate)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationSlave", TestRootfsPropagationSlave)
+	TestRootfsPropagation.AddTestCase("TestRootfsPropagationShare", TestRootfsPropagationShare)
+	manager.Manager.AddTestSuite(TestRootfsPropagation)
 }
 
 func setRootfsPropagation(mode string) specs.LinuxSpec {
@@ -169,4 +164,20 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 		}
 	}
 	return manager.FAILED, nil
+}
+
+func mkdir() {
+	cmd := exec.Command("bash", "-c", "mkdir  rootfs_rootconfig/fspropagationtest ")
+	_, err := cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] linux rootfs propagation test : make new folder in host error, %v", err)
+	}
+}
+
+func rmdir() {
+	cmd := exec.Command("bash", "-c", " rm -r rootfs_rootconfig/fspropagationtest/ ")
+	_, err := cmd.Output()
+	if err != nil {
+		log.Fatalf("[Specstest] linux rootfs propagation test : remove folder in host error, %v", err)
+	}
 }

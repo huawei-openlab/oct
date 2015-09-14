@@ -78,6 +78,7 @@ var TestSuiteLinuxApparmorProfile manager.TestSuite = manager.TestSuite{Name: "L
 
 func init() {
 	TestSuiteLinuxApparmorProfile.AddTestCase("TestLinuxApparmorProfile", TestLinuxApparmorProfile)
+	manager.Manager.AddTestSuite(TestSuiteLinuxApparmorProfile)
 }
 
 func setApparmorProfile(profilename string) specs.LinuxSpec {
