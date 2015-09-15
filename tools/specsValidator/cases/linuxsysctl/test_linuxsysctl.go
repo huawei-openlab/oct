@@ -21,9 +21,10 @@ import (
 func TestSysctlNetIpv4IpForward() string {
 	sysctlInput := make(map[string]string)
 	sysctlInput["net.ipv4.ip_forward"] = "4"
+	failinfo := " set net.ipv4.ip_forward failed"
 	var testResult manager.TestResult
 	linuxspec := setSysctls(sysctlInput)
-	result, err := testSysctls(&linuxspec)
+	result, err := testSysctls(&linuxspec, failinfo)
 	testResult.Set("TestSysctlNetIpv4IpForward", sysctlInput, err, result)
 	return testResult.Marshal()
 }
@@ -31,9 +32,10 @@ func TestSysctlNetIpv4IpForward() string {
 func TestSysctlNetCoreSomaxconn() string {
 	sysctlInput := make(map[string]string)
 	sysctlInput["net.core.somaxconn"] = "192"
+	failinfo := " set net.core.somaxconn"
 	var testResult manager.TestResult
 	linuxspec := setSysctls(sysctlInput)
-	result, err := testSysctls(&linuxspec)
+	result, err := testSysctls(&linuxspec, failinfo)
 	testResult.Set("TestSysctlNetCoreSomaxconn", sysctlInput, err, result)
 	return testResult.Marshal()
 }

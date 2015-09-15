@@ -32,11 +32,11 @@ func TestMemoryLimit() string {
 		},
 	}
 	linuxspec := setResources(testResourceseMemory)
+	failinfo := "Memory Limit"
 	go testResources(&linuxspec)
 	time.Sleep(time.Second * 3)
-	// defer cleanCgroup()
 	defer adaptor.CleanRunc()
-	result, err := checkConfigurationFromHost("memory.limit_in_bytes", "204800")
+	result, err := checkConfigurationFromHost("memory.limit_in_bytes", "204800", failinfo)
 	var testResult manager.TestResult
 	testResult.Set("TestMemoryLimit", testResourceseMemory.Memory, err, result)
 	return testResult.Marshal()
