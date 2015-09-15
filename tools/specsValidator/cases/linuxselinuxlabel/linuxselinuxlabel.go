@@ -20,7 +20,6 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
-	"log"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -87,29 +86,22 @@ func setSElinuxLabel(label string) specs.LinuxSpec {
 }
 
 func testSElinuxLabel(linuxSpec *specs.LinuxSpec) (string, error) {
+	selinuxlable := linuxSpec.Linux.SelinuxProcessLabel
+	//test whether the host supports the selinux
+	cmdout, err := exec.Command("/bin/bash", "-c", "getenforce").Output()
+	if err != nil || strings.EqualFold(strings.TrimSpace(string(cmdout)), "Permissive") {
+		return manager.UNSPPORTED, errors.New("Host Machine doesn't support SElinux")
+	}
 	configFile := "./config.json"
-	linuxSpec.Process.Args = []string{"/bin/bash", "-c", "sleep 400"}
-	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
+	linuxSpec.Process.Args = []string{"/bin/bash", "-c", "ps xZ|awk '{print $1}' |sed -n '2p' "}
+	err = configconvert.LinuxSpecToConfig(configFile, linuxSpec)
+
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
-	} else {
+		return manager.UNKNOWNERR, errors.New("StartRunc error;" + string(out) + err.Error())
+	} else if strings.EqualFold(out, selinuxlable) {
 		return manager.PASSED, nil
-	}
-}
-
-func checkProcessLableFromHost(label string) (string, error) {
-	cmd := exec.Command("bash", "-c", "ps -efZ|grep -w \"sleep 400\" |awk '{print $1}' |sed -n '1p' ")
-	cmdouput, err := cmd.Output()
-	if err != nil {
-		log.Fatalf("[specsValidator] linux selinux process lable test : read the process lable error, %v", err)
-		return manager.UNKNOWNERR, nil
 	} else {
-		if strings.EqualFold(strings.TrimSpace(string(cmdouput)), label) {
-			return manager.PASSED, nil
-		} else {
-			return manager.FAILED, nil
-		}
+		return manager.FAILED, errors.New("process selinux lable inside container doesn't match setting context")
 	}
-
 }
