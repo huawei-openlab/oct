@@ -48,8 +48,9 @@ func TestSuiteLinuxUidMappings() string {
 		ContainerID: 0,
 		Size:        10,
 	}
+	failinfo := "mapping from Host UID to Container UID failed"
 	linuxSpec = setIDmappings(uid, gid)
-	result, err := testIDmappings(&linuxSpec, true)
+	result, err := testIDmappings(&linuxSpec, true, failinfo)
 	var testResult manager.TestResult
 	testResult.Set("TestSuiteLinuxUidMappings", uid, err, result)
 	cleanTestUser()
@@ -81,8 +82,9 @@ func TestSuiteLinuxGidMappings() string {
 		ContainerID: 0,
 		Size:        10,
 	}
+	failinfo := "mapping from Host GID to Container GID failed"
 	linuxSpec = setIDmappings(uid, gid)
-	result, err := testIDmappings(&linuxSpec, false)
+	result, err := testIDmappings(&linuxSpec, true, failinfo)
 	var testResult manager.TestResult
 	testResult.Set("TestSuiteLinuxGidMappings", gid, err, result)
 	cleanTestUser()

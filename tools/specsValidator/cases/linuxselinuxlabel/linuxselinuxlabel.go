@@ -92,7 +92,7 @@ func testSElinuxLabel(linuxSpec *specs.LinuxSpec) (string, error) {
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
+		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
 		return manager.PASSED, nil
 	}
@@ -108,7 +108,7 @@ func checkProcessLableFromHost(label string) (string, error) {
 		if strings.EqualFold(strings.TrimSpace(string(cmdouput)), label) {
 			return manager.PASSED, nil
 		} else {
-			return manager.FAILED, nil
+			return manager.FAILED, errors.New("test failed because selinux label is not effective")
 		}
 	}
 

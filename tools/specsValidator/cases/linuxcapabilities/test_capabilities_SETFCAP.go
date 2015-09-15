@@ -39,7 +39,7 @@ func TestLinuxCapabilitiesSETFCAP() string {
 		errout = nil
 	} else {
 		result = manager.FAILED
-		errout = nil
+		errout = errors.New("test Capabilities CAP_SETFCAP NOT  does''t work")
 	}
 	var testResult manager.TestResult
 	testResult.Set("TestMountTmpfs", capability, errout, result)
