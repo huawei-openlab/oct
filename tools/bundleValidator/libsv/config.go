@@ -20,6 +20,7 @@ type Spec struct{
 }
 */
 
+//if rootfs == null, don't check files under rootfs
 func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []string) (bool, []string) {
 	valid, msgs := checkSemVer(s.Version, msgs)
 
@@ -140,18 +141,19 @@ func MountPointValid(mp specs.MountPoint, rootfs string, msgs []string) (bool, [
 	ret, msgs := StringValid("MountPoint.Path", mp.Path, msgs)
 	valid = ret && valid
 
-	mountPath := path.Join(rootfs, mp.Path)
+	if len(rootfs) > 0 {
+		mountPath := path.Join(rootfs, mp.Path)
 
-	fi, err := os.Stat(mountPath)
-	if err != nil {
-		msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not exist in rootfs", mp.Name, mp.Path))
-		valid = ret && valid
-	} else {
-		if !fi.IsDir() {
-			msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not a valid directory", mp.Name, mp.Path))
+		fi, err := os.Stat(mountPath)
+		if err != nil {
+			msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not exist in rootfs", mp.Name, mp.Path))
 			valid = ret && valid
+		} else {
+			if !fi.IsDir() {
+				msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not a valid directory", mp.Name, mp.Path))
+				valid = ret && valid
+			}
 		}
 	}
-
 	return valid, msgs
 }

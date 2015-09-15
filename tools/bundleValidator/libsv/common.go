@@ -52,8 +52,19 @@ func ReadFile(file_url string) (content string, err error) {
 	return content, nil
 }
 
-func OSDetect(bundlePath string) string {
-	content, err := ReadFile(path.Join(bundlePath, ConfigFile))
+func OSDetect(inputPath string) string {
+	var configURL string
+	fi, err := os.Stat(inputPath)
+	if err == nil {
+		if fi.IsDir() {
+			configURL = path.Join(inputPath, ConfigFile)
+		} else {
+			configURL = inputPath
+		}
+	} else {
+		return ""
+	}
+	content, err := ReadFile(configURL)
 	if err == nil {
 		var s specs.Spec
 		err = json.Unmarshal([]byte(content), &s)
@@ -106,12 +117,82 @@ func FilesValid(bundlePath string, msgs []string) (bool, []string) {
 	return valid, msgs
 }
 
-func BundleValid(bundlePath string, msgs []string) (bool, []string) {
-	var bundle Bundle
+func OCTConfigValid(configPath string, msgs []string) (bool, []string) {
+	valid := true
+	os := OSDetect(configPath)
+	if len(os) == 0 {
+		msgs = append(msgs, "Cannot detect OS in the config.json under the bundle, or maybe miss `config.json`.")
+		return false, msgs
+	}
+	if os == "linux" {
+		var ls specs.LinuxSpec
+		var rt specs.LinuxRuntimeSpec
+		content, _ := ReadFile(configPath)
+		json.Unmarshal([]byte(content), &ls)
+		valid, msgs = LinuxSpecValid(ls, rt, "", msgs)
+	} else {
+		var s specs.Spec
+		var rt specs.RuntimeSpec
+		content, _ := ReadFile(configPath)
+		json.Unmarshal([]byte(content), &s)
+		valid, msgs = SpecValid(s, rt, "", msgs)
+	}
+	return valid, msgs
+}
+
+func OCTRuntimeValid(runtimePath string, os string, msgs []string) (bool, []string) {
+	valid := true
+	content, err := ReadFile(runtimePath)
+	if err != nil {
+		msgs = append(msgs, fmt.Sprintf("Cannot read %s", runtimePath))
+		return false, msgs
+	}
+	if os == "linux" {
+		var lrt specs.LinuxRuntimeSpec
+		err = json.Unmarshal([]byte(content), &lrt)
+		if err != nil {
+			msgs = append(msgs, fmt.Sprintf("Cannot parse %s", runtimePath))
+			valid = false
+		} else {
+			valid, msgs = LinuxRuntimeSpecValid(lrt, "", msgs)
+		}
+	} else {
+		var rt specs.RuntimeSpec
+		err = json.Unmarshal([]byte(content), &rt)
+		if err != nil {
+			msgs = append(msgs, fmt.Sprintf("Cannot parse %s", runtimePath))
+			valid = false
+		} else {
+			valid, msgs = RuntimeSpecValid(rt, "", msgs)
+		}
+	}
+	return valid, msgs
+}
+
+func OCTBundleValid(bundlePath string, msgs []string) (bool, []string) {
 	valid, msgs := FilesValid(bundlePath, msgs)
 	if valid == false {
 		return valid, msgs
 	}
+
+	os := OSDetect(bundlePath)
+	if len(os) == 0 {
+		msgs = append(msgs, "Cannot detect OS in the config.json under the bundle, or maybe miss `config.json`.")
+		return false, msgs
+	}
+
+	if os == "linux" {
+		valid, msgs = LinuxBundleValid(bundlePath, msgs)
+	} else {
+		valid, msgs = BundleValid(bundlePath, msgs)
+	}
+
+	return valid, msgs
+}
+
+func BundleValid(bundlePath string, msgs []string) (bool, []string) {
+	var bundle Bundle
+	valid := true
 
 	content, err := ReadFile(path.Join(bundlePath, ConfigFile))
 	if err != nil {
@@ -145,15 +226,14 @@ func BundleValid(bundlePath string, msgs []string) (bool, []string) {
 	ret, msgs := SpecValid(bundle.Config, bundle.Runtime, bundle.Rootfs, msgs)
 	valid = ret && valid
 
+	//TODO runtime valid
+
 	return valid, msgs
 }
 
 func LinuxBundleValid(bundlePath string, msgs []string) (bool, []string) {
 	var bundle LinuxBundle
-	valid, msgs := FilesValid(bundlePath, msgs)
-	if valid == false {
-		return valid, msgs
-	}
+	valid := true
 
 	content, err := ReadFile(path.Join(bundlePath, ConfigFile))
 	if err != nil {

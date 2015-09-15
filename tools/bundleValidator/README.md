@@ -66,5 +66,7 @@ It is easy to use this tool, we provide a demo-bundle.
 ```
 make
 ./scv bundle demo-bundle
+./scv config demo-bundle/config.json
+./scv runtime demo-bundle/runtime.json linux
 
 ```

@@ -51,6 +51,7 @@ type LinuxRuntime struct {
 }
 */
 
+//if rootfs == nul, don't check files under rootfs
 func LinuxRuntimeValid(lr specs.LinuxRuntime, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
@@ -106,7 +107,7 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, rootfs string, msgs []string) (boo
 		valid = ret && valid
 	}
 
-	if len(lr.ApparmorProfile) > 0 {
+	if len(lr.ApparmorProfile) > 0 && len(rootfs) > 0 {
 		profilePath := path.Join(rootfs, "/etc/apparmor.d", lr.ApparmorProfile)
 		_, err := os.Stat(profilePath)
 		if err != nil {

@@ -31,31 +31,44 @@ func printErr(msgs []string) {
 func parseBundle(context *cli.Context) {
 	if len(context.Args()) > 0 {
 		var msgs []string
-		valid := true
-		os := specsValidator.OSDetect(context.Args()[0])
-		if len(os) == 0 {
-			valid = false
-			fmt.Println("Cannot detect OS in the config.json under the bundle, or maybe miss `config.json`.")
+		valid, msgs := specsValidator.OCTBundleValid(context.Args()[0], msgs)
+		if valid {
+			fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
 		} else {
-			if os == "linux" {
-				valid, msgs = specsValidator.LinuxBundleValid(context.Args()[0], msgs)
-			} else {
-				valid, msgs = specsValidator.BundleValid(context.Args()[0], msgs)
-			}
-			if valid {
-				fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
-			} else {
-				printErr(msgs)
-			}
+			printErr(msgs)
 		}
 	} else {
 		cli.ShowCommandHelp(context, "bundle")
 	}
 }
 
-func parseAll(context *cli.Context) {
+func parseConfig(context *cli.Context) {
 	if len(context.Args()) > 0 {
-		//	validateBundle(context.Args()[0])
+		var msgs []string
+		valid, msgs := specsValidator.OCTConfigValid(context.Args()[0], msgs)
+		if valid {
+			fmt.Println("Valid : config.json")
+		} else {
+			printErr(msgs)
+		}
+	} else {
+		cli.ShowCommandHelp(context, "bundle")
+	}
+}
+
+func parseRuntime(context *cli.Context) {
+	if len(context.Args()) > 0 {
+		var msgs []string
+		var os string
+		if len(context.Args()) > 1 {
+			os = context.Args()[1]
+		}
+		valid, msgs := specsValidator.OCTRuntimeValid(context.Args()[0], os, msgs)
+		if valid {
+			fmt.Println("Valid : runtime.json")
+		} else {
+			printErr(msgs)
+		}
 	} else {
 		cli.ShowCommandHelp(context, "all")
 	}
@@ -71,8 +84,20 @@ func main() {
 		{
 			Name:    "bundle",
 			Aliases: []string{"b"},
-			Usage:   "Validate if required files exist in a bundle",
+			Usage:   "Validate all the config.json, runtime.json and files in the rootfs",
 			Action:  parseBundle,
+		},
+		{
+			Name:    "config",
+			Aliases: []string{"c"},
+			Usage:   "Validate the config.json only",
+			Action:  parseConfig,
+		},
+		{
+			Name:    "runtime",
+			Aliases: []string{"r"},
+			Usage:   "Validate the runtime.json only, runtime + arch, default to 'linux'",
+			Action:  parseRuntime,
 		},
 	}
 
