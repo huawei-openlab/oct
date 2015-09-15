@@ -73,8 +73,7 @@ type Mount struct {
 */
 
 func MountValid(m specs.Mount, msgs []string) (bool, []string) {
-	//TODO: should we check the `type`?
-
+	//Donnot check the `type`
 	valid, msgs := StringValid("Mount.Type", m.Type, msgs)
 
 	ret, msgs := StringValid("Mount.Source", m.Source, msgs)

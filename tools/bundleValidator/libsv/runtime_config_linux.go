@@ -54,9 +54,22 @@ type LinuxRuntime struct {
 func LinuxRuntimeValid(lr specs.LinuxRuntime, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
-	if len(lr.UIDMappings)+len(lr.GIDMappings) > 5 {
+
+	//man user_namespaces
+	if len(lr.UIDMappings) > 5 {
 		valid = false
-		msgs = append(msgs, "The UID/GID mapping is limited to 5")
+		msgs = append(msgs, "The UID mapping is limited to 5")
+	}
+	for index := 0; index < len(lr.UIDMappings); index++ {
+		ret, msgs = IDMappingValid(lr.UIDMappings[index], msgs)
+	}
+
+	if len(lr.GIDMappings) > 5 {
+		valid = false
+		msgs = append(msgs, "The GID mapping is limited to 5")
+	}
+	for index := 0; index < len(lr.GIDMappings); index++ {
+		ret, msgs = IDMappingValid(lr.GIDMappings[index], msgs)
 	}
 
 	for index := 0; index < len(lr.Rlimits); index++ {
@@ -162,8 +175,20 @@ type IDMapping struct {
 */
 
 func IDMappingValid(idm specs.IDMapping, msgs []string) (bool, []string) {
-	//TODO?
-	return true, msgs
+	valid := true
+	if idm.HostID < 0 {
+		msgs = append(msgs, "Runtime.HostID is invalid")
+		valid = false && valid
+	}
+	if idm.ContainerID < 0 {
+		msgs = append(msgs, "Runtime.ContainerID is invalid")
+		valid = false && valid
+	}
+	if idm.Size < 0 {
+		msgs = append(msgs, "Runtime.Size is invalid")
+		valid = false && valid
+	}
+	return valid, msgs
 }
 
 /*
