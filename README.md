@@ -19,7 +19,7 @@ OCT covers two areas:
 ###Standard Container
 A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
 
-OCT provides a [Standard Container Validator](tools/stdContainerValidator/README.md) tool to varify if a bundle could be called `a standard container`.
+OCT provides a [Standard Container Validator](tools/bundleValidator/README.md) tool to varify if a bundle could be called `a standard container`.
 
 ###Compliant Runtime
 A compliant runtime should be the one which could run a standard container `correctly`, either runs `directly` or `indirectly`.
