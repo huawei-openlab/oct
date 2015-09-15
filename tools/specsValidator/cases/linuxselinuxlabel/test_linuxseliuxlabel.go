@@ -15,16 +15,13 @@
 package linuxselinuxlabel
 
 import (
-	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 )
 
 func TestLinuxSelinuxProcessLabel() string {
 	labelin := "system_u:system_r:svirt_lxc_net_t:s0:c124,c675"
 	linuxspec := setSElinuxLabel(labelin)
-	go testSElinuxLabel(&linuxspec)
-	defer adaptor.CleanRunc()
-	result, err := checkProcessLableFromHost(labelin)
+	result, err := testSElinuxLabel(&linuxspec)
 	var testResult manager.TestResult
 	testResult.Set("TestLinuxSelinuxProcessLabel", linuxspec.Linux.SelinuxProcessLabel, err, result)
 	return testResult.Marshal()
