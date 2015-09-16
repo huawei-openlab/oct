@@ -70,3 +70,16 @@ make
 ./scv runtime demo-bundle/runtime.json linux
 
 ```
+
+Also we add a simple config.json/runtime.json generator tool.
+
+```
+./scv genconfig > config.json
+./scv genruntime > runtime.json
+```
+
+We can use the validation tool to check these json file.
+```
+./scv c config.json
+./scv r runtime.json
+```

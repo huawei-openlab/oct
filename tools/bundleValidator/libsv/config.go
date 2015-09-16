@@ -38,7 +38,9 @@ func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []st
 	valid = ret && valid
 	*/
 
-	ret, msgs = MountPointsValid(s.Mounts, runtime.Mounts, rootfs, msgs)
+	if len(rootfs) > 0 {
+		ret, msgs = MountPointsValid(s.Mounts, runtime.Mounts, rootfs, msgs)
+	}
 	valid = ret && valid
 
 	return valid, msgs

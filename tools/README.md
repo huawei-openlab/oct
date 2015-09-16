@@ -2,7 +2,10 @@ The tools for open container test will be maintained here.
 
 ### [bundleValidator](bundleValidator/README.md) - specs/(bundle, config.json, runtime.json)
 The `bundleValidator` is a `rolling release` tool which keeps updating with OCI specs.
-(Current one is compliant with cbda52164745ca5a')
+It verifies if a `bundle` was a standard container, if a config.json/runtime.json is a standard configuration file.
+(Current one is compliant with v0.1.0)
+
+The option(genconfig/genruntime) in bundleValidator is used to generate a demo config.json/runtime.json.
 
 ### [specValidator](specsValidator/README.md) - specs/(runtime, config)
 The `specValidator` verifies all the specs configurations, so it is a much bigger project

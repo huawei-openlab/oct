@@ -16,6 +16,7 @@ package main
 
 import (
 	"./libsv"
+	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/cli"
 	"os"
@@ -74,6 +75,18 @@ func parseRuntime(context *cli.Context) {
 	}
 }
 
+func generateConfig(context *cli.Context) {
+	ls := genConfig()
+	content, _ := json.Marshal(ls)
+	fmt.Println(string(content))
+}
+
+func generateRuntime(context *cli.Context) {
+	lrt := genRuntime()
+	content, _ := json.Marshal(lrt)
+	fmt.Println(string(content))
+}
+
 // It is a cli framework.
 func main() {
 	app := cli.NewApp()
@@ -98,6 +111,18 @@ func main() {
 			Aliases: []string{"r"},
 			Usage:   "Validate the runtime.json only, runtime + arch, default to 'linux'",
 			Action:  parseRuntime,
+		},
+		{
+			Name:    "genconfig",
+			Aliases: []string{"gc"},
+			Usage:   "Generate a demo config.json",
+			Action:  generateConfig,
+		},
+		{
+			Name:    "genruntime",
+			Aliases: []string{"gr"},
+			Usage:   "Generate a demo runtime.json",
+			Action:  generateRuntime,
 		},
 	}
 
