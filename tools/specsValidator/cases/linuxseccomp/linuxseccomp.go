@@ -1,3 +1,5 @@
+// +build predraft
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +37,7 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 			Arch: runtime.GOARCH,
 		},
 		Root: specs.Root{
-			Path:     "rootfs_rootconfig",
+			Path:     "rootfs",
 			Readonly: true,
 		},
 		Process: specs.Process{

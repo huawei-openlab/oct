@@ -11,30 +11,34 @@ The specsValidator aims to test containers runtime compatible with  [opencontain
 1. Install the go-lang env, set the GOPATH and GOROOT properly, reuquired go-lang version is V1.4.2      
 2. Install godep tool, like the way below,
 ``` bash
-$       go get github.com/tools/godep
+$    go get github.com/tools/godep
 ```
 - Building        
 It just guide people to use the specsValidator tool directly, but not using it in the whole project,         
 if anyone wan to use it accross the whole proeject, please go through the [oct/README.md](./../../README.md)
 ``` bash
 $    go get -d  github.com/huawei-openlab/oct/tools/specsValidator
+$    cd $GOPATH/src/github.com/opencontainers/specs
+$    git checkout <specified specs version>
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
-$    make all
+$    make all BUILDTAGS=<specified specs version> 
+# BUILDTAGS should be the tag of the [opencontainers/specs](https://github.com/opencontainers/specs),         
+# supportted two version now, ***predraft*** or ***v0.1.1***
 ```
 Binary "specs" is buit now.
 - Using    
 Use binary "specs" to run,
 Usage of ./specs:        
   -o="./report/": Specify filePath to install the test result linuxspec.json     
-  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id        
-  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id
+  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id or tag       
+  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id tag
 
 ``` bash
 $   su root
 $   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
-# For example, ./specsValidator -specs=45ae53d4dba8e550942f7384914206103f6d2216
+# For example, ./specsValidator -specs=predraft -runc=v0.0.4
 ```
-#### Specs version should be older than 45ae53d4dba8e550942f7384914206103f6d2216, becasue of the huge change of adding runtime.config in specs.
+specs version can be choose between ***predraft*** or ***v0.1.1***, predraft is the commmit of 45ae53d4dba8e550942f7384914206103f6d2216
 
 - Getting Result    
 If specified the output path with "-o", get reuslt from the path specified,      
@@ -74,13 +78,9 @@ For example, in namespace_out.json
 
 ### Develop Progress
 
-It can support to resive the specified specs revision and runc revision now, But can not support to use the newest specs version ,becasuse the specs have the huge change in adding the runtime.json.
-
 ### Next to Do 
 
 1. Support the newest version of specs.
-2. Provide overall testcase of the specs.
-2. Support other containers.
 
 ### Reference
 OCP specs on https://github.com/opencontainers/specs   

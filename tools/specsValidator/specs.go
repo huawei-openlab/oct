@@ -25,9 +25,9 @@ import (
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxsysctl"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
 	"github.com/huawei-openlab/oct/tools/specsValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
@@ -41,31 +41,36 @@ var output = flag.String("o", "./report/", "Specify filePath to install the test
 func main() {
 
 	flag.Parse()
-
+	fmt.Println("Tested Revision:")
 	if *specsRev == "" {
-		fmt.Println("It is going to use newest specs revision as a test benchmark")
+		defaultRev := "45ae53d4dba8e550942f7384914206103f6d2216"
+		fmt.Printf("	Default specs revision: pre-draft(commit: %v)\n", defaultRev)
+		hostenv.UpateSpecsRev(defaultRev)
 	}
 
 	if *runcRev == "" {
-		fmt.Println("It is going to test specs on newest revision")
-	}
-
-	if *output == "" {
-		*output = "./report/"
-		fmt.Println("Used default output place, please get result in this project on localhost: oct/tools/specsValidator/report/linuxspec.json")
-	} else {
-		fmt.Printf("Please get result file linuxspec.json in the path : %v\n", *output)
+		defaultRev := "v0.0.4"
+		fmt.Printf("	Default runc revision :  %v\n", defaultRev)
+		hostenv.UpateRuncRev(defaultRev)
 	}
 
 	if *specsRev != "" && *runcRev != "" {
 		hostenv.UpateSpecsRev(*specsRev)
 		hostenv.UpateRuncRev(*runcRev)
-		fmt.Printf("It is going to do specs test on runc revesion commit %v specs revesion commit %v \n", *specsRev, *runcRev)
+		fmt.Printf("	Specified specs revision: %v \n", *specsRev)
+		fmt.Printf("	Specified runc revision: %v \n", *runcRev)
 	}
 
-	err := hostenv.SetupEnv("", "")
+	if *output == "" {
+		*output = "./report/"
+		fmt.Println("Using default output: oct/tools/specsValidator/report/linuxspec.json")
+	} else {
+		fmt.Printf("Specified output: %v\n", *output)
+	}
+
+	err := hostenv.CreateBoundle()
 	if err != nil {
-		log.Fatalf(" Pull image error, %v", err)
+		log.Fatalf("Create boundle error, %v", err)
 	}
 
 	/*linuxnamespace.TestSuiteNP.Run()

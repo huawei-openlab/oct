@@ -1,3 +1,5 @@
+// +build predraft
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +38,7 @@ func TestSuiteLinuxUidMappings() string {
 	if gopath == "" {
 		log.Fatalf("utils.setBind error GOPATH == nil")
 	}
-	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/rootfs_rootconfig"
+	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/rootfs"
 	utils.SetRight(rootfspath, int32(testuidInt), int32(testgidInt))
 	var uid specs.IDMapping = specs.IDMapping{
 		HostID:      int32(testuidInt),
@@ -69,7 +71,7 @@ func TestSuiteLinuxGidMappings() string {
 	if gopath == "" {
 		log.Fatalf("utils.setBind error GOPATH == nil")
 	}
-	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/rootfs_rootconfig"
+	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/specsValidator/rootfs"
 	utils.SetRight(rootfspath, int32(testuidInt), int32(testgidInt))
 	var uid specs.IDMapping = specs.IDMapping{
 		HostID:      int32(testuidInt),

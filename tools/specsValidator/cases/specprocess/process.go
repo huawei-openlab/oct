@@ -1,3 +1,5 @@
+// +build predraft
+
 package specprocess
 
 import (
@@ -26,7 +28,7 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 			Arch: runtime.GOARCH,
 		},
 		Root: specs.Root{
-			Path:     "rootfs_rootconfig",
+			Path:     "rootfs",
 			Readonly: true,
 		},
 		Process: specs.Process{

@@ -1,3 +1,5 @@
+// +build predraft
+
 package specplatform
 
 import (
@@ -21,7 +23,7 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 			Arch: "",
 		},
 		Root: specs.Root{
-			Path:     "rootfs_rootconfig",
+			Path:     "rootfs",
 			Readonly: true,
 		},
 		Process: specs.Process{
