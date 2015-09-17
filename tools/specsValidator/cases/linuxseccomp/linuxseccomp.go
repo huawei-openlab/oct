@@ -15,6 +15,7 @@
 package linuxseccomp
 
 import (
+	"errors"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
@@ -83,19 +84,16 @@ func setSeccomp(sec specs.Seccomp) specs.LinuxSpec {
 	return linuxSpec
 }
 
-func testSeccomp(linuxSpec *specs.LinuxSpec) (string, error) {
+func testSeccomp(linuxSpec *specs.LinuxSpec, failinfo string) (string, error) {
 	configFile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNKNOWNERR, err
+		return manager.UNKNOWNERR, errors.New("StartRunc error :" + out + "," + err.Error())
+	} else if strings.EqualFold(strings.TrimSpace(out), "Operation not permitted") {
+		return manager.PASSED, nil
 	} else {
-		if strings.EqualFold(strings.TrimSpace(out), "Operation not permitted") {
-			return manager.PASSED, nil
-		} else {
-			return manager.FAILED, err
-		}
-		return manager.FAILED, nil
+		return manager.FAILED, errors.New("test failed because" + failinfo)
 	}
 
 }
