@@ -12,6 +12,11 @@ The `specValidator` verifies all the specs configurations, so it is a much bigge
 and we will only validate the `stable` spec release.
 So far the tool is compliance with `45ae53d4dba8e550942f7384914206103f6d2216` commit.
 
+## OCT & OCT-Engine
+It is very easy to [write](https://github.com/huawei-openlab/oct-engine/blob/master/cases/README.md) a testcase under the OCT-engine.
+The testcase using bundleValidator as the testing tool is listed here:
+https://github.com/huawei-openlab/oct-engine/blob/master/cases/bundle/config.json
+
 ## Make OCT better
 We will also list other container testing tools here.
 Please tell us and update this file by using the following format:
