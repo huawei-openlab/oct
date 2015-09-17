@@ -41,33 +41,31 @@ var output = flag.String("o", "./report/", "Specify filePath to install the test
 func main() {
 
 	flag.Parse()
-	fmt.Println("Testing Revision:")
-	var checkoutSpecsRev, checkoutRuncRev string
-	if *specsRev == "" || *specsRev == "predraft" {
-		checkoutSpecsRev = "45ae53d4dba8e550942f7384914206103f6d2216"
-		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
-	} else {
-		checkoutSpecsRev = *specsRev
-		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
+	fmt.Println("Tested Revision:")
+	if *specsRev == "" {
+		defaultRev := "45ae53d4dba8e550942f7384914206103f6d2216"
+		fmt.Printf("	Default specs revision: pre-draft(commit: %v)\n", defaultRev)
+		hostenv.UpateSpecsRev(defaultRev)
 	}
 
 	if *runcRev == "" {
-		checkoutRuncRev = "v0.0.4"
-		fmt.Printf("	Runc revision :  %v\n", checkoutRuncRev)
-	} else {
-		checkoutRuncRev = *runcRev
-		fmt.Printf("	Runc revision: %v \n", checkoutRuncRev)
+		defaultRev := "v0.0.4"
+		fmt.Printf("	Default runc revision :  %v\n", defaultRev)
+		hostenv.UpateRuncRev(defaultRev)
 	}
 
-	hostenv.UpateSpecsRev(checkoutSpecsRev)
-	hostenv.UpateRuncRev(checkoutRuncRev)
+	if *specsRev != "" && *runcRev != "" {
+		hostenv.UpateSpecsRev(*specsRev)
+		hostenv.UpateRuncRev(*runcRev)
+		fmt.Printf("	Specified specs revision: %v \n", *specsRev)
+		fmt.Printf("	Specified runc revision: %v \n", *runcRev)
+	}
 
-	fmt.Println("Testing output: ")
 	if *output == "" {
 		*output = "./report/"
-		fmt.Println("	oct/tools/specsValidator/report/linuxspec.json")
+		fmt.Println("Using default output: oct/tools/specsValidator/report/linuxspec.json")
 	} else {
-		fmt.Printf("	%v\n", *output)
+		fmt.Printf("Specified output: %v\n", *output)
 	}
 
 	err := hostenv.CreateBoundle()
