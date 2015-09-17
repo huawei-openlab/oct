@@ -44,7 +44,8 @@ func TestSuiteLinuxHooksPrestart() string {
 	}
 	var testResult manager.TestResult
 	linuxspec := setHooks(pre, true)
-	result, err := testHooks(&linuxspec, "testHooksPrestart.txt")
+	info := " :Prestart Path=" + pre[0].Path
+	result, err := testHooks(&linuxspec, "testHooksPrestart.txt", info)
 	testResult.Set("TestSuiteLinuxHooksPrestart", linuxspec.Hooks.Prestart, err, result)
 	return testResult.Marshal()
 }

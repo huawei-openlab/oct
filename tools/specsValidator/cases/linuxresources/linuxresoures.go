@@ -96,24 +96,24 @@ func testResources(linuxSpec *specs.LinuxSpec) (string, error) {
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
+		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
 		fmt.Println("runc start success")
 		return manager.PASSED, nil
 	}
 }
 
-func checkConfigurationFromHost(filename string, configvalue string) (string, error) {
+func checkConfigurationFromHost(filename string, configvalue string, failinfo string) (string, error) {
 	cmd := exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/*/*/*/specsValidator/"+filename)
 	cmdouput, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
-		return manager.UNKNOWNERR, nil
+		return manager.UNKNOWNERR, err
 	} else {
 		if strings.EqualFold(strings.TrimSpace(string(cmdouput)), configvalue) {
 			return manager.PASSED, nil
 		} else {
-			return manager.FAILED, nil
+			return manager.FAILED, errors.New("test failed because" + failinfo)
 		}
 	}
 }

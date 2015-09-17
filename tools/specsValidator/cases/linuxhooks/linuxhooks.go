@@ -124,7 +124,7 @@ func setHooks(thooks []specs.Hook, isPre bool) specs.LinuxSpec {
 	return linuxSpec
 }
 
-func testHooks(linuxSpec *specs.LinuxSpec, compare string) (string, error) {
+func testHooks(linuxSpec *specs.LinuxSpec, compare string, failinfo string) (string, error) {
 	configFile := "./config.json"
 	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "ls"}
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
@@ -135,7 +135,7 @@ func testHooks(linuxSpec *specs.LinuxSpec, compare string) (string, error) {
 		if strings.Contains(strings.TrimSpace(string(out)), compare) {
 			return manager.PASSED, nil
 		} else {
-			return manager.FAILED, errors.New("Container output doesn't contains required content")
+			return manager.FAILED, errors.New("test failed because" + failinfo)
 		}
 	}
 }

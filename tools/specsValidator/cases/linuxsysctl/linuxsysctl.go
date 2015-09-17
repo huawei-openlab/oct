@@ -84,7 +84,7 @@ func setSysctls(testsysctls map[string]string) specs.LinuxSpec {
 	return linuxSpec
 }
 
-func testSysctls(linuxSpec *specs.LinuxSpec) (string, error) {
+func testSysctls(linuxSpec *specs.LinuxSpec, failinfo string) (string, error) {
 	configFile := "./config.json"
 	var key, value string
 	for k, v := range linuxSpec.Linux.Sysctl {
@@ -100,7 +100,7 @@ func testSysctls(linuxSpec *specs.LinuxSpec) (string, error) {
 		if strings.EqualFold(strings.TrimSpace(out), key+" = "+value) {
 			return manager.PASSED, nil
 		} else {
-			return manager.FAILED, nil
+			return manager.FAILED, errors.New("test failed because" + failinfo)
 		}
 	}
 }

@@ -99,13 +99,13 @@ func setIDmappings(testuid specs.IDMapping, testgid specs.IDMapping) specs.Linux
 	return linuxSpec
 }
 
-func testIDmappings(linuxSpec *specs.LinuxSpec, isUid bool) (string, error) {
+func testIDmappings(linuxSpec *specs.LinuxSpec, isUid bool, failinfo string) (string, error) {
 	//test whether the usernamespace works
 	configFile := "./config.json"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
+		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	}
 	outarray := strings.Fields(strings.TrimSpace(out))
 	outcuid, _ := strconv.ParseInt(outarray[0], 10, 0)
@@ -124,7 +124,7 @@ func testIDmappings(linuxSpec *specs.LinuxSpec, isUid bool) (string, error) {
 	if (int32(outcuid) == incuid) && (int32(outhuid) == inhuid) && (int32(outsize) == insize) {
 		return manager.PASSED, nil
 	} else {
-		return manager.FAILED, nil
+		return manager.FAILED, errors.New("test failed because" + failinfo)
 	}
 }
 func addTestUser() {
