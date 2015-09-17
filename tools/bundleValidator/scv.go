@@ -22,10 +22,38 @@ import (
 	"os"
 )
 
-func printErr(msgs []string) {
-	fmt.Println(len(msgs), "errors found:")
-	for index := 0; index < len(msgs); index++ {
-		fmt.Println(msgs[index])
+func outputInfo(context *cli.Context, content string) {
+	output := context.GlobalString("output")
+	if output == "" {
+		fmt.Println(content)
+	} else {
+		fout, err := os.Create(output)
+		defer fout.Close()
+		if err != nil {
+			fmt.Println(output, err)
+		} else {
+			fout.WriteString(content)
+		}
+	}
+}
+
+func printErr(context *cli.Context, msgs []string) {
+	output := context.GlobalString("output")
+	if output == "" {
+		fmt.Println(len(msgs), "errors found:")
+		for index := 0; index < len(msgs); index++ {
+			fmt.Println(msgs[index])
+		}
+	} else {
+		fout, err := os.Create(output)
+		defer fout.Close()
+		if err != nil {
+			fmt.Println(output, err)
+		} else {
+			for index := 0; index < len(msgs); index++ {
+				fout.WriteString(msgs[index])
+			}
+		}
 	}
 }
 
@@ -34,9 +62,9 @@ func parseBundle(context *cli.Context) {
 		var msgs []string
 		valid, msgs := specsValidator.OCTBundleValid(context.Args()[0], msgs)
 		if valid {
-			fmt.Println("Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
+			outputInfo(context, "Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
 		} else {
-			printErr(msgs)
+			printErr(context, msgs)
 		}
 	} else {
 		cli.ShowCommandHelp(context, "bundle")
@@ -48,9 +76,9 @@ func parseConfig(context *cli.Context) {
 		var msgs []string
 		valid, msgs := specsValidator.OCTConfigValid(context.Args()[0], msgs)
 		if valid {
-			fmt.Println("Valid : config.json")
+			outputInfo(context, "Valid : config.json")
 		} else {
-			printErr(msgs)
+			printErr(context, msgs)
 		}
 	} else {
 		cli.ShowCommandHelp(context, "bundle")
@@ -66,9 +94,9 @@ func parseRuntime(context *cli.Context) {
 		}
 		valid, msgs := specsValidator.OCTRuntimeValid(context.Args()[0], os, msgs)
 		if valid {
-			fmt.Println("Valid : runtime.json")
+			outputInfo(context, "Valid : runtime.json")
 		} else {
-			printErr(msgs)
+			printErr(context, msgs)
 		}
 	} else {
 		cli.ShowCommandHelp(context, "all")
@@ -78,21 +106,27 @@ func parseRuntime(context *cli.Context) {
 func generateConfig(context *cli.Context) {
 	ls := genConfig()
 	content, _ := json.Marshal(ls)
-	fmt.Println(string(content))
+	outputInfo(context, string(content))
 }
 
 func generateRuntime(context *cli.Context) {
 	lrt := genRuntime()
 	content, _ := json.Marshal(lrt)
-	fmt.Println(string(content))
+	outputInfo(context, string(content))
 }
 
-// It is a cli framework.
 func main() {
 	app := cli.NewApp()
 	app.Name = "scv"
 	app.Usage = "Standard Container Validator: tool to validate if a `bundle` was a standand container"
 	app.Version = "0.1.0"
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "output, o",
+			Value: "",
+			Usage: "Redirect the output to a certain file",
+		},
+	}
 	app.Commands = []cli.Command{
 		{
 			Name:    "bundle",
@@ -125,7 +159,12 @@ func main() {
 			Action:  generateRuntime,
 		},
 	}
-
+	/*
+		app.Action = func(c *cli.Context) {
+			output = c.String("output")
+			fmt.Println(output)
+		}
+	*/
 	app.Run(os.Args)
 
 	return
