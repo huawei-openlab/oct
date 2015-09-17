@@ -1,3 +1,5 @@
+// +build predraft
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +42,7 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 			Arch: runtime.GOARCH,
 		},
 		Root: specs.Root{
-			Path:     "rootfs_rootconfig",
+			Path:     "rootfs",
 			Readonly: true,
 		},
 		Process: specs.Process{
@@ -113,7 +115,7 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 	configFile := "./config.json"
 	propagationmode := linuxSpec.Linux.RootfsPropagation
 
-	cmd := exec.Command("bash", "-c", "touch  rootfs_rootconfig/fspropagationtest/fromhost.txt")
+	cmd := exec.Command("bash", "-c", "touch  rootfs/fspropagationtest/fromhost.txt")
 	_, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : touch test file in host error, %v", err)
@@ -133,7 +135,7 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 
 	err = configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	out_container, err := adaptor.StartRunc(configFile)
-	cmd = exec.Command("/bin/bash", "-c", "ls rootfs_rootconfig/fspropagationtest")
+	cmd = exec.Command("/bin/bash", "-c", "ls rootfs/fspropagationtest")
 	out_host, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : read test file from container (in host) error, %v", err)
@@ -168,7 +170,7 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 }
 
 func mkdir() {
-	cmd := exec.Command("bash", "-c", "mkdir  rootfs_rootconfig/fspropagationtest ")
+	cmd := exec.Command("bash", "-c", "mkdir  rootfs/fspropagationtest ")
 	_, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : make new folder in host error, %v", err)
@@ -176,7 +178,7 @@ func mkdir() {
 }
 
 func rmdir() {
-	cmd := exec.Command("bash", "-c", " rm -r rootfs_rootconfig/fspropagationtest/ ")
+	cmd := exec.Command("bash", "-c", " rm -r rootfs/fspropagationtest/ ")
 	_, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : remove folder in host error, %v", err)
