@@ -98,10 +98,12 @@ func testSElinuxLabel(linuxSpec *specs.LinuxSpec) (string, error) {
 
 	out, err := adaptor.StartRunc(configFile)
 	if err != nil {
-		return manager.UNKNOWNERR, errors.New("StartRunc error;" + string(out) + err.Error())
-	} else if strings.EqualFold(out, selinuxlable) {
-		return manager.PASSED, nil
+		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
-		return manager.FAILED, errors.New("process selinux lable inside container doesn't match setting context")
+		if strings.EqualFold(strings.TrimSpace(string(cmdouput)), label) {
+			return manager.PASSED, nil
+		} else {
+			return manager.FAILED, errors.New("test failed because selinux label is not effective")
+		}
 	}
 }

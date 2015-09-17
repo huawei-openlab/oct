@@ -15,6 +15,7 @@
 package linuxrootfspropagation
 
 import (
+	"errors"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
@@ -136,7 +137,7 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 	out_host, err := cmd.Output()
 	if err != nil {
 		log.Fatalf("[Specstest] linux rootfs propagation test : read test file from container (in host) error, %v", err)
-		return manager.UNKNOWNERR, nil
+		return manager.UNKNOWNERR, err
 	}
 	var flag_container, flag_host bool
 	if strings.Contains(strings.TrimSpace(out_container), "fromhost.txt") {
@@ -163,7 +164,7 @@ func testRootfsPropagationHost(linuxSpec *specs.LinuxSpec, guestfilename string)
 			return manager.PASSED, nil
 		}
 	}
-	return manager.FAILED, nil
+	return manager.FAILED, errors.New("RootfsPropagationmode:" + propagationmode + "failed")
 }
 
 func mkdir() {

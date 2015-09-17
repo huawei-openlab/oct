@@ -55,13 +55,13 @@ func TestSuiteLinuxDevicesFull() string {
 	var errout error
 	if err != nil {
 		result = manager.UNSPPORTED
-		errout = errors.New(out + err.Error())
+		errout = errors.New("StartRunc error :" + out + ", " + err.Error())
 	} else if strings.Contains(strings.TrimSpace(out), "echo: write error: No space left on device") {
 		result = manager.PASSED
 		errout = nil
 	} else {
 		result = manager.FAILED
-		errout = nil
+		errout = errors.New("device /dev/full is NOT effective")
 	}
 	var testResult manager.TestResult
 	testResult.Set("TestSuiteLinuxDevicesFull", device, errout, result)

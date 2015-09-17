@@ -44,8 +44,8 @@ func TestSuiteLinuxSeccompGetcwd() string {
 	linuxSpec.Spec.Process.Args = []string{"/testtool/linuxseccomp"}
 	testtoolfolder := specs.Mount{"bind", resource, "/testtool", "bind"}
 	linuxSpec.Spec.Mounts = append(linuxSpec.Spec.Mounts, testtoolfolder)
-	// linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "pwd"}
-	result, errout := testSeccomp(&linuxSpec)
+	info := ",Name=" + se.Syscalls[0].Name + ", Action=" + string(se.Syscalls[0].Action)
+	result, errout := testSeccomp(&linuxSpec, info)
 	var testResult manager.TestResult
 	testResult.Set("TestSuiteLinuxSeccompGetcwd", se, errout, result)
 	return testResult.Marshal()

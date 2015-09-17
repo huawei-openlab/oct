@@ -21,7 +21,8 @@ import (
 func TestMountTmpfs() string {
 	linuxspec := setMount("tmpfs", "tmpfs", "/mountTest", "")
 	mount := linuxspec.Spec.Mounts
-	result, err := testMount(&linuxspec)
+	failinfo := "tmpfs failed"
+	result, err := testMount(&linuxspec, failinfo)
 	var testResult manager.TestResult
 	testResult.Set("TestMountTmpfs", mount, err, result)
 	return testResult.Marshal()

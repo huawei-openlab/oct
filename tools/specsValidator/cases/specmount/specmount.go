@@ -101,7 +101,7 @@ func checkHostSupport(fsname string) (bool, error) {
 	return true, nil
 }
 
-func testMount(linuxSpec *specs.LinuxSpec) (string, error) {
+func testMount(linuxSpec *specs.LinuxSpec, failinfo string) (string, error) {
 	configFile := "./config.json"
 	linuxSpec.Spec.Process.Args[0] = "/bin/mount"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
@@ -111,6 +111,6 @@ func testMount(linuxSpec *specs.LinuxSpec) (string, error) {
 	} else if strings.Contains(out, "/mountTest") {
 		return manager.PASSED, nil
 	} else {
-		return manager.FAILED, nil
+		return manager.FAILED, errors.New("test failed because" + failinfo)
 	}
 }
