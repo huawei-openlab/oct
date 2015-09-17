@@ -13,7 +13,7 @@ regardless of the underlying machine and the contents of the container.
 ```
 
 OCT covers following areas:
-- [Bundle Validator]([tools/bundleValidator/README.md) verifies if a bundle was a [Standard Container](#standard-container).
+- [Bundle Validator](tools/bundleValidator/README.md) verifies if a bundle was a [Standard Container](#standard-container).
 - [Runtime Validator](tools/specsValidator/README.md) verifies if a runtime runs the bundle [correctly](#compliant-runtime).
 
 To make OCT easier, more tools are required:
