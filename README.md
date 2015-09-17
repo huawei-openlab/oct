@@ -12,14 +12,17 @@ so that any compliant runtime can run it without extra dependencies,
 regardless of the underlying machine and the contents of the container.
 ```
 
-OCT covers two areas:
-- [Standard Container](#standard-container) 
-- [Compliant Runtime](#compliant-runtime)
+OCT covers following areas:
+- [Bundle Validator]([tools/bundleValidator/README.md) verifies if a bundle was a [Standard Container](#standard-container).
+- [Runtime Validator](tools/specsValidator/README.md) verifies if a runtime runs the bundle [correctly](#compliant-runtime).
+
+To make OCT easier, more tools are required:
+- OCI builder - build a native OCI bundle
+- [OCI generator](tools/bundleValidator/README.md) - generate a minimal config.json/runtime.json
+- [OCI convert](tools/oci-convert) - convert from other images, like rkt.
 
 ###Standard Container
 A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
-
-OCT provides a [Standard Container Validator](tools/bundleValidator/README.md) tool to varify if a bundle could be called `a standard container`.
 
 ###Compliant Runtime
 A compliant runtime should be the one which could run a standard container `correctly`, either runs `directly` or `indirectly`.
@@ -29,8 +32,6 @@ A compliant runtime should be the one which could run a standard container `corr
 `Directly` means a runtime could run a standard container without any extra action, just like 'runC'.
 
 `Indirectly` means a runtime(runX) could not run a standard container directly. RunX needs to get a runX-bundle converted from an oci-bundle first and then runs runX-bundle. [Conversion tools](#conversion-tools)
-
-OCT provides a [Compliant Runtime Validator](tools/specsValidator/README.md) tool to varify if a runtime could be called `a compliant runtime`. (OCT tests on 'runC' so far.)
 
 ####Conversion tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
