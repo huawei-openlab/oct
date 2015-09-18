@@ -1,3 +1,5 @@
+// +build v0.1.1
+
 // Copyright 2014 Google Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,43 +20,29 @@ import (
 	"encoding/json"
 	"github.com/opencontainers/specs"
 	"io/ioutil"
-	"log"
-	"os"
 )
 
 //read config.json to specs.LinuxSpec
-func ConfigToLinuxSpec(filePath string) (*specs.LinuxSpec, error) {
+func ConfigToLinuxRuntime(filePath string) (*specs.LinuxRuntimeSpec, error) {
 	out, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
-	var linuxspec specs.LinuxSpec
-	err = json.Unmarshal(out, &linuxspec)
+	var linuxruntime specs.LinuxRuntimeSpec
+	err = json.Unmarshal(out, &linuxruntime)
 	if err != nil {
 		return nil, err
 	}
 
-	return &linuxspec, nil
+	return &linuxruntime, nil
 }
 
-//write specs.LinuxSpec to config.json
-func LinuxSpecToConfig(filePath string, linuxspec *specs.LinuxSpec) error {
-	stream, err := json.Marshal(linuxspec)
+//write specs.LinuxRuntimeSpec to runtime.json
+func LinuxRuntimeToConfig(filePath string, linuxRuntime *specs.LinuxRuntimeSpec) error {
+	stream, err := json.Marshal(linuxRuntime)
 	if err != nil {
 		return err
 	}
 	objToJson(stream, filePath)
 	return err
-}
-
-func objToJson(stream []byte, filePath string) {
-	fd, err := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0777)
-	if err != nil {
-		log.Fatalf(" open file err, %v", err)
-	}
-	defer fd.Close()
-	_, err = fd.Write(stream)
-	if err != nil {
-		log.Fatalf(" write file err, %v", err)
-	}
 }
