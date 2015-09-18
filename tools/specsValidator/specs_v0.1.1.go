@@ -1,3 +1,5 @@
+// +build v0.1.1
+
 // Copyright 2015 Huawei Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,16 +20,16 @@ import (
 	"flag"
 	"fmt"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxcapabilities"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxnamespace"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxnamespace"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxresources"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxrlimits"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxselinuxlabel"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxsysctl"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
+	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
 	"github.com/huawei-openlab/oct/tools/specsValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
@@ -41,31 +43,33 @@ var output = flag.String("o", "./report/", "Specify filePath to install the test
 func main() {
 
 	flag.Parse()
-	fmt.Println("Tested Revision:")
-	if *specsRev == "" {
-		defaultRev := "45ae53d4dba8e550942f7384914206103f6d2216"
-		fmt.Printf("	Default specs revision: pre-draft(commit: %v)\n", defaultRev)
-		hostenv.UpateSpecsRev(defaultRev)
+	fmt.Println("Testing Revision:")
+	var checkoutSpecsRev, checkoutRuncRev string
+	if *specsRev == "" || *specsRev == "predraft" {
+		checkoutSpecsRev = "45ae53d4dba8e550942f7384914206103f6d2216"
+		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
+	} else {
+		checkoutSpecsRev = *specsRev
+		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
 	}
 
 	if *runcRev == "" {
-		defaultRev := "v0.0.4"
-		fmt.Printf("	Default runc revision :  %v\n", defaultRev)
-		hostenv.UpateRuncRev(defaultRev)
+		checkoutRuncRev = "v0.0.4"
+		fmt.Printf("	Runc revision :  %v\n", checkoutRuncRev)
+	} else {
+		checkoutRuncRev = *runcRev
+		fmt.Printf("	Runc revision: %v \n", checkoutRuncRev)
 	}
 
-	if *specsRev != "" && *runcRev != "" {
-		hostenv.UpateSpecsRev(*specsRev)
-		hostenv.UpateRuncRev(*runcRev)
-		fmt.Printf("	Specified specs revision: %v \n", *specsRev)
-		fmt.Printf("	Specified runc revision: %v \n", *runcRev)
-	}
+	hostenv.UpateSpecsRev(checkoutSpecsRev)
+	hostenv.UpateRuncRev(checkoutRuncRev)
 
+	fmt.Println("Testing output: ")
 	if *output == "" {
 		*output = "./report/"
-		fmt.Println("Using default output: oct/tools/specsValidator/report/linuxspec.json")
+		fmt.Println("	oct/tools/specsValidator/report/linuxspec.json")
 	} else {
-		fmt.Printf("Specified output: %v\n", *output)
+		fmt.Printf("	%v\n", *output)
 	}
 
 	err := hostenv.CreateBoundle()
