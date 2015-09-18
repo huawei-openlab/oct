@@ -1,3 +1,4 @@
+//+build v0.1.1
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,13 +32,13 @@ import (
  */
 var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 	Spec: specs.Spec{
-		Version: "v0.1.0",
+		Version: "0.1.0",
 		Platform: specs.Platform{
 			OS:   runtime.GOOS,
 			Arch: runtime.GOARCH,
 		},
 		Root: specs.Root{
-			Path:     "rootfs_rootconfig",
+			Path:     "rootfs",
 			Readonly: true,
 		},
 		Process: specs.Process{
@@ -58,25 +59,27 @@ var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 	},
 }
 
-var linuxRuntimeSpec specs.LinuxRuntime = specs.LinuxRuntimeSpec{
-	Mounts: {
-		"proc": specs.Mount{
-			{
+var linuxRuntimeSpec specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
+	RuntimeSpec: specs.RuntimeSpec{
+		Mounts: map[string]specs.Mount{
+			"proc": specs.Mount{
 				Type:    "proc",
 				Source:  "proc",
-				Options: "",
+				Options: []string{""},
 			},
 		},
 	},
-	Resources: specs.Resources{
-		Memory: specs.Memory{
-			Swappiness: -1,
+	Linux: specs.LinuxRuntime{
+		Resources: &specs.Resources{
+			Memory: specs.Memory{
+				Swappiness: -1,
+			},
 		},
-	},
-	Namespaces: []specs.Namespace{
-		{
-			Type: "mount",
-			Path: "",
+		Namespaces: []specs.Namespace{
+			{
+				Type: "mount",
+				Path: "",
+			},
 		},
 	},
 }
@@ -89,11 +92,12 @@ func init() {
 	manager.Manager.AddTestSuite(TestSuiteMount)
 }
 
-func setMount(fsName string, fsSrc string, fsDes string, fsOpt string) specs.LinuxSpec {
-	mountsorigin := specs.Mount{"proc", "proc", "/proc", ""}
-	mountsadd := specs.Mount{fsName, fsSrc, fsDes, fsOpt}
-	linuxSpec.Mounts = []specs.Mount{mountsorigin, mountsadd}
-	return linuxSpec
+func setMount(fsName string, fsType string, fsSrc string, fsDes string, fsOpt []string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
+	configMountTest := specs.MountPoint{fsName, fsDes}
+	runtimeMountTest := specs.Mount{fsType, fsSrc, fsOpt}
+	linuxSpec.Mounts = append(linuxSpec.Mounts, configMountTest)
+	linuxRuntimeSpec.Mounts[fsName] = runtimeMountTest
+	return linuxSpec, linuxRuntimeSpec
 }
 
 func checkHostSupport(fsname string) (bool, error) {
@@ -109,11 +113,13 @@ func checkHostSupport(fsname string) (bool, error) {
 	return true, nil
 }
 
-func testMount(linuxSpec *specs.LinuxSpec, failinfo string) (string, error) {
+func testMount(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec, failinfo string) (string, error) {
 	configFile := "./config.json"
+	runtimeFile := "./runtime.json"
 	linuxSpec.Spec.Process.Args[0] = "/bin/mount"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
-	out, err := adaptor.StartRunc(configFile)
+	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
+	out, err := adaptor.StartRunc("", "")
 	if err != nil {
 		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
 	} else if strings.Contains(out, "/mountTest") {
