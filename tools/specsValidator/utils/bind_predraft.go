@@ -1,3 +1,5 @@
+// +build predraft
+
 package utils
 
 import (
