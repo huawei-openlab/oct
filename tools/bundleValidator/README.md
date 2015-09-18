@@ -74,8 +74,8 @@ make
 Also we add a simple config.json/runtime.json generator tool.
 
 ```
-./scv genconfig > config.json
-./scv genruntime > runtime.json
+./scv  -o config.json genconfig
+./scv  -o runtime.json genruntime
 ```
 
 We can use the validation tool to check these json file.

@@ -1,6 +1,11 @@
+ifndef BUILDTAGS
+BUILDTAGS=v0.1.1
+endif
+export BUILDTAGS
+
 all:
 
-	godep go build -o specsValidator
+	godep go build -tags $(BUILDTAGS) -o specsValidator
 
 	$(MAKE) -C containerend
 clean:
