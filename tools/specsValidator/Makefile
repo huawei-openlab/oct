@@ -1,5 +1,5 @@
 ifndef BUILDTAGS
-BUILDTAGS=v0.1.1
+BUILDTAGS=predraft
 endif
 export BUILDTAGS
 
