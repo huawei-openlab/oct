@@ -25,7 +25,7 @@ import (
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxrlimits"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxselinuxlabel"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxsysctl"
-	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
