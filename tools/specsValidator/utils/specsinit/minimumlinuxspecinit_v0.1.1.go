@@ -27,10 +27,7 @@ func SetLinuxspecMinimum() specs.LinuxSpec {
 					AdditionalGids: nil,
 				},
 				Args: []string{""},
-				Env:  []string{""},
-				Cwd:  "",
 			},
-			Hostname: "zenlinHost",
 			Mounts: []specs.MountPoint{
 				{
 					Name: "proc",
