@@ -1,5 +1,5 @@
 ifndef BUILDTAGS
-BUILDTAGS=v0.1.1
+BUILDTAGS=predraft
 endif
 export BUILDTAGS
 
@@ -10,4 +10,5 @@ all:
 	$(MAKE) -C containerend
 clean:
 	rm specsValidator
+	rm -rf  rootfs ubuntu.tar config.json
 	$(MAKE) -C containerend clean
