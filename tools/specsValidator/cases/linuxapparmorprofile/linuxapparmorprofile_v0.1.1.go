@@ -1,4 +1,5 @@
-//+build v0.1.1
+// +build v0.1.1
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +14,7 @@
 // limitations under the License.
 //
 
-package specmount
+package linuxapparmorprofile
 
 import (
 	"errors"
@@ -21,6 +22,7 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/opencontainers/specs"
+	"log"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -84,47 +86,41 @@ var linuxRuntimeSpec specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
 	},
 }
 
-var TestSuiteMount manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.Mount"}
+var TestSuiteLinuxApparmorProfile manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.ApparmorProfile"}
 
-// TODO
 func init() {
-	TestSuiteMount.AddTestCase("TestMountTmpfs", TestMountTmpfs)
-	manager.Manager.AddTestSuite(TestSuiteMount)
+	TestSuiteLinuxApparmorProfile.AddTestCase("TestLinuxApparmorProfile", TestLinuxApparmorProfile)
+	manager.Manager.AddTestSuite(TestSuiteLinuxApparmorProfile)
 }
 
-func setMount(fsName string, fsType string, fsSrc string, fsDes string, fsOpt []string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
-	configMountTest := specs.MountPoint{fsName, fsDes}
-	runtimeMountTest := specs.Mount{fsType, fsSrc, fsOpt}
-	linuxSpec.Mounts = append(linuxSpec.Mounts, configMountTest)
-	linuxRuntimeSpec.Mounts[fsName] = runtimeMountTest
+func setApparmorProfile(profilename string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
+	linuxRuntimeSpec.Linux.ApparmorProfile = profilename
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "echo \" enter the container \""}
 	return linuxSpec, linuxRuntimeSpec
 }
 
-func checkHostSupport(fsname string) (bool, error) {
-	cmd := exec.Command("/bin/sh", "-c", "cat /proc/filesystems | awk '{print $2}' | grep -w "+fsname)
-	output, err := cmd.Output()
-	if err != nil {
-		return false, errors.New(err.Error())
-	} else if strings.EqualFold(strings.TrimSpace(string(output)), fsname) {
-		return true, nil
-	} else {
-		return false, nil
-	}
-	return true, nil
-}
-
-func testMount(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec, failinfo string) (string, error) {
+func testApparmorProfile(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
-	linuxSpec.Spec.Process.Args[0] = "/bin/mount"
+	inputprofilename := linuxRuntimeSpec.Linux.ApparmorProfile
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
+	cmd := exec.Command("bash", "-c", "cp cases/linuxapparmorprofile/"+inputprofilename+"  /etc/apparmor.d")
+	_, err = cmd.Output()
+	if err != nil {
+		log.Fatalf("[specsValidator] linux apparmor profile test : copy the apparmor file error, %v", err)
+	}
 	out, err := adaptor.StartRunc(configFile, runtimeFile)
 	if err != nil {
-		return manager.UNSPPORTED, errors.New(string(out) + err.Error())
-	} else if strings.Contains(out, "/mountTest") {
+		return manager.UNKNOWNERR, errors.New(out + err.Error())
+	}
+	cmd = exec.Command("bash", "-c", " apparmor_status")
+	cmdout, err := cmd.Output()
+	if err != nil {
+		return manager.UNSPPORTED, errors.New("HOST Machine NOT Support Apparmor")
+	} else if strings.Contains(strings.TrimSpace(string(cmdout)), inputprofilename) {
 		return manager.PASSED, nil
 	} else {
-		return manager.FAILED, errors.New("test failed because" + failinfo)
+		return manager.FAILED, nil
 	}
 }
