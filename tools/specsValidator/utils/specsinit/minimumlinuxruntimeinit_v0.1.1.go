@@ -7,7 +7,16 @@ import (
 )
 
 func SetLinuxruntimeMinimum() specs.LinuxRuntimeSpec {
-	var linuxRuntime specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
+	var linuxRuntimeSpec specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
+		RuntimeSpec: specs.RuntimeSpec{
+			Mounts: map[string]specs.Mount{
+				"proc": specs.Mount{
+					Type:    "proc",
+					Source:  "proc",
+					Options: []string{""},
+				},
+			},
+		},
 		Linux: specs.LinuxRuntime{
 			Resources: &specs.Resources{
 				Memory: specs.Memory{
@@ -21,15 +30,6 @@ func SetLinuxruntimeMinimum() specs.LinuxRuntimeSpec {
 				},
 			},
 		},
-		RuntimeSpec: specs.RuntimeSpec{
-			Mounts: map[string]specs.Mount{
-				"proc": {
-					Type:    "proc",
-					Source:  "proc",
-					Options: []string{""},
-				},
-			},
-		},
 	}
-	return linuxRuntime
+	return linuxRuntimeSpec
 }
