@@ -1,5 +1,3 @@
-// +build v0.1.1
-
 // Copyright 2015 Huawei Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +26,7 @@ import (
 	//_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
 	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
-	// _ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
 	"github.com/huawei-openlab/oct/tools/specsValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
