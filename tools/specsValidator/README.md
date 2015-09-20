@@ -16,15 +16,24 @@ $    go get github.com/tools/godep
 - Building        
 It just guide people to use the specsValidator tool directly, but not using it in the whole project,         
 if anyone wan to use it accross the whole proeject, please go through the [oct/README.md](./../../README.md)
+For using specs v0.1.1 as a benchmark,       
 ``` bash
-$    go get -d  github.com/huawei-openlab/oct/tools/specsValidator
-$    cd $GOPATH/src/github.com/opencontainers/specs
-$    git checkout <specified specs version>
+$    go get -d  -tags v0.1.1 github.com/huawei-openlab/oct/tools/specsValidator
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
-$    make all BUILDTAGS=<specified specs version> 
+$    godep update github.com/opencontainers/specs
+$    make all BUILDTAGS=v0.1.1 
 # BUILDTAGS should be the tag of the [opencontainers/specs](https://github.com/opencontainers/specs),         
 # supportted two version now, ***predraft*** or ***v0.1.1***
-```
+```     
+For using specs predraft as a benchmark,      
+``` bash
+$    go get -d  -tags predraft github.com/huawei-openlab/oct/tools/specsValidator
+$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
+$    make all BUILDTAGS=predraft
+# BUILDTAGS should be the tag of the [opencontainers/specs](https://github.com/opencontainers/specs),         
+# supportted two version now, ***predraft*** or ***v0.1.1***
+```     
+
 Binary "specs" is buit now.
 - Using    
 Use binary "specs" to run,
