@@ -77,7 +77,7 @@ func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []st
 }
 ```
 
-##Validate once, return all the erros
+##Validate once, return all the errors
 The return value '(bool, msgs []string)' will store all the error messages.
 Correct all of them before run an OCI bundle.
 
