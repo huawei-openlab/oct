@@ -15,7 +15,7 @@
 package main
 
 import (
-	sv "./libsv"
+	sv "./libspec"
 	//"fmt"
 	"github.com/opencontainers/specs"
 	//	"os"

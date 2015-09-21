@@ -1,4 +1,4 @@
-The `scv` verifies:
+The `bundle` verifies:
 
 ## spec/bundle
 Verify whether a bundle is valid, with all the required files and
@@ -6,7 +6,7 @@ all the required attributes.
 Since the `bundle` spec is not decide yet, now just check if `config.json`,
 `runtime.json` and `rootfs` were accessbile.
 
-The validation work is done by .go files in the `libsv` directory.
+The validation work is done by .go files in the `libspec` directory.
 These .go files follows the .go files in [specs](https://github.com/opencontainers/specs) closely
 in order to make the validation clearly, for example:
 
@@ -32,7 +32,7 @@ type Spec struct {
 ```
 
 ```
-libsv/config.go
+libspec/config.go
 
 func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
         valid, msgs := checkSemVer(s.Version, msgs)
@@ -65,21 +65,16 @@ It is easy to use this tool, we provide a demo-bundle.
 
 ```
 make
-./scv bundle demo-bundle
-./scv config demo-bundle/config.json
-./scv runtime demo-bundle/runtime.json linux
+./bundle all demo-bundle
+./bundle config demo-bundle/config.json
+./bundle runtime demo-bundle/runtime.json linux
 
 ```
 
 Also we add a simple config.json/runtime.json generator tool.
 
 ```
-./scv  -o config.json genconfig
-./scv  -o runtime.json genruntime
+./bundle  -o config.json genconfig
+./bundle  -o runtime.json genruntime
 ```
 
-We can use the validation tool to check these json file.
-```
-./scv c config.json
-./scv r runtime.json
-```

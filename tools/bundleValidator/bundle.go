@@ -15,7 +15,7 @@
 package main
 
 import (
-	"./libsv"
+	"./libspec"
 	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/cli"
@@ -117,7 +117,7 @@ func generateRuntime(context *cli.Context) {
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "scv"
+	app.Name = "Bundle Validator"
 	app.Usage = "Standard Container Validator: tool to validate if a `bundle` was a standand container"
 	app.Version = "0.1.0"
 	app.Flags = []cli.Flag{

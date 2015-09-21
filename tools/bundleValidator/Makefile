@@ -1,5 +1,5 @@
 all:
-	go build -o scv
+	go build -o bundle
 
 clean:
-	rm scv
+	rm bundle
