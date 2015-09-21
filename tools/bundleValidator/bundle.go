@@ -52,6 +52,7 @@ func printErr(context *cli.Context, msgs []string) {
 		} else {
 			for index := 0; index < len(msgs); index++ {
 				fout.WriteString(msgs[index])
+				fout.WriteString("\n")
 			}
 		}
 	}
@@ -105,13 +106,13 @@ func parseRuntime(context *cli.Context) {
 
 func generateConfig(context *cli.Context) {
 	ls := genConfig()
-	content, _ := json.Marshal(ls)
+	content, _ := json.MarshalIndent(ls, "", "\t")
 	outputInfo(context, string(content))
 }
 
 func generateRuntime(context *cli.Context) {
 	lrt := genRuntime()
-	content, _ := json.Marshal(lrt)
+	content, _ := json.MarshalIndent(lrt, "", "\t")
 	outputInfo(context, string(content))
 }
 
@@ -159,12 +160,7 @@ func main() {
 			Action:  generateRuntime,
 		},
 	}
-	/*
-		app.Action = func(c *cli.Context) {
-			output = c.String("output")
-			fmt.Println(output)
-		}
-	*/
+
 	app.Run(os.Args)
 
 	return

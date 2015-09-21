@@ -96,7 +96,16 @@ func genRuntime() (lrts specs.LinuxRuntimeSpec) {
 		{"/dev/full", 'c', 1, 7, "rwm", 0666, 0, 0},
 	}
 
-	//	        Mounts map[string]Mount `json:"mounts"`
+	lrt.Namespaces = []specs.Namespace{
+		{"pid", ""},
+		{"network", ""},
+		{"mount", ""},
+		{"ipc", ""},
+		{"uts", ""},
+		{"user", ""},
+	}
+
+	lrts.Linux = lrt
 
 	return lrts
 }
