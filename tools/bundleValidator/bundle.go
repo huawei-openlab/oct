@@ -130,20 +130,20 @@ func main() {
 	}
 	app.Commands = []cli.Command{
 		{
-			Name:    "bundle",
-			Aliases: []string{"b"},
+			Name:    "valbundle",
+			Aliases: []string{"vb"},
 			Usage:   "Validate all the config.json, runtime.json and files in the rootfs",
 			Action:  parseBundle,
 		},
 		{
-			Name:    "config",
-			Aliases: []string{"c"},
+			Name:    "valconfig",
+			Aliases: []string{"vc"},
 			Usage:   "Validate the config.json only",
 			Action:  parseConfig,
 		},
 		{
-			Name:    "runtime",
-			Aliases: []string{"r"},
+			Name:    "valruntime",
+			Aliases: []string{"vr"},
 			Usage:   "Validate the runtime.json only, runtime + arch, default to 'linux'",
 			Action:  parseRuntime,
 		},

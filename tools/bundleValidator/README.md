@@ -1,17 +1,34 @@
-The `bundle` verifies:
+#Bundle tool
 
-## spec/bundle
-Verify whether a bundle is valid, with all the required files and
+##Generate a config.json and runtime.json
+Provide a template config.json and runtime.json.
+`
+./bundle -o config.json gc
+./bundle -o runtime.json gr
+`
+or 
+`
+./bundle gc > config.json
+./bundle gr > runtime.json
+`
+
+##Verify a bundle
+It verifies whether a bundle is valid, with all the required files and
 all the required attributes.
-Since the `bundle` spec is not decide yet, now just check if `config.json`,
-`runtime.json` and `rootfs` were accessbile.
+`
+./bundle vb demo-bundle
+./bundle vc demo-bundle/config.json
+./bundle vr demon-bundle/runtime.json
+`
 
+#Development design
+##One spec struct, one validate function
 The validation work is done by .go files in the `libspec` directory.
 These .go files follows the .go files in [specs](https://github.com/opencontainers/specs) closely
-in order to make the validation clearly, for example:
+in order to make the validation clearly, for example, here is the 'Spec' struct:
 
 ```
-spec/config.go
+opencontainers/specs/config.go
 
 // Spec is the base configuration for the container.  It specifies platform
 // independent configuration.
@@ -31,10 +48,11 @@ type Spec struct {
 }
 ```
 
+The 'Valid' function is like this:
 ```
 libspec/config.go
 
-func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
+func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []string) (bool, []string) {
         valid, msgs := checkSemVer(s.Version, msgs)
 
         ret, msgs := PlatformValid(s.Platform, msgs)
@@ -59,22 +77,12 @@ func SpecValid(s specs.Spec, msgs []string) (bool, []string) {
 }
 ```
 
-#How To try
-It is easy to use this tool, we provide a demo-bundle.
-
-
-```
-make
-./bundle all demo-bundle
-./bundle config demo-bundle/config.json
-./bundle runtime demo-bundle/runtime.json linux
+##Validate once, return all the erros
+The return value '(bool, msgs []string)' will store all the error messages.
+Correct all of them before run an OCI bundle.
 
 ```
-
-Also we add a simple config.json/runtime.json generator tool.
-
+The mountPoint sys /sys is not exist in rootfs
+The mountPoint proc /proc is not exist in rootfs
+The mountPoint dev /dev is not exist in rootfs
 ```
-./bundle  -o config.json genconfig
-./bundle  -o runtime.json genruntime
-```
-
