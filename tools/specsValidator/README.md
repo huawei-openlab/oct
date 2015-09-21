@@ -36,16 +36,16 @@ $    make all BUILDTAGS=predraft
 
 Binary "specs" is buit now.
 - Using    
-Use binary "specs" to run,
-Usage of ./specs:        
-  -o="./report/": Specify filePath to install the test result linuxspec.json     
-  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id or tag       
-  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id tag
-
+Use binary "specsValidator" to run,
+Usage of ./specsValidator:
+  -o="./report/": Specify filePath to install the test result linuxspec.json
+  -rtags="seccomp": Build tags for runc, should be one of seccomp/selinux/apparmor
+  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id or tags
+  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id or tags
 ``` bash
 $   su root
-$   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -o=<output path>
-# For example, ./specsValidator -specs=predraft -runc=v0.0.4
+$   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -rtags=<specified runc build tags> -o=<output path>
+# For example, ./specsValidator -specs=predraft -runc=v0.0.4 -rtags="selinux"
 ```
 specs version can be choose between ***predraft*** or ***v0.1.1***, predraft is the commmit of 45ae53d4dba8e550942f7384914206103f6d2216
 

@@ -37,12 +37,13 @@ import (
 var specsRev = flag.String("specs", "", "Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id")
 var runcRev = flag.String("runc", "", "Specify runc Revision from opencontainers/specs to be tested, in the form of commit id")
 var output = flag.String("o", "./report/", "Specify filePath to install the test result linuxspec.json")
+var runctags = flag.String("rtags", "seccomp", "Build tags for runc, should be one of seccomp/selinux/apparmor")
 
 func main() {
 
 	flag.Parse()
 	fmt.Println("Testing Revision:")
-	var checkoutSpecsRev, checkoutRuncRev string
+	var checkoutSpecsRev, checkoutRuncRev, runcBuildtags string
 	if *specsRev == "" || *specsRev == "predraft" {
 		checkoutSpecsRev = "45ae53d4dba8e550942f7384914206103f6d2216"
 		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
@@ -59,8 +60,16 @@ func main() {
 		fmt.Printf("	Runc revision: %v \n", checkoutRuncRev)
 	}
 
+	if *runctags == "" {
+		runcBuildtags = "seccomp"
+	} else if *runctags != "seccomp" && *runctags != "selinux" && *runctags != "apparmor" {
+		log.Fatalf("Parameter runctags=%v is the wrong value", *runctags)
+	} else {
+		runcBuildtags = *runctags
+	}
+
 	hostenv.UpateSpecsRev(checkoutSpecsRev)
-	hostenv.UpateRuncRev(checkoutRuncRev)
+	hostenv.UpateRuncRev(checkoutRuncRev, runcBuildtags)
 
 	fmt.Println("Testing output: ")
 	if *output == "" {
