@@ -8,10 +8,8 @@ import (
 )
 
 /*
-// LinuxSpec is the full specification for linux containers.
 type LinuxSpec struct {
 	Spec `required`
-	// Linux is platform specific configuration for linux based containers.
 	Linux Linux `required`
 }
 */
@@ -45,9 +43,7 @@ func LinuxSpecValid(ls specs.LinuxSpec, runtime specs.LinuxRuntimeSpec, rootfs s
 }
 
 /*
-// Linux contains platform specific configuration for linux based containers.
 type Linux struct {
-	// Capabilities are linux capabilities that are kept for the container.
 	Capabilities []string `optional`
 }
 */
@@ -66,19 +62,13 @@ func LinuxValid(l specs.Linux, msgs []string) (bool, []string) {
 }
 
 /*
-// User specifies linux specific user and group information for the container's
-// main process.
 type User struct {
-	// UID is the user id.
 	UID int32 `required`
-	// GID is the group id.
 	GID int32 `required`
-	// AdditionalGIDs are additional group ids set for the container's process.
 	AdditionalGIDs []int32 `optional`
 }
 */
 
-//TODO: check if uid/gid real exist
 func UserValid(u specs.User, msgs []string) (bool, []string) {
 	valid := true
 	if u.UID < 0 {

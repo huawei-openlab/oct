@@ -22,15 +22,13 @@ const (
 type Bundle struct {
 	Config  specs.Spec
 	Runtime specs.RuntimeSpec
-
-	Rootfs string
+	Rootfs  string
 }
 
 type LinuxBundle struct {
 	Config  specs.LinuxSpec
 	Runtime specs.LinuxRuntimeSpec
-
-	Rootfs string
+	Rootfs  string
 }
 
 func ReadFile(file_url string) (content string, err error) {
@@ -218,15 +216,17 @@ func BundleValid(bundlePath string, msgs []string) (bool, []string) {
 		}
 	}
 
-	bundle.Rootfs = path.Join(bundlePath, RootfsDir)
 	if valid == false {
 		return valid, msgs
 	}
 
+	bundle.Rootfs = path.Join(bundlePath, RootfsDir)
+
 	ret, msgs := SpecValid(bundle.Config, bundle.Runtime, bundle.Rootfs, msgs)
 	valid = ret && valid
 
-	//TODO runtime valid
+	ret, msgs = RuntimeSpecValid(bundle.Runtime, bundle.Rootfs, msgs)
+	valid = ret && valid
 
 	return valid, msgs
 }
@@ -247,26 +247,30 @@ func LinuxBundleValid(bundlePath string, msgs []string) (bool, []string) {
 		}
 	}
 
-	/*
-		content, err = ReadFile(path.Join(bundlePath, RuntimeFile))
+	content, err = ReadFile(path.Join(bundlePath, RuntimeFile))
+	if err != nil {
+		msgs = append(msgs, fmt.Sprintf("Cannot read %s", RuntimeFile))
+		valid = false && valid
+	} else {
+		err = json.Unmarshal([]byte(content), &(bundle.Runtime))
 		if err != nil {
-			msgs = append(msgs, fmt.Sprintf("Cannot read %s", RuntimeFile))
+			msgs = append(msgs, fmt.Sprintf("Cannot parse %s", RuntimeFile))
 			valid = false && valid
-		} else {
-			err = json.Unmarshal([]byte(content), &(bundle.Runtime))
-			if err != nil {
-				msgs = append(msgs, fmt.Sprintf("Cannot parse %s", RuntimeFile))
-				valid = false && valid
-			}
 		}
-	*/
-	bundle.Rootfs = path.Join(bundlePath, RootfsDir)
+	}
+
 	if valid == false {
 		return valid, msgs
 	}
 
+	bundle.Rootfs = path.Join(bundlePath, RootfsDir)
+
 	ret, msgs := LinuxSpecValid(bundle.Config, bundle.Runtime, bundle.Rootfs, msgs)
 	valid = ret && valid
+
+	ret, msgs = LinuxRuntimeSpecValid(bundle.Runtime, bundle.Rootfs, msgs)
+	valid = ret && valid
+
 	return valid, msgs
 }
 

@@ -94,6 +94,7 @@ func genRuntime() (lrts specs.LinuxRuntimeSpec) {
 		{"/dev/zero", 'c', 1, 5, "rwm", 0666, 0, 0},
 		{"/dev/tty", 'c', 5, 0, "rwm", 0666, 0, 0},
 		{"/dev/full", 'c', 1, 7, "rwm", 0666, 0, 0},
+		{"/dev/console", 'c', 5, 1, "rwm", 0666, 0, 0},
 	}
 
 	lrt.Namespaces = []specs.Namespace{

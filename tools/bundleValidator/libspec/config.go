@@ -8,8 +8,6 @@ import (
 )
 
 /*
-// Spec is the base configuration for the container.  It specifies platform
-// independent configuration.
 type Spec struct{
 	Version string `required; SemVer2.0`
 	Platform Platform `required`
@@ -37,7 +35,6 @@ func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []st
 	ret, msgs = StringValid("Spec.Hostname", s.Hostname, msgs)
 	valid = ret && valid
 	*/
-
 	if len(rootfs) > 0 {
 		ret, msgs = MountPointsValid(s.Mounts, runtime.Mounts, rootfs, msgs)
 	}
@@ -104,14 +101,12 @@ func PlatformValid(p specs.Platform, msgs []string) (bool, []string) {
 //config.md Each record in this array must have configuration in runtime config.
 / MountPoint describes a directory that may be fullfilled by a mount in the runtime.json.
 type MountPoint struct {
-	// Name is a unique descriptive identifier for this mount point.
 	Name string `required`
-	// Path specifies the path of the mount. The path and child directories MUST exist, a runtime MUST NOT create directories automatically to a mount point.
 	Path string `required`
 }
 */
 //mps:mount points; rmps: runtime mount points
-//We don't check the 'minimal mount points' here, we do it in config_linux.go
+//Don't check the 'minimal mount points' here, do it in config_linux.go
 func MountPointsValid(mps []specs.MountPoint, rmps map[string]specs.Mount, rootfs string, msgs []string) (bool, []string) {
 	ret := true
 	valid := true
@@ -143,19 +138,36 @@ func MountPointValid(mp specs.MountPoint, rootfs string, msgs []string) (bool, [
 	ret, msgs := StringValid("MountPoint.Path", mp.Path, msgs)
 	valid = ret && valid
 
-	if len(rootfs) > 0 {
-		mountPath := path.Join(rootfs, mp.Path)
-
-		fi, err := os.Stat(mountPath)
-		if err != nil {
-			msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not exist in rootfs", mp.Name, mp.Path))
-			valid = ret && valid
-		} else {
-			if !fi.IsDir() {
-				msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not a valid directory", mp.Name, mp.Path))
-				valid = ret && valid
-			}
+	mountPath := path.Join(rootfs, mp.Path)
+	fi, err := os.Stat(mountPath)
+	if err != nil {
+		msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not exist in rootfs", mp.Name, mp.Path))
+		valid = false && valid
+	} else {
+		if !fi.IsDir() {
+			msgs = append(msgs, fmt.Sprintf("The mountPoint %s %s is not a valid directory", mp.Name, mp.Path))
+			valid = false && valid
 		}
 	}
+	return valid, msgs
+}
+
+/*
+type State struct {
+	Version string `required`
+	ID string `required`
+	Pid int `required`
+	Root string `required`
+}
+*/
+func StateValid(s specs.State, msgs []string) (bool, []string) {
+	valid, msgs := StringValid("State.Version", s.Version, msgs)
+
+	ret, msgs := StringValid("State.ID", s.ID, msgs)
+	valid = ret && valid
+
+	ret, msgs = StringValid("State.Root", s.Root, msgs)
+	valid = ret && valid
+
 	return valid, msgs
 }

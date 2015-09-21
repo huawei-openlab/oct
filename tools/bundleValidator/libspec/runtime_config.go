@@ -6,7 +6,7 @@ import (
 
 /*
 type RuntimeSpec struct {
-	Mounts map[string]Mount `json:"mounts"`
+	Mounts map[string]Mount `required`
 	Hooks Hooks `optional`
 }
 */

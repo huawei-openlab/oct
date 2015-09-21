@@ -89,9 +89,9 @@ func requiredDevices() []string {
 		"/dev/urandom", //device
 		"/dev/tty",     //device
 		"/dev/console", //device
-		"/dev/pts",     //devpts
-		"/dev/ptmx",    //device	Bind-mount or symlink of /dev/pts/ptmx
-		"/dev/shm",     //tmpfs
+		//		"/dev/pts",     //devpts
+		//		"/dev/ptmx",    //device	Bind-mount or symlink of /dev/pts/ptmx
+		//		"/dev/shm",     //tmpfs
 	}
 	return devices
 }

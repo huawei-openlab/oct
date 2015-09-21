@@ -8,11 +8,9 @@ import (
 )
 
 /*
-// LinuxSpec is the full specification for linux containers.
 type LinuxRuntimeSpec struct {
 	RuntimeSpec
-	// Linux is platform specific configuration for linux based containers.
-	Linux LinuxRuntime `json:"linux"`
+	Linux LinuxRuntime `required`
 }
 */
 
@@ -35,11 +33,11 @@ type LinuxRuntime struct {
 	Sysctl map[string]string `json:"sysctl"`
 	// Resources contain cgroup information for handling resource constraints
 	// for the container
-	Resources Resources `json:"resources"`
-	// Namespaces contains the namespaces that are created and/or joined by the container
+	Resources *Resources `json:"resources"`
+	CgroupsPath string `json:"cgroupsPath"`
 	Namespaces []Namespace `optional`
 	// Devices are a list of device nodes that are created and enabled for the container
-	Devices []Device `json:"devices"`
+	Devices []Device `required`
 	// ApparmorProfile specified the apparmor profile for the container.
 	ApparmorProfile string `json:"apparmorProfile"`
 	// SelinuxProcessLabel specifies the selinux context that the container process is run as.
@@ -134,10 +132,7 @@ func LinuxRuntimeValid(lr specs.LinuxRuntime, rootfs string, msgs []string) (boo
 
 /* Namespace is the configuration for a linux namespace.
 type Namespace struct {
-	// Type is the type of Linux namespace
 	Type string `required`
-	// Path is a path to an existing namespace persisted on disk that can be joined
-	// and is of the same type
 	Path string `optional`
 }
 */
@@ -195,11 +190,8 @@ func IDMappingValid(idm specs.IDMapping, msgs []string) (bool, []string) {
 /*
 // Rlimit type and restrictions
 type Rlimit struct {
-	// Type of the rlimit to set
-	Type int `json:"type"`
-	// Hard is the hard limit for the specified type
+	Type int `required`
 	Hard uint64 `json:"hard"`
-	// Soft is the soft limit for the specified type
 	Soft uint64 `json:"soft"`
 }
 */
@@ -362,11 +354,11 @@ func DeviceValid(d specs.Device, msgs []string) (bool, []string) {
 	}
 	//TODO, check permission/filemode
 
-	if d.UID <= 0 {
+	if d.UID < 0 {
 		msgs = append(msgs, fmt.Sprintf("Device %s UID %d is invalid`", d.Path, d.UID))
 		valid = false && valid
 	}
-	if d.GID <= 0 {
+	if d.GID < 0 {
 		msgs = append(msgs, fmt.Sprintf("Device %s GID %d is invalid`", d.Path, d.GID))
 		valid = false && valid
 	}
@@ -376,8 +368,8 @@ func DeviceValid(d specs.Device, msgs []string) (bool, []string) {
 /*
 // Seccomp represents syscall restrictions
 type Seccomp struct {
-	DefaultAction Action     `json:"defaultAction"`
-	Syscalls      []*Syscall `json:"syscalls"`
+	DefaultAction Action     `required`
+	Syscalls      []*Syscall `optional`
 }
 */
 
@@ -414,9 +406,9 @@ type Arg struct {
 
 // Syscall is used to match a syscall in Seccomp
 type Syscall struct {
-	Name   string `json:"name"`
-	Action Action `json:"action"`
-	Args   []*Arg `json:"args"`
+	Name   string `required`
+	Action Action `required`
+	Args   []*Arg `optional`
 }
 */
 
