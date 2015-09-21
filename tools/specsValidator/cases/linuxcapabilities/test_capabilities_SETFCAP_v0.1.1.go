@@ -25,8 +25,8 @@ import (
 )
 
 func TestLinuxCapabilitiesSETFCAP() string {
-	linuxspec, linuxruntimespec := setCapability("SETFCAP")
-	linuxspec.Spec.Process.Args = []string{"/sbin/setcap", "CAP_SETFCAP=eip", "/testtool/linuxcapabilities"}
+	linuxspec, linuxruntimespec := setCapability("CAP_SETFCAP")
+	linuxspec.Spec.Process.Args = []string{"/sbin/setcap", "CAP_SETFCAP=eip", "/containerend/linuxcapabilities"}
 	capability := linuxspec.Linux.Capabilities
 
 	configFile := "./config.json"
