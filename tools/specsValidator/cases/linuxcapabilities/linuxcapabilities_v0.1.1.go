@@ -36,6 +36,5 @@ func setCapability(capabilityname string) (specs.LinuxSpec, specs.LinuxRuntimeSp
 	linuxRuntimeSpec := specsinit.SetLinuxruntimeMinimum()
 	linuxSpec.Linux.Capabilities = []string{capabilityname}
 	utils.SetBind(&linuxRuntimeSpec, &linuxSpec)
-	linuxSpec.Process.Cwd = "/testtool"
 	return linuxSpec, linuxRuntimeSpec
 }
