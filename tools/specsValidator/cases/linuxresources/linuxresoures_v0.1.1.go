@@ -55,7 +55,6 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 	if err != nil {
 		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
-		fmt.Println("runc start success")
 		return manager.PASSED, nil
 	}
 }
