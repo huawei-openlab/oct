@@ -14,27 +14,41 @@
 // limitations under the License.
 //
 
-package linuxcapabilities
+package linuxdevices
 
 import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
-	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
 )
 
-var TestSuiteLinuxCapabilities manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Capabilities"}
+/**
+*Need mount proc and set mnt namespace when get namespace from container
+*and the specs.Process.Terminal must be false when call runc in programe.
+ */
+
+var TestSuiteLinuxDevices manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Devices"}
 
 // TODO
 func init() {
-	TestSuiteLinuxCapabilities.AddTestCase("TestLinuxCapabilitiesSETFCAP", TestLinuxCapabilitiesSETFCAP)
-	manager.Manager.AddTestSuite(TestSuiteLinuxCapabilities)
+	TestSuiteLinuxDevices.AddTestCase("TestSuiteLinuxDevicesFull", TestSuiteLinuxDevicesFull)
+	manager.Manager.AddTestSuite(TestSuiteLinuxDevices)
 }
 
-func setCapability(capabilityname string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
+func setDevices(testdevices specs.Device) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
 	linuxSpec := specsinit.SetLinuxspecMinimum()
 	linuxRuntimeSpec := specsinit.SetLinuxruntimeMinimum()
-	linuxSpec.Linux.Capabilities = []string{capabilityname}
-	utils.SetBind(&linuxRuntimeSpec, &linuxSpec)
+	var initdevice specs.Device = specs.Device{
+		Type:        99,
+		Path:        "/dev/null",
+		Major:       1,
+		Minor:       3,
+		Permissions: "rwm",
+		FileMode:    438,
+		UID:         0,
+		GID:         0,
+	}
+	linuxRuntimeSpec.Linux.Devices = []specs.Device{initdevice}
+	linuxRuntimeSpec.Linux.Devices = append(linuxRuntimeSpec.Linux.Devices, testdevices)
 	return linuxSpec, linuxRuntimeSpec
 }

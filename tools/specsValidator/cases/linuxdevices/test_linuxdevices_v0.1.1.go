@@ -14,20 +14,33 @@
 // limitations under the License.
 //
 
-package linuxcapabilities
+package linuxdevices
 
 import (
 	"errors"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
+	"github.com/opencontainers/specs"
 	"strings"
 )
 
-func TestLinuxCapabilitiesSETFCAP() string {
-	linuxspec, linuxruntimespec := setCapability("CAP_SETFCAP")
-	linuxspec.Spec.Process.Args = []string{"/sbin/setcap", "CAP_SETFCAP=eip", "/containerend/linuxcapabilities"}
-	capability := linuxspec.Linux.Capabilities
+func TestSuiteLinuxDevicesFull() string {
+
+	var device specs.Device = specs.Device{
+		Type:        99,
+		Path:        "/dev/full",
+		Major:       1,
+		Minor:       7,
+		Permissions: "rwm",
+		FileMode:    438,
+		UID:         0,
+		GID:         0,
+	}
+	linuxspec, linuxruntimespec := setDevices(device)
+	utils.SetBind(&linuxruntimespec, &linuxspec)
+	linuxspec.Spec.Process.Args[0] = "/containerend/linuxdevicesfull"
 
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
@@ -39,15 +52,15 @@ func TestLinuxCapabilitiesSETFCAP() string {
 	var errout error
 	if err != nil {
 		result = manager.UNSPPORTED
-		errout = errors.New(string(out) + err.Error())
-	} else if strings.EqualFold(strings.TrimSpace(string(out)), "") {
+		errout = errors.New("StartRunc error :" + out + ", " + err.Error())
+	} else if strings.Contains(strings.TrimSpace(out), "echo: write error: No space left on device") {
 		result = manager.PASSED
 		errout = nil
 	} else {
 		result = manager.FAILED
-		errout = errors.New("test Capabilities CAP_SETFCAP NOT  does''t work")
+		errout = errors.New("device /dev/full is NOT effective")
 	}
 	var testResult manager.TestResult
-	testResult.Set("TestMountTmpfs", capability, errout, result)
+	testResult.Set("TestSuiteLinuxDevicesFull", device, errout, result)
 	return testResult.Marshal()
 }
