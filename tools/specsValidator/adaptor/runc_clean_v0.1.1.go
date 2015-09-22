@@ -1,3 +1,5 @@
+// +build v0.1.1
+
 package adaptor
 
 import (
@@ -19,9 +21,9 @@ func KillRunc() {
 }
 
 func DeleteRun() {
-	_, err := exec.Command("/bin/bash", "-c", "ls /run/oci/specsValidator").Output()
+	_, err := exec.Command("/bin/bash", "-c", "ls /run/opencontainer/containers/specsValidator").Output()
 	if err == nil {
-		cmd := exec.Command("/bin/bash", "-c", "rm -r /run/oci/specsValidator")
+		cmd := exec.Command("/bin/bash", "-c", "rm -r /run/opencontainer/containers/specsValidator")
 		_, err = cmd.Output()
 		if err != nil {
 			log.Printf("[clean runc] delete folder error , %v", err)
