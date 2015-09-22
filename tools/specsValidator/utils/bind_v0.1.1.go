@@ -19,4 +19,6 @@ func SetBind(linuxRuntime *specs.LinuxRuntimeSpec, linuxSpec *specs.LinuxSpec) {
 	mountpoint := specs.MountPoint{"bind", "/containerend"}
 	linuxSpec.Mounts = append(linuxSpec.Mounts, mountpoint)
 	linuxRuntime.Mounts["bind"] = specs.Mount{"bind", source, []string{"bind"}}
+
+	SetRight(source, linuxSpec.Process.User.UID, linuxSpec.Process.User.GID)
 }
