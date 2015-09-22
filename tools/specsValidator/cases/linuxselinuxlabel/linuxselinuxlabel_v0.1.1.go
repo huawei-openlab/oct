@@ -1,4 +1,4 @@
-// +build predraft
+// +build v0.1.1
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,59 +21,11 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
 	"os/exec"
-	"runtime"
 	"strings"
 )
-
-/**
-*Need mount proc and set mnt namespace when get namespace from container
-*and the specs.Process.Terminal must be false when call runc in programe.
- */
-var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
-	Spec: specs.Spec{
-		Version: "pre-draft",
-		Platform: specs.Platform{
-			OS:   runtime.GOOS,
-			Arch: runtime.GOARCH,
-		},
-		Root: specs.Root{
-			Path:     "rootfs",
-			Readonly: true,
-		},
-		Process: specs.Process{
-			Terminal: false,
-			User: specs.User{
-				UID:            0,
-				GID:            0,
-				AdditionalGids: nil,
-			},
-			Args: []string{""},
-		},
-		Mounts: []specs.Mount{
-			{
-				Type:        "proc",
-				Source:      "proc",
-				Destination: "/proc",
-				Options:     "",
-			},
-		},
-	},
-	Linux: specs.Linux{
-		Resources: specs.Resources{
-			Memory: specs.Memory{
-				Swappiness: -1,
-			},
-		},
-		Namespaces: []specs.Namespace{
-			{
-				Type: "mount",
-				Path: "",
-			},
-		},
-	},
-}
 
 var TestSuiteLinuxSelinuxLabel manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.SelinuxProcessLabel"}
 
@@ -82,27 +34,30 @@ func init() {
 	manager.Manager.AddTestSuite(TestSuiteLinuxSelinuxLabel)
 }
 
-func setSElinuxLabel(label string) specs.LinuxSpec {
-	linuxSpec.Linux.SelinuxProcessLabel = label
-	return linuxSpec
+func setSElinuxLabel(label string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
+	linuxSpec := specsinit.SetLinuxspecMinimum()
+	linuxRuntimeSpec := specsinit.SetLinuxruntimeMinimum()
+	linuxRuntimeSpec.Linux.SelinuxProcessLabel = label
+	return linuxSpec, linuxRuntimeSpec
 }
 
-func testSElinuxLabel(linuxSpec *specs.LinuxSpec) (string, error) {
-	selinuxlable := linuxSpec.Linux.SelinuxProcessLabel
+func testSElinuxLabel(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
+	selinuxlable := linuxRuntimeSpec.Linux.SelinuxProcessLabel
 	//test whether the host supports the selinux
 	cmdout, err := exec.Command("/bin/bash", "-c", "getenforce").Output()
 	if err != nil || strings.EqualFold(strings.TrimSpace(string(cmdout)), "Permissive") {
 		return manager.UNSPPORTED, errors.New("Host Machine doesn't support SElinux")
 	}
 	configFile := "./config.json"
+	runtimeFile := "./runtime.json"
 	linuxSpec.Process.Args = []string{"/bin/bash", "-c", "ps xZ|awk '{print $1}' |sed -n '2p' "}
 	err = configconvert.LinuxSpecToConfig(configFile, linuxSpec)
-
-	out, err := adaptor.StartRunc(configFile)
+	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
+	out, err := adaptor.StartRunc(configFile, runtimeFile)
 	if err != nil {
 		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
-		if strings.EqualFold(strings.TrimSpace(string(out)), label) {
+		if strings.EqualFold(strings.TrimSpace(string(out)), selinuxlable) {
 			return manager.PASSED, nil
 		} else {
 			return manager.FAILED, errors.New("test failed because selinux label is not effective")
