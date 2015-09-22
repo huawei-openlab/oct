@@ -10,5 +10,5 @@ all:
 	$(MAKE) -C containerend
 clean:
 	rm specsValidator
-	rm -rf  rootfs ubuntu.tar config.json
+	rm -rf  rootfs ubuntu.tar config.json runtime.json
 	$(MAKE) -C containerend clean
