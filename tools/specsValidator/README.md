@@ -40,8 +40,8 @@ Use binary "specsValidator" to run,
 Usage of ./specsValidator:
   -o="./report/": Specify filePath to install the test result linuxspec.json
   -rtags="seccomp": Build tags for runc, should be one of seccomp/selinux/apparmor
-  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id or tags
-  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id or tags
+  -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id or tags, keep empty to using the newest commit of [opencontainers/runc](https://github.com/opencontainers/runc)
+  -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id or tags, keep empty to using the newest commit of [opencontainers/specs](https://github.com/opencontainers/specs)
 ``` bash
 $   su root
 $   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -rtags=<specified runc build tags> -o=<output path>
