@@ -20,7 +20,16 @@ $    cat report/linuxspec.json                                                  
 
 
 ### Summary for the impatient
-      
+                
+**Key Notes**
+1. For using the specs commit Revxxx and runc commit Revyyy,      
+   There are two tags of specs can be used directly, v0.1.1 and predraft(commmit: 45ae53d4dba8e550942f7384914206103f6d2216)     
+
+2. Not all of the specs version and runc version can matched to run regularly, the commit of runc and specs can be used directly when you ensure the commmit of both of them can be run reguarly together.    
+
+3. If Revxxx is little than v0.1.1, use predraft as tagsxxxx, if Revxxx is equal or bigger than v0.1.1, use v0.1.1 as tagsxxx.    
+
+
 
 - **Step 0: Prepare**
 
@@ -32,13 +41,11 @@ $    go get github.com/tools/godep
      
 - **Step 1: Building**        
 
-For using the specs commit Revxxx and runc commit Revyyy,      
-There are two tags of specs can be used directly, v0.1.1 and predraft(commmit: 45ae53d4dba8e550942f7384914206103f6d2216)   
-Not all of the specs version and runc version can match to run regularly, use the commit of runc and specs directly when the commmit of both of the runc and specs can be run reguarly together.
+ 
 
        
 ``` bash
-$    go get -d -tags Revxxx github.com/huawei-openlab/oct/tools/specsValidator
+$    go get -d -tags tagsxxx github.com/huawei-openlab/oct/tools/specsValidator
 $    cd $GOPATH/src/github.com/opencontainers/specs
 $    git checkout Revxxx    
 $    godep update github.com/opencontainers/specs
@@ -52,7 +59,7 @@ $    make all BUILDTAGS=Revxxx
       
 ``` bash
 $   su root
-$   ./specsValidator -runc=<specified runc revision> -specs=<specified specs revision> -rtags=<specified runc build tags> -o=<output path>    
+$   ./specsValidator -runc=Revyyy -specs=Revxxx -rtags=<specified runc build tags> -o=<output path>    
 ```      
 For example,      
 ``` bash
@@ -63,14 +70,12 @@ $   ./specsValidator -specs=v0.1.1 -runc=6b5a66f7e1444ac7776019a4bb8ad0b93584685
 
 Usage of specsValidator      
 ``` bash    
-$   ./specsValidator --helpUsage of ./specsValidator:       
-           
+$   ./specsValidator --help     
+    
+    Usage of ./specsValidator:       
       -o="./report/": Specify filePath to install the test result linuxspec.json     
-           
       -rtags="seccomp": Build tags for runc, should be one of seccomp/selinux/apparmor, keep empty to using seccomp      
-            
       -runc="": Specify runc Revision from opencontainers/specs to be tested, in the form of commit id, keep empty to using the newest commit of [opencontainers/runc](https://github.com/opencontainers/runc       
-           
       -specs="": Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id, keep empty to using the newest commit of [opencontainers/specs](https://github.com/opencontainers/specs)
 ```
 
@@ -121,6 +126,6 @@ For example, in linuxspec.json
 1. Rich cases for testing runtime of runc
 
 ### Reference
-OCP specs on https://github.com/opencontainers/specs   
+OCI specs on https://github.com/opencontainers/specs   
 
-OCP runc on https://github.com/opencontainers/runc
+OCI runc on https://github.com/opencontainers/runc
