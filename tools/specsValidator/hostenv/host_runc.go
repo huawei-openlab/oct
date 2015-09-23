@@ -116,10 +116,10 @@ func getParentDirectory(dirctory string) string {
 	return substr(dirctory, 0, strings.LastIndex(dirctory, "/"))
 }
 
-func UpateRuncRev(runcRev string) error {
+func UpateRuncRev(runcRev string, tags string) error {
 	path, _ := upateRev(runcRev, "runc")
 
-	cmd := exec.Command("make")
+	cmd := exec.Command("make", "BUILDTAGS="+tags)
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
