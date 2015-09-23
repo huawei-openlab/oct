@@ -18,7 +18,6 @@ package linuxresources
 
 import (
 	"errors"
-	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
@@ -100,7 +99,6 @@ func testResources(linuxSpec *specs.LinuxSpec) (string, error) {
 	if err != nil {
 		return manager.UNSPPORTED, errors.New("StartRunc error :" + out + "," + err.Error())
 	} else {
-		fmt.Println("runc start success")
 		return manager.PASSED, nil
 	}
 }
