@@ -21,13 +21,21 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 )
 
+// The test func for TestCase TestVersionCorrect
 func TestVersionCorrect() string {
 
+	// Set result to spec.Version, and get specs.LinuxSpec obj
 	ls := setVersion(testValueCorrect)
+
+	// Get smallest specs.LinuxRuntimeSpec obj
 	lr := specsinit.SetLinuxruntimeMinimum()
 	version := ls.Spec.Version
+
+	// Do test
 	result, err := testVersion(&ls, &lr, true)
 	var testResult manager.TestResult
+
+	// Set reusult to TestResult
 	testResult.Set("TestVersionCorrect", version, err, result)
 	return testResult.Marshal()
 }
