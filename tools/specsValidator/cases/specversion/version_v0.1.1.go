@@ -30,21 +30,29 @@ const (
 	testVauleError   = "0.1.0-err"
 )
 
+// Init TestSuite for spec.Version
 var TestSuiteVersion manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.Version"}
 
+// Add TestCase to Testsuite, add TestSuite to TestManager
 func init() {
 	TestSuiteVersion.AddTestCase("TestVersionCorrect", TestVersionCorrect)
 	TestSuiteVersion.AddTestCase("TestVersionError", TestVersionError)
 	manager.Manager.AddTestSuite(TestSuiteVersion)
 }
 
+// Set input value of spec.Version to specs.LinuxSpec obj
 func setVersion(testValue string) specs.LinuxSpec {
+	// Get smallest set of specs.LinuxSpec
 	ls := specsinit.SetLinuxspecMinimum()
+	// Set value
 	ls.Version = testValue
 	return ls
 }
 
+// Convert specs obj to json file, and start runc to have a test, return testresult
 func testVersion(linuxSpec *specs.LinuxSpec, linuxRuntime *specs.LinuxRuntimeSpec, value bool) (string, error) {
+
+	// Convert LinuxSpec to config.json
 	configFile := "./config.json"
 	linuxSpec.Spec.Process.Args[0] = "/bin/ls"
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
@@ -52,12 +60,14 @@ func testVersion(linuxSpec *specs.LinuxSpec, linuxRuntime *specs.LinuxRuntimeSpe
 		return manager.UNKNOWNERR, err
 	}
 
+	// Convert LinuxRuntimeSpec to runtime.json
 	runtimeFile := "./runtime.json"
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntime)
 	if err != nil {
 		return manager.UNKNOWNERR, err
 	}
 
+	// Start runc to have a test
 	out, err := adaptor.StartRunc(configFile, runtimeFile)
 	if err != nil {
 		if value {
