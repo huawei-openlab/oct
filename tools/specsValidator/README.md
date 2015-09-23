@@ -1,9 +1,6 @@
-## The Specs test  aims to test OCP specs's compliance on runc
-
-### Test Scope    
-
-The specsValidator aims to test containers runtime compatible with  [opencontainers/specs](https://github.com/opencontainers/specs).Generates an OCI bundle that tests that the runtime is compliant
+## Specs Validator       
       
+The specsValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
 
 
 ### Quickstart      
@@ -21,17 +18,26 @@ $    cat report/linuxspec.json                                                  
 
 ### Summary for the impatient
                 
-**Key Notes**
-1. For using the specs commit Revxxx and runc commit Revyyy,      
+**Key Notes**        
+
+1. For using the ***specs commit svxxx*** and ***runc commit rvyyy***,       
    There are two tags of specs can be used directly, v0.1.1 and predraft(commmit: 45ae53d4dba8e550942f7384914206103f6d2216)     
 
-2. Not all of the specs version and runc version can matched to run regularly, the commit of runc and specs can be used directly when you ensure the commmit of both of them can be run reguarly together.    
+2. Not all of the specs version and runc version can matched each other, the commit of runc and specs can be used directly when you ensure the commmit of both of them can be run reguarly together.     
 
-3. If Revxxx is little than v0.1.1, use predraft as tagsxxxx, if Revxxx is equal or bigger than v0.1.1, use v0.1.1 as tagsxxx.    
+3. If ***svxxx<v0.1.1***, use ***predraft*** as getTagxxx, if ***svxxx>=v0.1.1***, use ***v0.1.1*** as getTagxxx.     
+
+4. Table below shows the map of the specs version and runc version,       
+              
+
+| getTagxxx|  buildTagxxx|             specs version(svxxx)                 |            runc version(rvyyy)                     |
+| -----    | ------------| ------------------------------------------------ | -------------------------------------------------- |
+| predraft | predraft    | < commit:7232e4b1373c16a86d01b810c07749a1ba6124b1| < commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6 |
+| v0.1.1   | v0.1.1      | > commit:7232e4b1373c16a86d01b810c07749a1ba6124b1| > commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6 |
 
 
 
-- **Step 0: Prepare**
+- **Step 0: Prepare**     
 
 1. Install the go-lang env, set the GOPATH and GOROOT properly, reuquired go-lang version is V1.4.2      
 2. Install godep tool, like the way below,
@@ -41,25 +47,23 @@ $    go get github.com/tools/godep
      
 - **Step 1: Building**        
 
- 
-
        
 ``` bash
-$    go get -d -tags tagsxxx github.com/huawei-openlab/oct/tools/specsValidator
+$    go get -d -tags getTagxxx github.com/huawei-openlab/oct/tools/specsValidator
 $    cd $GOPATH/src/github.com/opencontainers/specs
-$    git checkout Revxxx    
+$    git checkout svxxx    
 $    godep update github.com/opencontainers/specs
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
-$    make all BUILDTAGS=Revxxx    
+$    make all BUILDTAGS=buildTagxxx    
 ```     
      
-
+     
 - **Step 2: Using**     
        
       
 ``` bash
 $   su root
-$   ./specsValidator -runc=Revyyy -specs=Revxxx -rtags=<specified runc build tags> -o=<output path>    
+$   ./specsValidator -runc=*svxxx* -specs=*rvyyy* -rtags=<specified runc build tags> -o=<output path>    
 ```      
 For example,      
 ``` bash
@@ -124,6 +128,7 @@ For example, in linuxspec.json
 ### Next to Do 
 
 1. Rich cases for testing runtime of runc
+2. Support other containers
 
 ### Reference
 OCI specs on https://github.com/opencontainers/specs   
