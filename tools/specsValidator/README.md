@@ -49,12 +49,12 @@ $    go get github.com/tools/godep
 
        
 ``` bash
-$    go get -d -tags *getTagxxx* github.com/huawei-openlab/oct/tools/specsValidator
+$    go get -d -tags getTagxxx github.com/huawei-openlab/oct/tools/specsValidator
 $    cd $GOPATH/src/github.com/opencontainers/specs
-$    git checkout *svxxx*    
+$    git checkout svxxx    
 $    godep update github.com/opencontainers/specs
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/specsValidator
-$    make all BUILDTAGS=*buildTagxxx*    
+$    make all BUILDTAGS=buildTagxxx    
 ```     
      
      
