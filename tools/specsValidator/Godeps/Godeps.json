@@ -7,7 +7,8 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/opencontainers/specs",
-			"Rev": "45ae53d4dba8e550942f7384914206103f6d2216"
+			"Comment": "v0.1.1-16-g96bcd04",
+			"Rev": "96bcd043aa8a28f6f64c95ad61329765f01de1ba"
 		}
 	]
 }
