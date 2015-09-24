@@ -54,6 +54,7 @@ func main() {
 		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
 	} else if *specsRev == "" {
 		checkoutSpecsRev = "origin/master"
+		fmt.Println("   Specs revision: newest commit")
 	} else {
 		checkoutSpecsRev = *specsRev
 		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
@@ -61,7 +62,7 @@ func main() {
 
 	if *runcRev == "" {
 		checkoutRuncRev = "origin/master"
-		fmt.Printf("	Runc revision :  %v\n", checkoutRuncRev)
+		fmt.Println("   Runc revision: newest commit")
 	} else {
 		checkoutRuncRev = *runcRev
 		fmt.Printf("	Runc revision: %v \n", checkoutRuncRev)
