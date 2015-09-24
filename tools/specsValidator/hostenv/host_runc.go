@@ -2,6 +2,7 @@ package hostenv
 
 import (
 	"fmt"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"log"
 	"os"
 	"os/exec"
@@ -91,12 +92,14 @@ func checkout(pPath string, path string, Rev string, repo string) error {
 		}
 	}
 
-	cmd := exec.Command("git", "checkout", Rev)
-	cmd.Stderr = os.Stderr
-	//cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	cmd.Dir = path
-	_, err := cmd.Output()
+	_, err := utils.ExecCmdStr("git", path, "checkout", Rev)
+	/*
+		cmd := exec.Command("git", "checkout", Rev)
+		cmd.Stderr = os.Stderr
+		//cmd.Stdout = os.Stdout
+		cmd.Stdin = os.Stdin
+		cmd.Dir = path
+		_, err := cmd.Output()*/
 	if err != nil {
 		return err
 	}
@@ -119,22 +122,24 @@ func getParentDirectory(dirctory string) string {
 func UpateRuncRev(runcRev string, tags string) error {
 	path, _ := upateRev(runcRev, "runc")
 
-	cmd := exec.Command("make", "BUILDTAGS="+tags)
+	_, err := utils.ExecCmdStr("make", path, "BUILDTAGS="+tags)
+	/*cmd := exec.Command("make", "BUILDTAGS="+tags)
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Dir = path
-	_, err := cmd.Output()
+	_, err := cmd.Output()*/
 	if err != nil {
 		log.Fatalf("UpateRuncRev make runc err : %v", err)
 	}
 
-	cmd = exec.Command("make", "install")
+	_, err = utils.ExecCmdStr("make", path, "install")
+	/*cmd = exec.Command("make", "install")
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Dir = path
-	_, err = cmd.Output()
+	_, err = cmd.Output()*/
 	if err != nil {
 		log.Fatalf("UpateRuncRev make install runc err : %v", err)
 	}
