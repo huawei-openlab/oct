@@ -7,7 +7,8 @@ The specsValidator aims to Verify if a runtime containers runs the bundle correc
 Just following steps below,      
 ``` bash
 $    go get github.com/tools/godep                                               #install godep tool requested     
-$    go get -d  -tags v0.1.1 github.com/huawei-openlab/oct/tools/specsValidator  #get source code           
+$    go get -d  -tags v0.1.1 github.com/huawei-openlab/oct/tools/specsValidator  #get source code       
+$    cd $GOPATH/src/huawei-openlab/oct/tools/specsValidator                      #change dir to spcsValidator
 $    make all BUILDTAGS=v0.1.1                                                   #build specsValidator      
 $    ./specsValidator -rtags=apparmor                                            #run specsValidator     
 $    cat report/linuxspec.json                                                   #get result       
@@ -32,8 +33,8 @@ $    cat report/linuxspec.json                                                  
 
 | getTagxxx|  buildTagxxx|             specs version(svxxx)                 |            runc version(rvyyy)                     |
 | -----    | ------------| ------------------------------------------------ | -------------------------------------------------- |
-| predraft | predraft    | < commit:7232e4b1373c16a86d01b810c07749a1ba6124b1| < commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6 |
-| v0.1.1   | v0.1.1      | > commit:7232e4b1373c16a86d01b810c07749a1ba6124b1| > commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6 |
+| predraft | predraft    |  <commit:7232e4b1373c16a86d01b810c07749a1ba6124b1 |  <commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6  |
+| v0.1.1   | v0.1.1      |  >commit:7232e4b1373c16a86d01b810c07749a1ba6124b1 |  >commmit:ea5032bc5e6ecab53b2cac14d63667868ac03bf6  |
 
 
 
