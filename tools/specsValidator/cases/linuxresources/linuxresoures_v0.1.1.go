@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
@@ -48,7 +49,7 @@ func setResources(resources specs.Resources) (specs.LinuxSpec, specs.LinuxRuntim
 func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 3s"}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 10s"}
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
 	out, err := adaptor.StartRunc(configFile, runtimeFile)
@@ -60,8 +61,17 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 }
 
 func checkConfigurationFromHost(filename string, configvalue string, failinfo string) (string, error) {
-	cmd := exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/*/*/*/specsValidator/"+filename)
-	cmdouput, err := cmd.Output()
+	procFile := "/proc/self/status"
+	suid := utils.GetJob("Uid", procFile)
+	suid = strings.TrimLeft(suid, "Uid:")
+	suids := strings.Fields(suid)
+	var err error
+	var cmdouput []byte
+	if suids[0] == "0" && suids[1] == "0" {
+		cmdouput, err = exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/specsValidator/"+filename).Output()
+	} else {
+		cmdouput, err = exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/*/*/*/specsValidator/"+filename).Output()
+	}
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, err
@@ -75,8 +85,6 @@ func checkConfigurationFromHost(filename string, configvalue string, failinfo st
 }
 
 func cleanCgroup() {
-	// cmd := exec.Command("bash", "-c", "rmdir /sys/fs/cgroup/memory/user/1002.user/c2.session/specsValidator")
-	// outPut, err := cmd.Output()
 	var cmd *exec.Cmd
 	time.Sleep(time.Second * 15)
 	cmd = exec.Command("rmdir", "/sys/fs/cgroup/*/user/*/*/specsValidator")
