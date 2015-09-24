@@ -49,7 +49,7 @@ func setResources(resources specs.Resources) (specs.LinuxSpec, specs.LinuxRuntim
 func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 10s"}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 3s"}
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
 	out, err := adaptor.StartRunc(configFile, runtimeFile)
