@@ -1,4 +1,4 @@
-// +build v0.1.1
+// +build v0.1.2
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +14,17 @@
 // limitations under the License.
 //
 
-package linuxhooks
+package linuxapparmorprofile
 
 import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
-	"github.com/opencontainers/specs"
 )
 
-func TestSuiteLinuxHooksPrestart() string {
-	var pre []specs.Hook = []specs.Hook{
-		{
-			Path: "/bin/bash",
-			Args: []string{"-c", "touch /testHooksPrestart.txt"},
-			Env:  []string{""},
-		},
-	}
+func TestLinuxApparmorProfile() string {
+	apparmorfile := "testapporprofile"
+	linuxspec, linuxruntimespec := setApparmorProfile(apparmorfile)
+	result, err := testApparmorProfile(&linuxspec, &linuxruntimespec)
 	var testResult manager.TestResult
-	linuxspec, linuxruntimespec := setHooks(pre, true)
-	info := "may be not support"
-	result, err := testHooks(&linuxspec, &linuxruntimespec, "testHooksPrestart.txt", info)
-	testResult.Set("TestSuiteLinuxHooksPrestart", pre, err, result)
+	testResult.Set("TestLinuxApparmorProfile", linuxRuntimeSpec.Linux.ApparmorProfile, err, result)
 	return testResult.Marshal()
 }

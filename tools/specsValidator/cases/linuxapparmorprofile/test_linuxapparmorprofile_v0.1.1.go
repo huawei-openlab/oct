@@ -17,6 +17,7 @@
 package linuxapparmorprofile
 
 import (
+	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 )
 
@@ -24,6 +25,7 @@ func TestLinuxApparmorProfile() string {
 	apparmorfile := "testapporprofile"
 	linuxspec, linuxruntimespec := setApparmorProfile(apparmorfile)
 	result, err := testApparmorProfile(&linuxspec, &linuxruntimespec)
+	adaptor.DeleteRun()
 	var testResult manager.TestResult
 	testResult.Set("TestLinuxApparmorProfile", linuxRuntimeSpec.Linux.ApparmorProfile, err, result)
 	return testResult.Marshal()

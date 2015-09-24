@@ -21,70 +21,15 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
-	"log"
 	"os/exec"
-	"runtime"
 	"strings"
+	"time"
 )
 
-/**
-*Need mount proc and set mnt namespace when get namespace from container
-*and the specs.Process.Terminal must be false when call runc in programe.
- */
-var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
-	Spec: specs.Spec{
-		Version: "0.1.0",
-		Platform: specs.Platform{
-			OS:   runtime.GOOS,
-			Arch: runtime.GOARCH,
-		},
-		Root: specs.Root{
-			Path:     "rootfs",
-			Readonly: true,
-		},
-		Process: specs.Process{
-			Terminal: false,
-			User: specs.User{
-				UID:            0,
-				GID:            0,
-				AdditionalGids: nil,
-			},
-			Args: []string{""},
-		},
-		Mounts: []specs.MountPoint{
-			{
-				Name: "proc",
-				Path: "/proc",
-			},
-		},
-	},
-}
-
-var linuxRuntimeSpec specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
-	RuntimeSpec: specs.RuntimeSpec{
-		Mounts: map[string]specs.Mount{
-			"proc": specs.Mount{
-				Type:    "proc",
-				Source:  "proc",
-				Options: []string{""},
-			},
-		},
-	},
-	Linux: specs.LinuxRuntime{
-		Resources: &specs.Resources{
-			Memory: specs.Memory{
-				Swappiness: -1,
-			},
-		},
-		Namespaces: []specs.Namespace{
-			{
-				Type: "mount",
-				Path: "",
-			},
-		},
-	},
-}
+var linuxSpec specs.LinuxSpec = specsinit.SetLinuxspecMinimum()
+var linuxRuntimeSpec specs.LinuxRuntimeSpec = specsinit.SetLinuxruntimeMinimum()
 
 var TestSuiteLinuxApparmorProfile manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.ApparmorProfile"}
 
@@ -95,32 +40,50 @@ func init() {
 
 func setApparmorProfile(profilename string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
 	linuxRuntimeSpec.Linux.ApparmorProfile = profilename
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "echo \" enter the container \""}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 3s"}
 	return linuxSpec, linuxRuntimeSpec
 }
 
 func testApparmorProfile(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
+	out, err := pretest()
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
-	inputprofilename := linuxRuntimeSpec.Linux.ApparmorProfile
-	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
+	err = configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
-	cmd := exec.Command("bash", "-c", "cp cases/linuxapparmorprofile/"+inputprofilename+"  /etc/apparmor.d")
-	_, err = cmd.Output()
-	if err != nil {
-		log.Fatalf("[specsValidator] linux apparmor profile test : copy the apparmor file error, %v", err)
-	}
-	out, err := adaptor.StartRunc(configFile, runtimeFile)
+	go adaptor.StartRunc(configFile, runtimeFile)
+	time.Sleep(time.Second * 1)
+	out, err = checkapparmorfilefromhost()
 	if err != nil {
 		return manager.UNKNOWNERR, errors.New(out + err.Error())
 	}
-	cmd = exec.Command("bash", "-c", " apparmor_status")
-	cmdout, err := cmd.Output()
-	if err != nil {
+	return out, err
+
+}
+
+func pretest() (string, error) {
+	out, err := exec.Command("bash", "-c", "cat  /sys/module/apparmor/parameters/enabled").Output()
+	if err != nil || !strings.EqualFold(strings.TrimSpace(string(out)), "Y") {
 		return manager.UNSPPORTED, errors.New("HOST Machine NOT Support Apparmor")
-	} else if strings.Contains(strings.TrimSpace(string(cmdout)), inputprofilename) {
-		return manager.PASSED, nil
+	}
+	out, err = exec.Command("bash", "-c", "apparmor_parser -r case/linuxapparmorprofile/testapporprofile ").Output()
+	if err != nil {
+		return manager.UNKNOWNERR, errors.New("HOST Machine Load Apparmor ERROR")
+	}
+	return manager.PASSED, nil
+}
+
+func checkapparmorfilefromhost() (string, error) {
+	out, err := exec.Command("bash", "-c", "apparmor_status").Output()
+	outstr := string(out)
+	outstr = strings.TrimLeft(outstr, "processes are in enforce mode")
+	outstr = strings.TrimRight(outstr, "processes are in complain mode")
+	if err != nil {
+		return manager.UNKNOWNERR, errors.New("check apparmor status error")
 	} else {
-		return manager.FAILED, nil
+		if strings.Contains(outstr, "runc-test") {
+			return manager.PASSED, nil
+		} else {
+			return manager.FAILED, errors.New("apparmorfile does not work")
+		}
 	}
 }
