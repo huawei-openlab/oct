@@ -1,0 +1,15 @@
+{
+  "LinuxSpec.Linux.Resources": [
+    {
+      "testcasename": "TestMemoryLimit",
+      "input": {
+        "limit": 204800,
+        "reservation": 0,
+        "swap": 0,
+        "kernel": 0,
+        "swappiness": -1
+      },
+      "result": "passed"
+    }
+  ]
+}

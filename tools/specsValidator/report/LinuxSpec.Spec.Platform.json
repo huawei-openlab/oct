@@ -14,7 +14,8 @@
         "os": "osErr",
         "arch": "archErr"
       },
-      "result": "unknowErr"
+      "error": "Err: Gived err value to platform, but runc ran well",
+      "result": "failed"
     }
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "LinuxSpec.Linux.Capabilities": [
+    {
+      "testcasename": "TestMountTmpfs",
+      "input": [
+        "CAP_SETFCAP"
+      ],
+      "result": "passed"
+    }
+  ]
+}

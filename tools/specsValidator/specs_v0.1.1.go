@@ -76,16 +76,15 @@ func main() {
 		runcBuildtags = *runctags
 	}
 
+	fmt.Println("Going to update revision, maybe need several mins, plz be patient!")
 	hostenv.UpateSpecsRev(checkoutSpecsRev)
 	hostenv.UpateRuncRev(checkoutRuncRev, runcBuildtags)
 
 	fmt.Println("Testing output: ")
 	if *output == "" {
 		*output = "./report/"
-		fmt.Println("	oct/tools/specsValidator/report/linuxspec.json")
-	} else {
-		fmt.Printf("	%v\n", *output)
 	}
+	fmt.Printf("   %v\n", *output+"linuxspec.json")
 
 	if !exists("rootfs") {
 		err := hostenv.CreateBoundle()
