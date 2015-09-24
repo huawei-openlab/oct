@@ -65,7 +65,7 @@ func pretest() (string, error) {
 	if err != nil || !strings.EqualFold(strings.TrimSpace(string(out)), "Y") {
 		return manager.UNSPPORTED, errors.New("HOST Machine NOT Support Apparmor")
 	}
-	out, err = exec.Command("bash", "-c", "apparmor_parser -r case/linuxapparmorprofile/testapporprofile ").Output()
+	out, err = exec.Command("bash", "-c", "apparmor_parser -r cases/linuxapparmorprofile/testapporprofile ").Output()
 	if err != nil {
 		return manager.UNKNOWNERR, errors.New("HOST Machine Load Apparmor ERROR")
 	}

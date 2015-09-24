@@ -21,7 +21,7 @@ import (
 	"github.com/opencontainers/specs"
 )
 
-func TestSuiteLinuxHooksPrestart() string {
+func TestLinuxHooksPrestart() string {
 	var pre []specs.Hook = []specs.Hook{
 		{
 			Path: "/bin/bash",

@@ -49,12 +49,12 @@ import (
 *and the specs.Process.Terminal must be false when call runc in programe.
  */
 
-var TestSuiteLinuxHooks manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Hooks"}
+var TestLinuxHooks manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Hooks"}
 
 func init() {
-	TestSuiteLinuxHooks.AddTestCase("TestSuiteLinuxHooksPrestart", TestSuiteLinuxHooksPrestart)
+	TestLinuxHooks.AddTestCase("TestLinuxHooksPrestart", TestLinuxHooksPrestart)
 	// TestSuiteLinuxHooks.AddTestCase("TestSuiteLinuxHooksPoststop", TestSuiteLinuxHooksPoststop)
-	manager.Manager.AddTestSuite(TestSuiteLinuxHooks)
+	manager.Manager.AddTestSuite(TestLinuxHooks)
 }
 
 func setHooks(thooks []specs.Hook, isPre bool) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
