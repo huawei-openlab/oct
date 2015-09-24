@@ -15,6 +15,7 @@ package manager
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"reflect"
 	"strings"
@@ -116,9 +117,19 @@ func (this *TestSuite) Run() {
 		rt = tc.Implement.Call(nil)
 		str := rt[0].String()
 		if str != "" {
+			fmt.Printf("%-50s    %20s\n", tc.Name, getResult(str))
 			this.TestResult = append(this.TestResult, str)
 		}
 	}
+}
+
+func getResult(str string) string {
+
+	splitStr := "\"result\":\""
+	retStr := strings.SplitAfter(str, splitStr)
+
+	result := strings.TrimSuffix(retStr[1], "\"}")
+	return result
 }
 
 // Merge jsonstring of each testcases in TestSuite into one json string

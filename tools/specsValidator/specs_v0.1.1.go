@@ -37,6 +37,7 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"log"
+	"os"
 )
 
 var specsRev = flag.String("specs", "", "Specify specs Revision from opencontainers/specs as the benchmark, in the form of commit id, keep empty to using the newest commit of [opencontainers/specs](https://github.com/opencontainers/specs)")
@@ -86,9 +87,11 @@ func main() {
 		fmt.Printf("	%v\n", *output)
 	}
 
-	err := hostenv.CreateBoundle()
-	if err != nil {
-		log.Fatalf("Create boundle error, %v", err)
+	if !exists("rootfs") {
+		err := hostenv.CreateBoundle()
+		if err != nil {
+			log.Fatalf("Create boundle error, %v", err)
+		}
 	}
 
 	/*linuxnamespace.TestSuiteNP.Run()
@@ -128,7 +131,7 @@ func main() {
 
 	}
 	result := manager.Manager.GetTotalResult()
-	err = utils.SpecifyOutput(*output, result)
+	err := utils.SpecifyOutput(*output, result)
 	if err != nil {
 		log.Fatalf("Write %v out file error,%v\n", *output, err)
 	}
@@ -155,4 +158,13 @@ func main() {
 		log.Fatalf("Write LinuxResources out file error,%v\n", err)
 	}*/
 
+}
+
+func exists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }
