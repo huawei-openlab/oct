@@ -14,21 +14,6 @@
 // limitations under the License.
 //
 
-/*
-"hooks": {
-    "prestart": [{
-      "path": "/bin/ls",
-      "args": null,
-      "env": null
-    }],
-    "poststop": [{
-      "path": "/bin/pwd",
-      "args": null,
-      "env": null
-    }]
-  },
-*/
-
 package linuxhooks
 
 import (
@@ -46,7 +31,7 @@ func TestSuiteLinuxHooksPrestart() string {
 	}
 	var testResult manager.TestResult
 	linuxspec, linuxruntimespec := setHooks(pre, true)
-	info := " :Prestart Path=" + pre[0].Path
+	info := "may be not support"
 	result, err := testHooks(&linuxspec, &linuxruntimespec, "testHooksPrestart.txt", info)
 	testResult.Set("TestSuiteLinuxHooksPrestart", pre, err, result)
 	return testResult.Marshal()
