@@ -1,26 +1,11 @@
 {
   " linuxspec  ": [
     {
-      "LinuxSpec.Spec.Version": [
-        {
-          "testcasename": "TestVersionCorrect",
-          "input": "pre-draft",
-          "result": "passed"
-        },
-        {
-          "testcasename": "TestVersionCorrect",
-          "input": "pre-draft-err",
-          "error": "exit status 1",
-          "result": "failed"
-        }
-      ]
-    },
-    {
       "LinuxSpec.Spec.Root": [
         {
           "testcasename": "TestReadOnlyTrue",
           "input": {
-            "path": "rootfs_rootconfig",
+            "path": "rootfs",
             "readonly": true
           },
           "result": "passed"
@@ -28,7 +13,7 @@
         {
           "testcasename": "TestReadOnlyFalse",
           "input": {
-            "path": "rootfs_rootconfig",
+            "path": "rootfs",
             "readonly": false
           },
           "result": "passed"
@@ -39,7 +24,146 @@
             "path": "rootfs_error",
             "readonly": true
           },
+          "result": "unknowErr"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Spec.Process": [
+        {
+          "testcasename": "TestBase",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 0,
+              "gid": 0,
+              "additionalGids": null
+            },
+            "args": [
+              "./specprocess"
+            ],
+            "env": null,
+            "cwd": "/containerend"
+          },
           "result": "passed"
+        },
+        {
+          "testcasename": "TestUser1000",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 1000,
+              "gid": 1000,
+              "additionalGids": [
+                0,
+                1000
+              ]
+            },
+            "args": [
+              "./specprocess"
+            ],
+            "env": null,
+            "cwd": "/containerend"
+          },
+          "error": "AddtionalGidsInput is not compliant with the specs or not supported by runc",
+          "result": "failed"
+        },
+        {
+          "testcasename": "TestUser1",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 1,
+              "gid": 1,
+              "additionalGids": [
+                0
+              ]
+            },
+            "args": [
+              "./specprocess"
+            ],
+            "env": null,
+            "cwd": "/containerend"
+          },
+          "error": "AddtionalGidsInput is not compliant with the specs or not supported by runc",
+          "result": "failed"
+        },
+        {
+          "testcasename": "TestUsernil",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 0,
+              "gid": 0,
+              "additionalGids": null
+            },
+            "args": [
+              "./specprocess"
+            ],
+            "env": null,
+            "cwd": "/containerend"
+          },
+          "result": "passed"
+        },
+        {
+          "testcasename": "TestEnv",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 0,
+              "gid": 0,
+              "additionalGids": null
+            },
+            "args": [
+              "bash",
+              "-c",
+              "specprocessenv"
+            ],
+            "env": [
+              "PATH=/containerend:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+              "TERM=xterm"
+            ],
+            "cwd": "/containerend"
+          },
+          "result": "passed"
+        },
+        {
+          "testcasename": "TestEnvNilFalse",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 0,
+              "gid": 0,
+              "additionalGids": null
+            },
+            "args": [
+              "bash"
+            ],
+            "env": null,
+            "cwd": ""
+          },
+          "error": "Input is not compliant with the specs or not supported by runc----time=\"2015-09-24T21:03:51+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-09-24T21:03:51+08:00\" level=warning msg=\"open /sys/fs/cgroup/freezer/specsValidator/freezer.state: no such file or directory\" \ntime=\"2015-09-24T21:03:51+08:00\" level=warning msg=\"open /sys/fs/cgroup/devices/specsValidator/cgroup.procs: no such file or directory\" \ntime=\"2015-09-24T21:03:51+08:00\" level=fatal msg=\"Container start failed: [8] System error: exec: \\\"bash\\\": executable file not found in $PATH\" \n",
+          "result": "failed"
+        },
+        {
+          "testcasename": "TestEnvNilTrue",
+          "input": {
+            "terminal": false,
+            "user": {
+              "uid": 0,
+              "gid": 0,
+              "additionalGids": null
+            },
+            "args": [
+              "/bin/bash",
+              "-c",
+              "specprocessenv"
+            ],
+            "env": null,
+            "cwd": ""
+          },
+          "error": "Input is not compliant with the specs or not supported by runc----",
+          "result": "failed"
         }
       ]
     },
@@ -59,7 +183,8 @@
             "os": "osErr",
             "arch": "archErr"
           },
-          "result": "unknowErr"
+          "error": "Err: Gived err value to platform, but runc ran well",
+          "result": "failed"
         }
       ]
     },
@@ -69,18 +194,96 @@
           "testcasename": "TestMountTmpfs",
           "input": [
             {
-              "type": "proc",
-              "source": "proc",
-              "destination": "/proc",
-              "options": ""
+              "name": "proc",
+              "path": "/proc"
             },
             {
-              "type": "tmpfs",
-              "source": "tmpfs",
-              "destination": "/mountTest",
-              "options": ""
+              "name": "tmpfs",
+              "path": "/mountTest"
             }
           ],
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.UidGidMappings": [
+        {
+          "testcasename": "TestSuiteLinuxUidMappings",
+          "input": {
+            "hostID": 0,
+            "containerID": 0,
+            "size": 10
+          },
+          "result": "passed"
+        },
+        {
+          "testcasename": "TestSuiteLinuxGidMappings",
+          "input": {
+            "hostID": 0,
+            "containerID": 0,
+            "size": 10
+          },
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.SelinuxProcessLabel": [
+        {
+          "testcasename": "TestLinuxSelinuxProcessLabel",
+          "input": "system_u:system_r:svirt_lxc_net_t:s0:c124,c675",
+          "error": "Host Machine doesn't support SElinux",
+          "result": "unspported"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Spec.RootfsPropagation": [
+        {
+          "testcasename": "TestRootfsPropagationPrivate",
+          "input": "private",
+          "result": "passed"
+        },
+        {
+          "testcasename": "TestRootfsPropagationSlave",
+          "input": "slave",
+          "error": "RootfsPropagationmode:slavefailed",
+          "result": "failed"
+        },
+        {
+          "testcasename": "TestRootfsPropagationShare",
+          "input": "share",
+          "error": "RootfsPropagationmode:sharefailed",
+          "result": "failed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.Rlimits": [
+        {
+          "testcasename": "TestRlimitNOFILESoft",
+          "input": 2048,
+          "result": "passed"
+        },
+        {
+          "testcasename": "TestRlimitNOFILEHard",
+          "input": 20480,
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.Resources": [
+        {
+          "testcasename": "TestMemoryLimit",
+          "input": {
+            "limit": 204800,
+            "reservation": 0,
+            "swap": 0,
+            "kernel": 0,
+            "swappiness": -1
+          },
           "result": "passed"
         }
       ]
@@ -101,7 +304,7 @@
             "type": "pid",
             "path": "/proc/1/ns/pid"
           },
-          "result": "passed"
+          "result": "failed"
         },
         {
           "testcasename": "TestIpcPathEmpty",
@@ -165,8 +368,66 @@
             "type": "mount",
             "path": "/proc/1/ns/mnt"
           },
-          "error": "time=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"open /sys/fs/cgroup/freezer/user/1000.user/c2.session/specsValidator/freezer.state: no such file or directory\" \ntime=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"open /sys/fs/cgroup/devices/user/1000.user/c2.session/specsValidator/cgroup.procs: no such file or directory\" \ntime=\"2015-09-02T10:26:08+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1",
-          "result": "unspported"
+          "result": "failed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.Hooks": [
+        {
+          "testcasename": "TestSuiteLinuxHooksPrestart",
+          "input": [
+            {
+              "path": "/bin/bash",
+              "args": [
+                "-c",
+                "touch /testHooksPrestart.txt"
+              ],
+              "env": [
+                ""
+              ]
+            }
+          ],
+          "error": "test failed becausemay be not support",
+          "result": "failed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.Devices": [
+        {
+          "testcasename": "TestSuiteLinuxDevicesFull",
+          "input": {
+            "path": "/dev/full",
+            "type": 99,
+            "major": 1,
+            "minor": 7,
+            "permissions": "rwm",
+            "fileMode": 438,
+            "uid": 0,
+            "gid": 0
+          },
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.Capabilities": [
+        {
+          "testcasename": "TestMountTmpfs",
+          "input": [
+            "CAP_SETFCAP"
+          ],
+          "result": "passed"
+        }
+      ]
+    },
+    {
+      "LinuxSpec.Linux.ApparmorProfile": [
+        {
+          "testcasename": "TestLinuxApparmorProfile",
+          "input": "testapporprofile",
+          "result": "passed"
         }
       ]
     }

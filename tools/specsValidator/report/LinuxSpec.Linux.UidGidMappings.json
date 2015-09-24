@@ -1,0 +1,22 @@
+{
+  "LinuxSpec.Linux.UidGidMappings": [
+    {
+      "testcasename": "TestSuiteLinuxUidMappings",
+      "input": {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 10
+      },
+      "result": "passed"
+    },
+    {
+      "testcasename": "TestSuiteLinuxGidMappings",
+      "input": {
+        "hostID": 0,
+        "containerID": 0,
+        "size": 10
+      },
+      "result": "passed"
+    }
+  ]
+}

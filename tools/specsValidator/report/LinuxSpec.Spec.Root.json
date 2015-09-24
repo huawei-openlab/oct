@@ -3,7 +3,7 @@
     {
       "testcasename": "TestReadOnlyTrue",
       "input": {
-        "path": "rootfs_rootconfig",
+        "path": "rootfs",
         "readonly": true
       },
       "result": "passed"
@@ -11,7 +11,7 @@
     {
       "testcasename": "TestReadOnlyFalse",
       "input": {
-        "path": "rootfs_rootconfig",
+        "path": "rootfs",
         "readonly": false
       },
       "result": "passed"
@@ -22,7 +22,7 @@
         "path": "rootfs_error",
         "readonly": true
       },
-      "result": "passed"
+      "result": "unknowErr"
     }
   ]
 }

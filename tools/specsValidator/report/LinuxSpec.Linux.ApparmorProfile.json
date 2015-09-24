@@ -1,0 +1,9 @@
+{
+  "LinuxSpec.Linux.ApparmorProfile": [
+    {
+      "testcasename": "TestLinuxApparmorProfile",
+      "input": "testapporprofile",
+      "result": "passed"
+    }
+  ]
+}

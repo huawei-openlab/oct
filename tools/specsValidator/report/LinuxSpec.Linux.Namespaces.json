@@ -14,7 +14,7 @@
         "type": "pid",
         "path": "/proc/1/ns/pid"
       },
-      "result": "passed"
+      "result": "failed"
     },
     {
       "testcasename": "TestIpcPathEmpty",
@@ -78,8 +78,7 @@
         "type": "mount",
         "path": "/proc/1/ns/mnt"
       },
-      "error": "time=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"exit status 1\" \ntime=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"open /sys/fs/cgroup/freezer/user/1000.user/c2.session/specsValidator/freezer.state: no such file or directory\" \ntime=\"2015-09-02T10:26:08+08:00\" level=warning msg=\"open /sys/fs/cgroup/devices/user/1000.user/c2.session/specsValidator/cgroup.procs: no such file or directory\" \ntime=\"2015-09-02T10:26:08+08:00\" level=fatal msg=\"Container start failed: [8] System error: invalid argument\" \nexit status 1",
-      "result": "unspported"
+      "result": "failed"
     }
   ]
 }

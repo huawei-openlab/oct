@@ -4,7 +4,6 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 )
 
@@ -25,12 +24,14 @@ func cloneDeps(path string, repo string) error {
 	}
 
 	cloneString := "https://github.com/opencontainers/" + repo + ".git"
-	cmd := exec.Command("git", "clone", cloneString)
+
+	_, err = utils.ExecCmdStr("git", path, "clone", cloneString)
+	/*cmd := exec.Command("git", "clone", cloneString)
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Dir = path
-	_, err = cmd.Output()
+	_, err = cmd.Output()*/
 	if err != nil {
 		log.Fatalf("CloneDeps git clone %v err", cloneString)
 	}
