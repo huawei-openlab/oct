@@ -26,7 +26,7 @@ import (
 	"strconv"
 )
 
-func TestSuiteLinuxUidMappings() string {
+func TestLinuxUidMappings() string {
 	// addTestUser()
 	//get uid&gid of test account
 	testuser, _ := user.Lookup("root")
@@ -60,7 +60,7 @@ func TestSuiteLinuxUidMappings() string {
 
 }
 
-func TestSuiteLinuxGidMappings() string {
+func TestLinuxGidMappings() string {
 	// addTestUser()
 	//get uid&gid of test account
 	testuser, _ := user.Lookup("root")

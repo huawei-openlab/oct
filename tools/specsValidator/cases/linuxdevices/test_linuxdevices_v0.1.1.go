@@ -26,7 +26,7 @@ import (
 	"strings"
 )
 
-func TestSuiteLinuxDevicesFull() string {
+func TestLinuxDevicesFull() string {
 
 	var device specs.Device = specs.Device{
 		Type:        99,

@@ -27,12 +27,12 @@ import (
 *and the specs.Process.Terminal must be false when call runc in programe.
  */
 
-var TestSuiteLinuxDevices manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Devices"}
+var TestLinuxDevices manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Devices"}
 
 // TODO
 func init() {
-	TestSuiteLinuxDevices.AddTestCase("TestSuiteLinuxDevicesFull", TestSuiteLinuxDevicesFull)
-	manager.Manager.AddTestSuite(TestSuiteLinuxDevices)
+	TestLinuxDevices.AddTestCase("TestLinuxDevicesFull", TestLinuxDevicesFull)
+	manager.Manager.AddTestSuite(TestLinuxDevices)
 }
 
 func setDevices(testdevices specs.Device) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {

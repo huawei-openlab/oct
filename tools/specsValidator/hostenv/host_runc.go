@@ -1,7 +1,6 @@
 package hostenv
 
 import (
-	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"log"
 	"os"
@@ -39,7 +38,7 @@ func cloneDeps(path string, repo string) error {
 }
 
 func upateRev(Rev string, repo string) (string, error) {
-	fmt.Printf("Rev : %v", Rev)
+
 	goPath := os.Getenv("GOPATH")
 	path := goPath + "/src/github.com/opencontainers/" + repo
 	pPath := goPath + "/src/github.com/opencontainers/"
@@ -70,9 +69,9 @@ func upateRev(Rev string, repo string) (string, error) {
 		if err != nil {
 			return path, err
 		}
-		fmt.Println(path)
+		// fmt.Println(path)
 		pPath = getParentDirectory(path)
-		fmt.Println(pPath)
+		// fmt.Println(pPath)
 		path = pPath + "/Godeps/_workspace/src/github.com/opencontainers/specs/"
 		pPath = pPath + "/Godeps/_workspace/src/github.com/opencontainers/"
 		err := checkout(pPath, path, Rev, repo)

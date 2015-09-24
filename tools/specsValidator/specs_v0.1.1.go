@@ -27,12 +27,11 @@ import (
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxrootfspropagation"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxselinuxlabel"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxsysctl"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxuidgidmappings"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specmount"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specplatform"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specprocess"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specroot"
-	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/specversion"
-
 	"github.com/huawei-openlab/oct/tools/specsValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
@@ -55,6 +54,7 @@ func main() {
 		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
 	} else if *specsRev == "" {
 		checkoutSpecsRev = "origin/master"
+		fmt.Println("   Specs revision: newest commit")
 	} else {
 		checkoutSpecsRev = *specsRev
 		fmt.Printf("	Specs revision: %v \n", checkoutSpecsRev)
@@ -62,7 +62,7 @@ func main() {
 
 	if *runcRev == "" {
 		checkoutRuncRev = "origin/master"
-		fmt.Printf("	Runc revision :  %v\n", checkoutRuncRev)
+		fmt.Println("   Runc revision: newest commit")
 	} else {
 		checkoutRuncRev = *runcRev
 		fmt.Printf("	Runc revision: %v \n", checkoutRuncRev)

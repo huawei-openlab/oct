@@ -28,13 +28,13 @@ import (
 	"strings"
 )
 
-var TestSuiteLinuxUidGidMappings manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.UidGidMappings"}
+var TestLinuxUidGidMappings manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.UidGidMappings"}
 
 // TODO
 func init() {
-	TestSuiteLinuxUidGidMappings.AddTestCase("TestSuiteLinuxUidMappings", TestSuiteLinuxUidMappings)
-	TestSuiteLinuxUidGidMappings.AddTestCase("TestSuiteLinuxGidMappings", TestSuiteLinuxGidMappings)
-	manager.Manager.AddTestSuite(TestSuiteLinuxUidGidMappings)
+	TestLinuxUidGidMappings.AddTestCase("TestLinuxUidMappings", TestLinuxUidMappings)
+	TestLinuxUidGidMappings.AddTestCase("TestLinuxGidMappings", TestLinuxGidMappings)
+	manager.Manager.AddTestSuite(TestLinuxUidGidMappings)
 }
 
 func setIDmappings(testuid specs.IDMapping, testgid specs.IDMapping) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
