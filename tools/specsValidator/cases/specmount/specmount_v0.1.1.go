@@ -20,79 +20,29 @@ import (
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
 	"os/exec"
-	"runtime"
 	"strings"
 )
-
-/**
-*Need mount proc and set mnt namespace when get namespace from container
-*and the specs.Process.Terminal must be false when call runc in programe.
- */
-var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
-	Spec: specs.Spec{
-		Version: "0.1.0",
-		Platform: specs.Platform{
-			OS:   runtime.GOOS,
-			Arch: runtime.GOARCH,
-		},
-		Root: specs.Root{
-			Path:     "rootfs",
-			Readonly: true,
-		},
-		Process: specs.Process{
-			Terminal: false,
-			User: specs.User{
-				UID:            0,
-				GID:            0,
-				AdditionalGids: nil,
-			},
-			Args: []string{""},
-		},
-		Mounts: []specs.MountPoint{
-			{
-				Name: "proc",
-				Path: "/proc",
-			},
-		},
-	},
-}
-
-var linuxRuntimeSpec specs.LinuxRuntimeSpec = specs.LinuxRuntimeSpec{
-	RuntimeSpec: specs.RuntimeSpec{
-		Mounts: map[string]specs.Mount{
-			"proc": specs.Mount{
-				Type:    "proc",
-				Source:  "proc",
-				Options: []string{""},
-			},
-		},
-	},
-	Linux: specs.LinuxRuntime{
-		Resources: &specs.Resources{
-			Memory: specs.Memory{
-				Swappiness: -1,
-			},
-		},
-		Namespaces: []specs.Namespace{
-			{
-				Type: "mount",
-				Path: "",
-			},
-		},
-	},
-}
 
 var TestSuiteMount manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Spec.Mount"}
 
 // TODO
 func init() {
 	TestSuiteMount.AddTestCase("TestMountTmpfs", TestMountTmpfs)
+	TestSuiteMount.AddTestCase("TestMountDev", TestMountDev)
+	TestSuiteMount.AddTestCase("TestMountCgroup", TestMountCgroup)
+	TestSuiteMount.AddTestCase("TestMountDevpts", TestMountDevpts)
+	TestSuiteMount.AddTestCase("TestMountMqueue", TestMountMqueue)
+	TestSuiteMount.AddTestCase("TestMountShm", TestMountShm)
+	TestSuiteMount.AddTestCase("TestMountSysfs", TestMountSysfs)
 	manager.Manager.AddTestSuite(TestSuiteMount)
 }
 
 func setMount(fsName string, fsType string, fsSrc string, fsDes string, fsOpt []string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
+	var linuxSpec specs.LinuxSpec = specsinit.SetLinuxspecMinimum()
+	var linuxRuntimeSpec specs.LinuxRuntimeSpec = specsinit.SetLinuxruntimeMinimum()
 	configMountTest := specs.MountPoint{fsName, fsDes}
 	runtimeMountTest := specs.Mount{fsType, fsSrc, fsOpt}
 	linuxSpec.Mounts = append(linuxSpec.Mounts, configMountTest)
