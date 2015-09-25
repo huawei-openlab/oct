@@ -3,7 +3,7 @@
 ##Build     
 ```
 go get -d github.com/huawei-openlab/oct/tools/bundleValidator      
-cd $GOPATH/github.com/huawei-openlab/oct/tools/bundleValidator       
+cd $GOPATH/src/github.com/huawei-openlab/oct/tools/bundleValidator       
 make     
 ```
       
