@@ -8,9 +8,8 @@ It verifies if a `bundle` was a standard container, if a config.json/runtime.jso
 The option(genconfig/genruntime) in bundleValidator is used to generate a demo config.json/runtime.json.
 
 ### [specValidator](specsValidator/README.md) - specs/(runtime, config)
-The `specValidator` verifies all the specs configurations, so it is a much bigger project
-and we will only validate the `stable` spec release.
-So far the tool is compliance with `45ae53d4dba8e550942f7384914206103f6d2216` commit.
+The `specValidator` virifies if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs), so it is a much bigger project, so far it can validates any commit of specs, and we suggest to use the `stable` specs release.     
+
 
 ## OCT & OCT-Engine
 It is very easy to [write](https://github.com/huawei-openlab/oct-engine/blob/master/cases/README.md) a testcase under the OCT-engine.
