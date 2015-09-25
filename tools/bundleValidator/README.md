@@ -1,5 +1,12 @@
 #Bundle tool
-
+      
+##Build     
+```
+go get -d github.com/huawei-openlab/oct/tools/bundleValidator      
+cd $GOPATH/github.com/huawei-openlab/oct/tools/bundleValidator       
+make     
+```
+      
 ##Generate a config.json and runtime.json
 Provide a template config.json and runtime.json.
 ```
