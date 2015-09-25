@@ -15,10 +15,10 @@
 package main
 
 import (
-	"./libspec"
 	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/cli"
+	"github.com/huawei-openlab/oct/tools/bundleValidator/libspec"
 	"os"
 )
 

@@ -15,10 +15,8 @@
 package main
 
 import (
-	sv "./libspec"
-	//"fmt"
+	sv "github.com/huawei-openlab/oct/tools/bundleValidator/libspec"
 	"github.com/opencontainers/specs"
-	//	"os"
 )
 
 func genConfig() (ls specs.LinuxSpec) {
