@@ -3,7 +3,7 @@
 The specsValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
 
 
-### Quickstart      
+### Summary for the impatient      
 Just following steps below,      
 ``` bash
 $    go get github.com/tools/godep                                               #install godep tool requested     
@@ -16,7 +16,7 @@ $    cat report/linuxspec.json                                                  
       
 
 
-### Summary for the impatient
+### Specs Validator Quickstart
                 
 **Key Notes**        
 
