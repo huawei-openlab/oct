@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
-	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
+	// "github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
@@ -61,17 +61,8 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 }
 
 func checkConfigurationFromHost(filename string, configvalue string, failinfo string) (string, error) {
-	procFile := "/proc/self/status"
-	suid := utils.GetJob("Uid", procFile)
-	suid = strings.TrimLeft(suid, "Uid:")
-	suids := strings.Fields(suid)
-	var err error
-	var cmdouput []byte
-	if suids[0] == "0" && suids[1] == "0" {
-		cmdouput, err = exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/specsValidator/"+filename).Output()
-	} else {
-		cmdouput, err = exec.Command("bash", "-c", "cat  /sys/fs/cgroup/*/*/*/*/specsValidator/"+filename).Output()
-	}
+	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/memory -name specsValidator").Output()
+	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, err
