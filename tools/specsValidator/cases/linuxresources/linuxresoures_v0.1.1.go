@@ -29,12 +29,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 )
 
 var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Resources"}
 
 func init() {
+	TestSuiteLinuxResources.AddTestCase("TestCpuQuota", TestCpuQuota)
 	TestSuiteLinuxResources.AddTestCase("TestMemoryLimit", TestMemoryLimit)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
@@ -60,8 +60,15 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 	}
 }
 
-func checkConfigurationFromHost(filename string, configvalue string, failinfo string) (string, error) {
-	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/memory -name specsValidator").Output()
+func checkConfigurationFromHost(tp string, filename string, configvalue string, failinfo string) (string, error) {
+	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+tp+" -name specsValidator").Output()
+	if err != nil {
+		log.Println("err=" + err.Error())
+	} else {
+		log.Println("pwd=" + string(pwd))
+		log.Println("find /sys/fs/cgroup/" + tp + " -name specsValidator")
+		log.Println("cat " + strings.TrimSpace(string(pwd)) + "/" + filename)
+	}
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
@@ -73,12 +80,12 @@ func checkConfigurationFromHost(filename string, configvalue string, failinfo st
 			return manager.FAILED, errors.New("test failed because" + failinfo)
 		}
 	}
+
 }
 
-func cleanCgroup() {
+func cleanCgroup(path string) {
 	var cmd *exec.Cmd
-	time.Sleep(time.Second * 15)
-	cmd = exec.Command("rmdir", "/sys/fs/cgroup/*/user/*/*/specsValidator")
+	cmd = exec.Command("rmdir", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	outPut, err := cmd.Output()
