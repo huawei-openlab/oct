@@ -23,7 +23,7 @@ func SpecFrom(image schema.ImageManifest, msgs []string) (specs.Spec, []string) 
 	var s specs.Spec
 
 	// pre-draft now
-	s.Version = "pre-draft"
+	s.Version = specs.Version
 	s.Platform, msgs = PlatformFrom(image, msgs)
 	s.Process, msgs = ProcessFrom(image, msgs)
 	s.Root, msgs = RootFrom(image, msgs)
@@ -91,7 +91,7 @@ type Root struct {
 func RootFrom(image schema.ImageManifest, msgs []string) (specs.Root, []string) {
 	var r specs.Root
 	r.Path = "rootfs"
-	//TODO: default to 'false'?
+	//Default to 'false'
 	r.Readonly = false
 	msg := fmt.Sprintf("root readonly is not exist in aci-0.6.1")
 	msgs = append(msgs, msg)

@@ -11,7 +11,7 @@ type RuntimeSpec struct {
 	Hooks Hooks `optional`
 }
 */
-func RuntimeFrom(image schema.ImageManifest, msgs []string) (specs.RuntimeSpec, []string) {
+func RuntimeSpecFrom(image schema.ImageManifest, msgs []string) (specs.RuntimeSpec, []string) {
 	var rt specs.RuntimeSpec
 	//FIXME: upstream changes!
 	//	rt.Mounts, msgs = RuntimeMountsFrom(image, msgs)

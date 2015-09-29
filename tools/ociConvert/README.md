@@ -1,4 +1,4 @@
-The `oci-convert` converts:
+The `ociConvert` converts:
 
 ## from aci to oci
 So far we just attempt to do this.
@@ -41,5 +41,5 @@ It is easy to use this tool, we provide a `demo rkt file` with an `manfest` file
 
 ```
 make
-./oci-convert a2i manfest
+./ociConvert a2i manfest
 ```

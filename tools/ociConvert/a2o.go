@@ -34,12 +34,11 @@ func convertRocketFile(path string) {
 		return
 	}
 	json.Unmarshal([]byte(content), &image)
-	fmt.Println(image.App)
 
-	return
 	ls, msgs = specsConvert.LinuxSpecFrom(image, msgs)
 
-	fmt.Println(ls)
+	val, _ := json.MarshalIndent(ls, "", "\t")
+	fmt.Println(string(val))
 
 }
 

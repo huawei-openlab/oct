@@ -1,7 +1,8 @@
 package specsConvert
 
 import (
-//	"github.com/opencontainers/specs"
+	"github.com/appc/spec/schema"
+	"github.com/opencontainers/specs"
 )
 
 /*
@@ -9,9 +10,19 @@ import (
 type LinuxRuntimeSpec struct {
 	RuntimeSpec
 	// Linux is platform specific configuration for linux based containers.
-	LinuxRuntime Linux `json:"linux"`
+	Linux LinuxRuntime `json:"linux"`
+}
+*/
+func LinuxRuntimeSpecFrom(image schema.ImageManifest, msgs []string) (specs.LinuxRuntimeSpec, []string) {
+	var lrs specs.LinuxRuntimeSpec
+
+	lrs.RuntimeSpec, msgs = RuntimeSpecFrom(image, msgs)
+	lrs.Linux, msgs = LinuxRuntimeFrom(image, msgs)
+
+	return lrs, msgs
 }
 
+/*
 type LinuxRuntime struct {
 	// UidMapping specifies user mappings for supporting user namespaces on linux.
 	UidMappings []IDMapping `json:"uidMappings"`
@@ -23,7 +34,7 @@ type LinuxRuntime struct {
 	Sysctl map[string]string `json:"sysctl"`
 	// Resources contain cgroup information for handling resource constraints
 	// for the container
-	Resources Resources `json:"resources"`
+	Resources *Resources `json:"resources"`
 	// Namespaces contains the namespaces that are created and/or joined by the container
 	Namespaces []Namespace `json:"namespaces"`
 	// Devices are a list of device nodes that are created and enabled for the container
@@ -37,7 +48,17 @@ type LinuxRuntime struct {
 	// RootfsPropagation is the rootfs mount propagation mode for the container
 	RootfsPropagation string `json:"rootfsPropagation"`
 }
+*/
 
+func LinuxRuntimeFrom(image schema.ImageManifest, msgs []string) (specs.LinuxRuntime, []string) {
+	var lr specs.LinuxRuntime
+
+	resources, msgs := ResourcesFrom(image, msgs)
+	lr.Resources = &resources
+	return lr, msgs
+}
+
+/*
 // Namespace is the configuration for a linux namespace.
 type Namespace struct {
 	// Type is the type of Linux namespace
@@ -110,7 +131,13 @@ type Memory struct {
 	// How aggressive the kernel will swap memory pages. Range from 0 to 100. Set -1 to use system default
 	Swappiness int64 `json:"swappiness"`
 }
+*/
+func MemoryFrom(image schema.ImageManifest, msgs []string) (specs.Memory, []string) {
+	var memory specs.Memory
+	return memory, msgs
+}
 
+/*
 // CPU for Linux cgroup 'cpu' resource management
 type CPU struct {
 	// CPU shares (relative weight vs. other cgroups with cpu shares)
@@ -128,7 +155,13 @@ type CPU struct {
 	// MEM to use within the cpuset
 	Mems string `json:"mems"`
 }
+*/
+func CPUFrom(image schema.ImageManifest, msgs []string) (specs.CPU, []string) {
+	var cpu specs.CPU
+	return cpu, msgs
+}
 
+/*
 // Network identification and priority configuration
 type Network struct {
 	// Set class identifier for container's network packets
@@ -152,7 +185,17 @@ type Resources struct {
 	// Network restriction configuration
 	Network Network `json:"network"`
 }
+*/
+func ResourcesFrom(image schema.ImageManifest, msgs []string) (specs.Resources, []string) {
+	var r specs.Resources
 
+	r.Memory, msgs = MemoryFrom(image, msgs)
+	r.CPU, msgs = CPUFrom(image, msgs)
+
+	return r, msgs
+}
+
+/*
 type Device struct {
 	// Path to the device.
 	Path string `json:"path"`

@@ -3,6 +3,7 @@
 package specsConvert
 
 import (
+	"encoding/json"
 	"github.com/appc/spec/schema"
 	"github.com/opencontainers/specs"
 	"strconv"
@@ -30,15 +31,36 @@ func LinuxSpecFrom(image schema.ImageManifest, msgs []string) (specs.LinuxSpec, 
 type Linux struct {
 	// Capabilities are linux capabilities that are kept for the container.
 	Capabilities []string `optional`
-	// RootfsPropagation is the rootfs mount propagation mode for the container.
-	RootfsPropagation string `optional`
 }
 */
 func LinuxFrom(image schema.ImageManifest, msgs []string) (specs.Linux, []string) {
 	var l specs.Linux
-	//FIXME: capabilities?
-	msgs = append(msgs, "Linux.RootfsPropagation is not exist in aci-0.6.1")
+
+	l.Capabilities, msgs = CapabilitiesFrom(image, msgs)
 	return l, msgs
+}
+
+func CapabilitiesFrom(image schema.ImageManifest, msgs []string) ([]string, []string) {
+	type CapSet struct {
+		Set []string
+	}
+	var capSet CapSet
+	var caps []string
+
+	for index := 0; index < len(image.App.Isolators); index++ {
+		iso := image.App.Isolators[index]
+		isoName := string(iso.Name)
+		switch isoName {
+		case "os/linux/capabilities-retain-set":
+			fallthrough
+		case "os/linux/capabilities-remove-set":
+			json.Unmarshal([]byte(*iso.ValueRaw), &capSet)
+			for index := 0; index < len(capSet.Set); index++ {
+				caps = append(caps, capSet.Set[index])
+			}
+		}
+	}
+	return caps, msgs
 }
 
 /*
