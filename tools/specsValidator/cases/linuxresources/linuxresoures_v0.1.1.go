@@ -21,7 +21,6 @@ import (
 	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
-	// "github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
@@ -34,8 +33,9 @@ import (
 var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Resources"}
 
 func init() {
-	TestSuiteLinuxResources.AddTestCase("TestCpuQuota", TestCpuQuota)
-	TestSuiteLinuxResources.AddTestCase("TestMemoryLimit", TestMemoryLimit)
+	TestSuiteLinuxResources.AddTestCase("TestResourceBlockIOWeight", TestBlockIOWeight)
+	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
+	TestSuiteLinuxResources.AddTestCase("TestResourceMemoryLimit", TestMemoryLimit)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
 
@@ -65,6 +65,7 @@ func checkConfigurationFromHost(subsys string, filename string, configvalue stri
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
 	cleanCgroup(subsys + ":/")
 	if err != nil {
+		log.Println("path=" + strings.TrimSpace(string(pwd)) + "/" + filename)
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, err
 	} else {
@@ -79,7 +80,7 @@ func checkConfigurationFromHost(subsys string, filename string, configvalue stri
 
 func cleanCgroup(path string) {
 	var cmd *exec.Cmd
-	cmd = exec.Command("cgdelete", path)
+	cmd = exec.Command("cgdelete", "cpu,memory,blkio,hugetlb:/")
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	outPut, err := cmd.Output()
