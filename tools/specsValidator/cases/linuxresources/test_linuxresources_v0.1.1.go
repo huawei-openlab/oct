@@ -75,3 +75,30 @@ func TestCpuQuota() string {
 	adaptor.DeleteRun()
 	return testResult.Marshal()
 }
+
+func TestBlockIOWeight() string {
+	var testResourceBlockIO specs.Resources = specs.Resources{
+		BlockIO: specs.BlockIO{
+			Weight:                  300,
+			WeightDevice:            nil,
+			ThrottleReadBpsDevice:   nil,
+			ThrottleWriteBpsDevice:  nil,
+			ThrottleReadIOPSDevice:  nil,
+			ThrottleWriteIOPSDevice: nil,
+		},
+	}
+	linuxspec, linuxruntimespec := setResources(testResourceBlockIO)
+	failinfo := "BlockIO Weight"
+	c := make(chan bool)
+	go func() {
+		testResources(&linuxspec, &linuxruntimespec)
+		close(c)
+	}()
+	time.Sleep(time.Second * 1)
+	result, err := checkConfigurationFromHost("blkio", "blkio.weight", "300", failinfo)
+	<-c
+	var testResult manager.TestResult
+	testResult.Set("TestBlockIOWeight", testResourceBlockIO.BlockIO, err, result)
+	adaptor.DeleteRun()
+	return testResult.Marshal()
+}
