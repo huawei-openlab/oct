@@ -75,3 +75,31 @@ func TestCpuQuota() string {
 	adaptor.DeleteRun()
 	return testResult.Marshal()
 }
+
+func TestCpuQuota() string {
+	var testResourceCPU specs.Resources = specs.Resources{
+		CPU: specs.CPU{
+			Shares:          0,
+			Quota:           20000,
+			Period:          0,
+			RealtimeRuntime: 0,
+			RealtimePeriod:  0,
+			Cpus:            "",
+			Mems:            "",
+		},
+	}
+	linuxspec, linuxruntimespec := setResources(testResourceCPU)
+	failinfo := "CPU Quota"
+	c := make(chan bool)
+	go func() {
+		testResources(&linuxspec, &linuxruntimespec)
+		close(c)
+	}()
+	time.Sleep(time.Second * 1)
+	result, err := checkConfigurationFromHost("cpu", "cpu.cfs_quota_us", "20000", failinfo)
+	<-c
+	var testResult manager.TestResult
+	testResult.Set("TestMemoryLimit", testResourceCPU.CPU, err, result)
+	adaptor.DeleteRun()
+	return testResult.Marshal()
+}
