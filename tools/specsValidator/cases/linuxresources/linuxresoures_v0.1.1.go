@@ -29,12 +29,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"time"
 )
 
 var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Resources"}
 
 func init() {
+	TestSuiteLinuxResources.AddTestCase("TestCpuQuota", TestCpuQuota)
 	TestSuiteLinuxResources.AddTestCase("TestMemoryLimit", TestMemoryLimit)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
@@ -60,9 +60,10 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 	}
 }
 
-func checkConfigurationFromHost(filename string, configvalue string, failinfo string) (string, error) {
-	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/memory -name specsValidator").Output()
+func checkConfigurationFromHost(subsys string, filename string, configvalue string, failinfo string) (string, error) {
+	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+subsys+" -name specsValidator").Output()
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
+	cleanCgroup(subsys + ":/")
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, err
@@ -73,12 +74,12 @@ func checkConfigurationFromHost(filename string, configvalue string, failinfo st
 			return manager.FAILED, errors.New("test failed because" + failinfo)
 		}
 	}
+
 }
 
-func cleanCgroup() {
+func cleanCgroup(path string) {
 	var cmd *exec.Cmd
-	time.Sleep(time.Second * 15)
-	cmd = exec.Command("rmdir", "/sys/fs/cgroup/*/user/*/*/specsValidator")
+	cmd = exec.Command("cgdelete", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	outPut, err := cmd.Output()
@@ -86,5 +87,4 @@ func cleanCgroup() {
 		fmt.Println(string(outPut))
 		log.Fatalf("[specsValidator] linux resources test : clean cgroup error , %v", err)
 	}
-	fmt.Println("clean cgroup sucess, ")
 }
