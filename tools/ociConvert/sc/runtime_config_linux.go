@@ -1,6 +1,7 @@
 package specsConvert
 
 import (
+	"encoding/json"
 	"github.com/appc/spec/schema"
 	"github.com/opencontainers/specs"
 )
@@ -134,6 +135,20 @@ type Memory struct {
 */
 func MemoryFrom(image schema.ImageManifest, msgs []string) (specs.Memory, []string) {
 	var memory specs.Memory
+	for index := 0; index < len(image.App.Isolators); index++ {
+		iso := image.App.Isolators[index]
+		if iso.Name == "resource/memory" {
+			type IsoMemory struct {
+				Limit string
+			}
+			var im IsoMemory
+			json.Unmarshal([]byte(*iso.ValueRaw), &im)
+
+			//TODO: convert it !
+			break
+		}
+	}
+
 	return memory, msgs
 }
 
@@ -158,6 +173,7 @@ type CPU struct {
 */
 func CPUFrom(image schema.ImageManifest, msgs []string) (specs.CPU, []string) {
 	var cpu specs.CPU
+
 	return cpu, msgs
 }
 

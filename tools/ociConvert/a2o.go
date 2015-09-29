@@ -27,6 +27,7 @@ import (
 func convertRocketFile(path string) {
 	var image schema.ImageManifest
 	var ls specs.LinuxSpec
+	var lrs specs.LinuxRuntimeSpec
 	var msgs []string
 
 	content, err := ReadFile(path)
@@ -38,6 +39,11 @@ func convertRocketFile(path string) {
 	ls, msgs = specsConvert.LinuxSpecFrom(image, msgs)
 
 	val, _ := json.MarshalIndent(ls, "", "\t")
+	//	fmt.Println(string(val))
+
+	lrs, msgs = specsConvert.LinuxRuntimeSpecFrom(image, msgs)
+
+	val, _ = json.MarshalIndent(lrs, "", "\t")
 	fmt.Println(string(val))
 
 }
