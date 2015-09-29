@@ -19,6 +19,7 @@ import (
 	"fmt"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxapparmorprofile"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxcapabilities"
+	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxcgroupspath"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxdevices"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxhooks"
 	_ "github.com/huawei-openlab/oct/tools/specsValidator/cases/linuxnamespace"
