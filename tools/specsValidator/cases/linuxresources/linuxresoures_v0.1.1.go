@@ -60,16 +60,10 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 	}
 }
 
-func checkConfigurationFromHost(tp string, filename string, configvalue string, failinfo string) (string, error) {
-	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+tp+" -name specsValidator").Output()
-	if err != nil {
-		log.Println("err=" + err.Error())
-	} else {
-		log.Println("pwd=" + string(pwd))
-		log.Println("find /sys/fs/cgroup/" + tp + " -name specsValidator")
-		log.Println("cat " + strings.TrimSpace(string(pwd)) + "/" + filename)
-	}
+func checkConfigurationFromHost(subsys string, filename string, configvalue string, failinfo string) (string, error) {
+	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+subsys+" -name specsValidator").Output()
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
+	cleanCgroup(subsys + ":/")
 	if err != nil {
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
 		return manager.UNKNOWNERR, err
@@ -85,7 +79,7 @@ func checkConfigurationFromHost(tp string, filename string, configvalue string, 
 
 func cleanCgroup(path string) {
 	var cmd *exec.Cmd
-	cmd = exec.Command("rmdir", path)
+	cmd = exec.Command("cgdelete", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	outPut, err := cmd.Output()
@@ -93,5 +87,4 @@ func cleanCgroup(path string) {
 		fmt.Println(string(outPut))
 		log.Fatalf("[specsValidator] linux resources test : clean cgroup error , %v", err)
 	}
-	fmt.Println("clean cgroup sucess, ")
 }
