@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"github.com/huawei-openlab/oct/tools/specsValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/specsValidator/manager"
+	"github.com/huawei-openlab/oct/tools/specsValidator/utils"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/configconvert"
 	"github.com/huawei-openlab/oct/tools/specsValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
@@ -33,9 +34,9 @@ import (
 var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Resources"}
 
 func init() {
+	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
 	TestSuiteLinuxResources.AddTestCase("TestResourceBlockIOWeight", TestBlockIOWeight)
 	TestSuiteLinuxResources.AddTestCase("TestResourceMemoryLimit", TestMemoryLimit)
-	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
 
@@ -80,6 +81,7 @@ func checkConfigurationFromHost(subsys string, filename string, configvalue stri
 }
 
 func cleanCgroup(path string) {
+	utils.ExecCmdStr("apt-get", "/", "install", "-y", "cgroup-bin")
 	var cmd *exec.Cmd
 	cmd = exec.Command("cgdelete", path)
 	cmd.Stderr = os.Stderr
