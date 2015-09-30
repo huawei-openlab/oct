@@ -20,8 +20,8 @@ import (
 )
 
 func convertProcess(context *cli.Context) {
-	if len(context.Args()) > 0 {
-		convertRocketFile(context.Args()[0])
+	if len(context.Args()) > 1 {
+		convertRocketFile(context.Args()[0], context.Args()[1])
 	}
 
 }

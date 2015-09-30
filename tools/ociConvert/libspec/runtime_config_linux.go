@@ -16,10 +16,10 @@ type LinuxRuntimeSpec struct {
 	Linux LinuxRuntime `json:"linux"`
 }
 */
-func LinuxRuntimeSpecFrom(image schema.ImageManifest, msgs []string) (specs.LinuxRuntimeSpec, []string) {
+func LinuxRuntimeSpecFrom(image schema.ImageManifest, pod schema.PodManifest, msgs []string) (specs.LinuxRuntimeSpec, []string) {
 	var lrs specs.LinuxRuntimeSpec
 
-	lrs.RuntimeSpec, msgs = RuntimeSpecFrom(image, msgs)
+	lrs.RuntimeSpec, msgs = RuntimeSpecFrom(image, pod, msgs)
 	lrs.Linux, msgs = LinuxRuntimeFrom(image, msgs)
 
 	return lrs, msgs
@@ -245,7 +245,9 @@ type Device struct {
 	// Gid of the device.
 	GID uint32 `json:"gid"`
 }
+*/
 
+/*
 // Seccomp represents syscall restrictions
 type Seccomp struct {
 	DefaultAction Action     `json:"defaultAction"`

@@ -36,10 +36,12 @@ type Spec struct {
 ```
 
 #How To try
-It is easy to use this tool, we provide a `demo rkt file` with an `manfest` file. 
+It is easy to use this tool, we provide a `demo rkt file` with an `image.json and pod_runtime.json` file,
+both of them are downloaded from [AppC Example](https://github.com/appc/spec/tree/master/examples)
 
 
 ```
 make
-./ociConvert a2i manfest
+./ociConvert a2i test/image.json test/pod_runtime.json
+
 ```

@@ -15,37 +15,63 @@
 package main
 
 import (
-	"./sc"
+	"./libspec"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/appc/spec/schema"
 	"github.com/opencontainers/specs"
 	"os"
+	"path"
 )
 
-func convertRocketFile(path string) {
+func convertRocketFile(imagePath string, podPath string) {
 	var image schema.ImageManifest
+	var pod schema.PodManifest
+
 	var ls specs.LinuxSpec
 	var lrs specs.LinuxRuntimeSpec
 	var msgs []string
 
-	content, err := ReadFile(path)
+	content, err := ReadFile(imagePath)
 	if err != nil {
+		fmt.Println("Cannot parse image file: ", imagePath)
 		return
 	}
 	json.Unmarshal([]byte(content), &image)
 
+	content, err = ReadFile(podPath)
+	if err != nil {
+		fmt.Println("Cannot parse pod file: ", podPath)
+		return
+	}
+	json.Unmarshal([]byte(content), &pod)
+
+	PreparePath("output", "")
+
 	ls, msgs = specsConvert.LinuxSpecFrom(image, msgs)
-
 	val, _ := json.MarshalIndent(ls, "", "\t")
-	//	fmt.Println(string(val))
+	output := "output/config.json"
+	fout, err := os.Create(output)
+	if err != nil {
+		fmt.Println(output, err)
+	} else {
+		fout.WriteString(string(val))
+		fmt.Println("Generate ", output)
+		fout.Close()
+	}
 
-	lrs, msgs = specsConvert.LinuxRuntimeSpecFrom(image, msgs)
-
+	lrs, msgs = specsConvert.LinuxRuntimeSpecFrom(image, pod, msgs)
 	val, _ = json.MarshalIndent(lrs, "", "\t")
-	fmt.Println(string(val))
-
+	output = "output/runtime.json"
+	fout, err = os.Create(output)
+	if err != nil {
+		fmt.Println(output, err)
+	} else {
+		fout.WriteString(string(val))
+		fmt.Println("Generate ", output)
+		fout.Close()
+	}
 }
 
 func ReadFile(file_url string) (content string, err error) {
@@ -65,4 +91,28 @@ func ReadFile(file_url string) (content string, err error) {
 	content = buf.String()
 
 	return content, nil
+}
+
+func PreparePath(cachename string, filename string) (realurl string) {
+	var dir string
+	if filename == "" {
+		dir = cachename
+	} else {
+		realurl = path.Join(cachename, filename)
+		dir = path.Dir(realurl)
+	}
+	p, err := os.Stat(dir)
+	if err != nil {
+		if !os.IsExist(err) {
+			os.MkdirAll(dir, 0777)
+		}
+	} else {
+		if p.IsDir() {
+			return realurl
+		} else {
+			os.Remove(dir)
+			os.MkdirAll(dir, 0777)
+		}
+	}
+	return realurl
 }
