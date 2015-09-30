@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/appc/spec/schema"
 	"github.com/opencontainers/specs"
+	"strconv"
+	"strings"
 )
 
 /*
@@ -143,8 +145,7 @@ func MemoryFrom(image schema.ImageManifest, msgs []string) (specs.Memory, []stri
 			}
 			var im IsoMemory
 			json.Unmarshal([]byte(*iso.ValueRaw), &im)
-
-			//TODO: convert it !
+			memory.Limit = SizeStringToByte(im.Limit)
 			break
 		}
 	}
@@ -174,6 +175,20 @@ type CPU struct {
 func CPUFrom(image schema.ImageManifest, msgs []string) (specs.CPU, []string) {
 	var cpu specs.CPU
 
+	for index := 0; index < len(image.App.Isolators); index++ {
+		iso := image.App.Isolators[index]
+		if iso.Name == "resource/cpu" {
+			type IsoCPU struct {
+				Limit string
+			}
+			var ic IsoCPU
+			json.Unmarshal([]byte(*iso.ValueRaw), &ic)
+			val := strings.TrimSuffix(ic.Limit, "m")
+			baseNum, _ := strconv.ParseInt(val, 10, 64)
+			cpu.Quota = baseNum
+			break
+		}
+	}
 	return cpu, msgs
 }
 
