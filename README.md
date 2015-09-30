@@ -39,7 +39,7 @@ One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://
 ## Getting Started
 
 - Fork the repository on GitHub
-- Read the [HowTO](tools/HowTO.md) for build and test instructions
+- Read the 'build and test instruction' for [Bundle Validator](tools/bundleValidator/README.md) and [Runtime Validator](tools/specsValidator/README.md)
 - Play with the project, submit bugs, submit patches!
 
 ### How to involve
