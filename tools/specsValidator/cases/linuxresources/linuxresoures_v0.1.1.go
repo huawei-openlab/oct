@@ -34,8 +34,8 @@ var TestSuiteLinuxResources manager.TestSuite = manager.TestSuite{Name: "LinuxSp
 
 func init() {
 	TestSuiteLinuxResources.AddTestCase("TestResourceBlockIOWeight", TestBlockIOWeight)
-	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
 	TestSuiteLinuxResources.AddTestCase("TestResourceMemoryLimit", TestMemoryLimit)
+	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
 
@@ -47,6 +47,7 @@ func setResources(resources specs.Resources) (specs.LinuxSpec, specs.LinuxRuntim
 }
 
 func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
+
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
 	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 3s"}
@@ -63,7 +64,7 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 func checkConfigurationFromHost(subsys string, filename string, configvalue string, failinfo string) (string, error) {
 	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+subsys+" -name specsValidator").Output()
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
-	cleanCgroup(subsys + ":/")
+	cleanCgroup(subsys + ":/specsValidator")
 	if err != nil {
 		log.Println("path=" + strings.TrimSpace(string(pwd)) + "/" + filename)
 		log.Fatalf("[specsValidator] linux resources test : read the "+filename+" error, %v", err)
@@ -80,7 +81,7 @@ func checkConfigurationFromHost(subsys string, filename string, configvalue stri
 
 func cleanCgroup(path string) {
 	var cmd *exec.Cmd
-	cmd = exec.Command("cgdelete", "cpu,memory,blkio,hugetlb:/")
+	cmd = exec.Command("cgdelete", path)
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	outPut, err := cmd.Output()
