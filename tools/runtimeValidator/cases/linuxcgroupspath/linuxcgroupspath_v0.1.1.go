@@ -32,7 +32,7 @@ import (
 	"time"
 )
 
-var TestLinuxCgroupspath manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Resources"}
+var TestLinuxCgroupspath manager.TestSuite = manager.TestSuite{Name: "LinuxSpec.Linux.Cgroupspath"}
 
 func init() {
 	TestLinuxCgroupspath.AddTestCase("TestCgroupspath", TestCgroupspath)

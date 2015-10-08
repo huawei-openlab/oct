@@ -102,3 +102,28 @@ func TestBlockIOWeight() string {
 	adaptor.DeleteRun()
 	return testResult.Marshal()
 }
+
+func TestHugepageLimit() string {
+	var testResourcehugtlb specs.Resources = specs.Resources{
+		HugepageLimits: []specs.HugepageLimit{
+			{
+				Pagesize: "2MB",
+				Limit:    409600,
+			},
+		},
+	}
+	linuxspec, linuxruntimespec := setResources(testResourcehugtlb)
+	failinfo := "Hugepage Limit"
+	c := make(chan bool)
+	go func() {
+		testResources(&linuxspec, &linuxruntimespec)
+		close(c)
+	}()
+	time.Sleep(time.Second * 1)
+	result, err := checkConfigurationFromHost("hugetlb", "hugetlb."+testResourcehugtlb.HugepageLimits[0].Pagesize+".limit_in_bytes", "409600", failinfo)
+	<-c
+	var testResult manager.TestResult
+	testResult.Set("TestHugepageLimit", testResourcehugtlb.HugepageLimits, err, result)
+	adaptor.DeleteRun()
+	return testResult.Marshal()
+}

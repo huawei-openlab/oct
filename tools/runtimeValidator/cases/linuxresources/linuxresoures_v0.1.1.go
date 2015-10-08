@@ -37,6 +37,7 @@ func init() {
 	TestSuiteLinuxResources.AddTestCase("TestResourceCpuQuota", TestCpuQuota)
 	TestSuiteLinuxResources.AddTestCase("TestResourceBlockIOWeight", TestBlockIOWeight)
 	TestSuiteLinuxResources.AddTestCase("TestResourceMemoryLimit", TestMemoryLimit)
+	TestSuiteLinuxResources.AddTestCase("TestResourceHugepageLimit", TestHugepageLimit)
 	manager.Manager.AddTestSuite(TestSuiteLinuxResources)
 }
 
@@ -65,7 +66,8 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 func checkConfigurationFromHost(subsys string, filename string, configvalue string, failinfo string) (string, error) {
 	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+subsys+" -name runtimeValidator").Output()
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
-	cleanCgroup(subsys + ":/runtimeValidator")
+	cleanpath := subsys + ":" + strings.TrimPrefix(strings.TrimSpace(string(pwd)), "/sys/fs/cgroup/"+subsys)
+	cleanCgroup(cleanpath)
 	if err != nil {
 		log.Println("path=" + strings.TrimSpace(string(pwd)) + "/" + filename)
 		log.Fatalf("[runtimeValidator] linux resources test : read the "+filename+" error, %v", err)
