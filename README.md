@@ -14,7 +14,7 @@ regardless of the underlying machine and the contents of the container.
 
 OCT covers following areas:
 - [Bundle Validator](tools/bundleValidator/README.md) verifies if a bundle was a [Standard Container](#standard-container).
-- [Runtime Validator](tools/specsValidator/README.md) verifies if a runtime runs the bundle [correctly](#compliant-runtime).
+- [Runtime Validator](tools/runtimeValidator/README.md) verifies if a runtime runs the bundle [correctly](#compliant-runtime).
 
 To make OCT easier, more tools are required:
 - OCI builder - build a native OCI bundle
@@ -39,7 +39,7 @@ One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://
 ## Getting Started
 
 - Fork the repository on GitHub
-- Read the 'build and test instruction' for [Bundle Validator](tools/bundleValidator/README.md) and [Runtime Validator](tools/specsValidator/README.md)
+- Read the 'build and test instruction' for [Bundle Validator](tools/bundleValidator/README.md) and [Runtime Validator](tools/runtimeValidator/README.md)
 - Play with the project, submit bugs, submit patches!
 
 ### How to involve
