@@ -115,14 +115,14 @@ For example, in linuxspec.json
   ]
 }
 # Field "testcasename": name of testacse
-# Field "input": input of the tetstcase to create config.json for containers, left value is the obj in [opencontainers/specs](https://github.com/opencontainers/specs), right value is the value of the obj in left.
+# Field "input": input of the tetstcase to create config.json for containers, left value is the obj in (https://github.com/opencontainers/specs), right value is the value of the obj in left.
 # Field "error": output the err of the testcase
-# Field "result": result of the testcase, it is value should be in {"passed", "failed", "unsupportd", "unknown"}
+# Field "result": result of the testcase, it is value should be in ('passed', 'failed', 'unsupportd', 'unknown')
 # "passed": testcase is passed
 # "failed": testcase is failed
 # "unsupported": the input of the config is not supported by runc yet
 # "unkown": meet the unknown err, if anyone meet the result ,plz let me know
-``` 
+```
 
 ### Develop Progress
 
