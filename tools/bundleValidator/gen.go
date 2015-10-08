@@ -15,7 +15,7 @@
 package main
 
 import (
-	sv "github.com/huawei-openlab/oct/tools/bundleValidator/libspec"
+	sv "github.com/huawei-openlab/oct/tools/bundleValidator/lib"
 	"github.com/opencontainers/specs"
 )
 

@@ -30,7 +30,7 @@ all the required attributes.
 
 #Development design
 ##One spec struct, one validate function
-The validation work is done by .go files in the `libspec` directory.
+The validation work is done by .go files in the `lib` directory.
 These .go files follows the .go files in [specs](https://github.com/opencontainers/specs) closely
 in order to make the validation clearly, for example, here is the 'Spec' struct:
 
@@ -57,7 +57,7 @@ type Spec struct {
 
 The 'Valid' function is like this:
 ```
-libspec/config.go
+lib/config.go
 
 func SpecValid(s specs.Spec, runtime specs.RuntimeSpec, rootfs string, msgs []string) (bool, []string) {
         valid, msgs := checkSemVer(s.Version, msgs)

@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/codegangsta/cli"
-	"github.com/huawei-openlab/oct/tools/bundleValidator/libspec"
+	"github.com/huawei-openlab/oct/tools/bundleValidator/lib"
 	"os"
 )
 
@@ -61,7 +61,7 @@ func printErr(context *cli.Context, msgs []string) {
 func parseBundle(context *cli.Context) {
 	if len(context.Args()) > 0 {
 		var msgs []string
-		valid, msgs := specsValidator.OCTBundleValid(context.Args()[0], msgs)
+		valid, msgs := bundleValidator.OCTBundleValid(context.Args()[0], msgs)
 		if valid {
 			outputInfo(context, "Valid : config.json, runtime.json and rootfs are all accessible in the bundle")
 		} else {
@@ -75,7 +75,7 @@ func parseBundle(context *cli.Context) {
 func parseConfig(context *cli.Context) {
 	if len(context.Args()) > 0 {
 		var msgs []string
-		valid, msgs := specsValidator.OCTConfigValid(context.Args()[0], msgs)
+		valid, msgs := bundleValidator.OCTConfigValid(context.Args()[0], msgs)
 		if valid {
 			outputInfo(context, "Valid : config.json")
 		} else {
@@ -93,7 +93,7 @@ func parseRuntime(context *cli.Context) {
 		if len(context.Args()) > 1 {
 			os = context.Args()[1]
 		}
-		valid, msgs := specsValidator.OCTRuntimeValid(context.Args()[0], os, msgs)
+		valid, msgs := bundleValidator.OCTRuntimeValid(context.Args()[0], os, msgs)
 		if valid {
 			outputInfo(context, "Valid : runtime.json")
 		} else {
