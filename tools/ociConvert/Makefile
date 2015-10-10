@@ -1,4 +1,6 @@
-all:
+all: ociConvert
+
+ociConvert:
 	go build -o ociConvert
 
 clean:

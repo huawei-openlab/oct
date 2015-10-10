@@ -68,9 +68,9 @@ func CapabilitiesFrom(image schema.ImageManifest, msgs []string) ([]string, []st
 // main process.
 type User struct {
 	// UID is the user id.
-	UID int32 `required`
+	UID uint32 `required`
 	// GID is the group id.
-	GID int32 `required`
+	GID uint32 `required`
 	// AdditionalGIDs are additional group ids set for the container's process.
 	AdditionalGIDs []int32 `optional`
 }
@@ -83,13 +83,13 @@ func UserFrom(image schema.ImageManifest, msgs []string) (specs.User, []string) 
 	if err != nil {
 		msgs = append(msgs, "User.UID invalid")
 	} else {
-		u.UID = int32(UID)
+		u.UID = uint32(UID)
 	}
 	GID, err := strconv.Atoi(image.App.Group)
 	if err != nil {
 		msgs = append(msgs, "User.GID invalid")
 	} else {
-		u.GID = int32(GID)
+		u.GID = uint32(GID)
 	}
 
 	return u, msgs

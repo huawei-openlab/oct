@@ -15,11 +15,11 @@
 package main
 
 import (
-	"./libspec"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/appc/spec/schema"
+	"github.com/huawei-openlab/oct/tools/ociConvert/lib"
 	"github.com/opencontainers/specs"
 	"os"
 	"path"
