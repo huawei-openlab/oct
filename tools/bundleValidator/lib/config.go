@@ -157,7 +157,7 @@ type State struct {
 	Version string `required`
 	ID string `required`
 	Pid int `required`
-	Root string `required`
+	BundlePath string `required`
 }
 */
 func StateValid(s specs.State, msgs []string) (bool, []string) {
@@ -166,7 +166,7 @@ func StateValid(s specs.State, msgs []string) (bool, []string) {
 	ret, msgs := StringValid("State.ID", s.ID, msgs)
 	valid = ret && valid
 
-	ret, msgs = StringValid("State.Root", s.Root, msgs)
+	ret, msgs = StringValid("State.BundlePath", s.BundlePath, msgs)
 	valid = ret && valid
 
 	return valid, msgs
