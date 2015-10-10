@@ -10,11 +10,6 @@ make
 ##Generate a config.json and runtime.json
 Provide a template config.json and runtime.json.
 ```
-./bundle -o config.json gc
-./bundle -o runtime.json gr
-```
-or 
-```
 ./bundle gc > config.json
 ./bundle gr > runtime.json
 ```
