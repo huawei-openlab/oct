@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func SetRight(file string, uid int32, gid int32) {
+func SetRight(file string, uid uint32, gid uint32) {
 	f, err := os.Open(file)
 	if err != nil {
 		log.Fatalf("Open file %v error %v", file, err)

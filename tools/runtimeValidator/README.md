@@ -8,7 +8,7 @@ Just following steps below,
 ``` bash
 $    go get github.com/tools/godep                                               #install godep tool requested     
 $    go get -d  -tags v0.1.1 github.com/huawei-openlab/oct/tools/runtimeValidator  #get source code       
-$    cd $GOPATH/src/huawei-openlab/oct/tools/runtimeValidator                      #change dir to spcsValidator
+$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/runtimeValidator                      #change dir to spcsValidator
 $    make all BUILDTAGS=v0.1.1                                                   #build runtimeValidator      
 $    ./runtimeValidator -rtags=apparmor                                            #run runtimeValidator     
 $    cat report/linuxspec.json                                                   #get result       
