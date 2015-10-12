@@ -28,7 +28,7 @@ import (
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxrootfspropagation"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxselinuxlabel"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxsysctl"
-	//_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxuidgidmappings"
+	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxuidgidmappings"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specmount"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specplatform"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specprocess"
