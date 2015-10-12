@@ -62,7 +62,7 @@ func testIDmappings(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRun
 	outcuid, _ := strconv.ParseInt(outarray[0], 10, 0)
 	outhuid, _ := strconv.ParseInt(outarray[1], 10, 0)
 	outsize, _ := strconv.ParseInt(outarray[2], 10, 0)
-	var incuid, inhuid, insize int32
+	var incuid, inhuid, insize uint32
 	if isUid {
 		incuid = linuxRuntimeSpec.Linux.UIDMappings[0].ContainerID
 		inhuid = linuxRuntimeSpec.Linux.UIDMappings[0].HostID
@@ -72,7 +72,7 @@ func testIDmappings(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRun
 		inhuid = linuxRuntimeSpec.Linux.GIDMappings[0].HostID
 		insize = linuxRuntimeSpec.Linux.GIDMappings[0].Size
 	}
-	if (int32(outcuid) == incuid) && (int32(outhuid) == inhuid) && (int32(outsize) == insize) {
+	if (uint32(outcuid) == incuid) && (uint32(outhuid) == inhuid) && (uint32(outsize) == insize) {
 		return manager.PASSED, nil
 	} else {
 		return manager.FAILED, errors.New("test failed because" + failinfo)
