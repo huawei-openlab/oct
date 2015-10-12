@@ -10,7 +10,7 @@ import (
 func SetLinuxspecMinimum() specs.LinuxSpec {
 	var linuxSpec specs.LinuxSpec = specs.LinuxSpec{
 		Spec: specs.Spec{
-			Version: "0.1.0",
+			Version: "0.2.0",
 			Platform: specs.Platform{
 				OS:   runtime.GOOS,
 				Arch: runtime.GOARCH,
