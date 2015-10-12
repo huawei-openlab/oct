@@ -31,7 +31,7 @@ import (
 	//_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/linuxuidgidmappings"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specmount"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specplatform"
-	//_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specprocess"
+	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specprocess"
 	_ "github.com/huawei-openlab/oct/tools/runtimeValidator/cases/specroot"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/hostenv"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/manager"
