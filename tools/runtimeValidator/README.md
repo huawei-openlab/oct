@@ -1,4 +1,4 @@
-## Specs Validator       
+## Runtime Validator       
       
 The runtimeValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
 
@@ -17,7 +17,7 @@ $    cat report/linuxspec.json                                                  
       
 
 
-### Specs Validator Quickstart
+### Runtime Validator Quickstart
                 
 **Key Notes**        
 
