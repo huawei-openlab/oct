@@ -19,7 +19,7 @@ OCT covers following areas:
 To make OCT easier, more tools are required:
 - OCI builder - build a native OCI bundle
 - [OCI generator](tools/bundleValidator/README.md) - generate a minimal config.json/runtime.json
-- [OCI convert](tools/oci-convert) - convert from other images, like rkt.
+- [OCI convert](tools/ociConvert) - convert from other images, like rkt.
 
 
 ###Standard Bundle
@@ -35,7 +35,7 @@ A standard OCI runtime should be the one which could run all the [Standard Testi
 ![Standard Runtime](docs/static/runtime-validation-oci-standard.png "Standard Runtime")
 
 #### Compliant Runtime Testing Flow
-A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#stardard-testing-bundles) `correctly`.
+A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
 ![Compliant Runtime](docs/static/runtime-validation-oci-compliant.png "Compliant Runtime")
 
 
