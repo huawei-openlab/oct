@@ -28,14 +28,14 @@ A standard OCI bundle should be a [bundle](https://github.com/opencontainers/spe
 OCT provides standard bundles with different configuration in order to cover all the OCI testing.
 
 ###Standard or Compliant Runtime
-A standard OCI runtime should be the one which could run all the [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
-`Correctly` means running by a runtime, all the mounts, uid, and other informations should be exactly same with what defined in config.json/runtime.json.
 
 ####Standard Runtime Testing Flow
+A standard OCI runtime should be the one which could run all the [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
+`Correctly` means running by a runtime, all the mounts, uid, and other informations should be exactly same with what defined in config.json/runtime.json.
 ![Standard Runtime](docs/static/runtime-validation-oci-standard.png "Standard Runtime")
 
+#### Compliant Runtime Testing Flow
 A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#stardard-testing-bundles) `correctly`.
-## Compliant Runtime Testing Flow
 ![Compliant Runtime](docs/static/runtime-validation-oci-compliant.png "Compliant Runtime")
 
 
