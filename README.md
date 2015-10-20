@@ -29,13 +29,15 @@ OCT provides standard bundles with different configuration in order to cover all
 
 ###Standard or Compliant Runtime
 A standard OCI runtime should be the one which could run all the [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
-A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#stardard-testing-bundles) `correctly`.
-
 `Correctly` means running by a runtime, all the mounts, uid, and other informations should be exactly same with what defined in config.json/runtime.json.
 
-## Runtime Testing Flow
+####Standard Runtime Testing Flow
 ![Standard Runtime](docs/static/runtime-validation-oci-standard.png "Standard Runtime")
+
+A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#stardard-testing-bundles) `correctly`.
+## Compliant Runtime Testing Flow
 ![Compliant Runtime](docs/static/runtime-validation-oci-compliant.png "Compliant Runtime")
+
 
 ####Conversion tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
