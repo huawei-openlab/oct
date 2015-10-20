@@ -1,4 +1,4 @@
-## Specs Validator       
+## Runtime Validator       
       
 The runtimeValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
 
@@ -8,7 +8,7 @@ Just following steps below,
 ``` bash
 $    go get github.com/tools/godep                                               #install godep tool requested     
 $    go get -d  -tags v0.1.1 github.com/huawei-openlab/oct/tools/runtimeValidator  #get source code       
-$    cd $GOPATH/src/huawei-openlab/oct/tools/runtimeValidator                      #change dir to spcsValidator
+$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/runtimeValidator                      #change dir to spcsValidator
 $    make all BUILDTAGS=v0.1.1                                                   #build runtimeValidator      
 $    ./runtimeValidator -rtags=apparmor                                            #run runtimeValidator     
 $    cat report/linuxspec.json                                                   #get result       
@@ -17,7 +17,7 @@ $    cat report/linuxspec.json                                                  
       
 
 
-### Specs Validator Quickstart
+### Runtime Validator Quickstart
                 
 **Key Notes**        
 

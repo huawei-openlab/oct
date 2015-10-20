@@ -38,14 +38,14 @@ func TestLinuxUidMappings() string {
 		log.Fatalf("utils.setBind error GOPATH == nil")
 	}
 	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/runtimeValidator/rootfs"
-	utils.SetRight(rootfspath, int32(testuidInt), int32(testgidInt))
+	utils.SetRight(rootfspath, uint32(testuidInt), uint32(testgidInt))
 	var uid specs.IDMapping = specs.IDMapping{
-		HostID:      int32(testuidInt),
+		HostID:      uint32(testuidInt),
 		ContainerID: 0,
 		Size:        10,
 	}
 	var gid specs.IDMapping = specs.IDMapping{
-		HostID:      int32(testgidInt),
+		HostID:      uint32(testgidInt),
 		ContainerID: 0,
 		Size:        10,
 	}
@@ -72,14 +72,14 @@ func TestLinuxGidMappings() string {
 		log.Fatalf("utils.setBind error GOPATH == nil")
 	}
 	rootfspath := gopath + "/src/github.com/huawei-openlab/oct/tools/runtimeValidator/rootfs"
-	utils.SetRight(rootfspath, int32(testuidInt), int32(testgidInt))
+	utils.SetRight(rootfspath, uint32(testuidInt), uint32(testgidInt))
 	var uid specs.IDMapping = specs.IDMapping{
-		HostID:      int32(testuidInt),
+		HostID:      uint32(testuidInt),
 		ContainerID: 0,
 		Size:        10,
 	}
 	var gid specs.IDMapping = specs.IDMapping{
-		HostID:      int32(testgidInt),
+		HostID:      uint32(testgidInt),
 		ContainerID: 0,
 		Size:        10,
 	}

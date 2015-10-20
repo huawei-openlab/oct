@@ -34,7 +34,7 @@ func TestUser1000() string {
 		User: specs.User{
 			UID:            1000,
 			GID:            1000,
-			AdditionalGids: []int32{0, 1000},
+			AdditionalGids: []uint32{0, 1000},
 		},
 		Args: []string{"./specprocess"},
 		Env:  nil,
@@ -54,7 +54,7 @@ func TestUser1() string {
 		User: specs.User{
 			UID:            1,
 			GID:            1,
-			AdditionalGids: []int32{0},
+			AdditionalGids: []uint32{0},
 		},
 		Args: []string{"./specprocess"},
 		Env:  nil,

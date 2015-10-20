@@ -42,6 +42,7 @@ func TestMemoryLimit() string {
 	}()
 	time.Sleep(time.Second * 1)
 	result, err := checkConfigurationFromHost("memory", "memory.limit_in_bytes", "204800", failinfo)
+	<-c
 	var testResult manager.TestResult
 	testResult.Set("TestMemoryLimit", testResourceseMemory.Memory, err, result)
 	adaptor.DeleteRun()
