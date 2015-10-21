@@ -13,24 +13,27 @@ regardless of the underlying machine and the contents of the container.
 ```
 
 OCT covers following areas:
-- [Standard Container](#standard-container) test
-- [Compliant Runtime](#compliant-runtime) test
+- [Standard Container Test](#standard-container-test) 
+- [Compliant Runtime Test](#compliant-runtime-test) 
 
-###Standard Container
+###Standard Container Test
 A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
 
-####Standard Container Testing
 OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a bundle was a standard container.
 
-###Compliant Runtime
+###Compliant Runtime Test
 OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
-`Runtime Validator` is composed of three parts.
-- Standard Testing Containers
-  Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
-- Runtime Validator Unit
-  Runtime Validator Unit runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
-- Runtime Validator Manager
-  Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
+The `Runtime Validator` is composed of three parts:
+
+1.    Standard Testing Containers
+
+      Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
+2.    Runtime Validator Program
+
+      Runtime Validator Program runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
+3.    Runtime Validator Manager
+
+      Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
 ####Runtime Testing Flow
 There are two types of 'compliant runtime', the first one is could runs all the 
