@@ -23,26 +23,30 @@ OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a 
 
 ###Compliant Runtime Test
 OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
-The `Runtime Validator` is composed of three parts:
+The `Runtime Validator` has four components:
+  * Test Cases  
+    The `Test Cases` define a 'target' and a list of 'tests'. The 'target' is a single configuartion, the case developer could fill the 'tests' part with different values to cover more/all testing.
   * Standard Testing Containers  
-    `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
+    The `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
+    The config.json/runtime.json in these containers are coming from `Test Cases` by [OCI generator](#generator-tools). After being verified by the [Bundle Validator](tools/bundleValidator/README.md), all these containers became the `Standard Testing Containers`
   * Runtime Validator Program  
-    `Runtime Validator Program` runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
+    The `Runtime Validator Program` runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
   * Runtime Validator Manager  
-    `Runtime Validator Manager` loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
+    The `Runtime Validator Manager` loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
 ####Compliant Runtime Testing Flow
 There are two types of runtime, the first type support image with OCI format (Standard Container), the second type only support image with other format.
 Both of them could be 'OCI compliant', only difference is the second type need a ['conversion'](#conversion-tools) phase.
 
-#####Flow One            
+####Flow Chart One            
 ![Compliant Runtime One](docs/static/runtime-validation-oci-standard.png "Compliant Runtime One")
 
-#####Flow Two - begin with `Standard Testing Containers`
+
+####Flow Chart Two - begin with `Standard Testing Containers`
 ![Compliant Runtime Two](docs/static/runtime-validation-oci-standard2.png "Compliant Runtime Two")
 
 ###Generator tools
-[OCI generator](tools/bundleValidator/README.md) - generate config.json/runtime.json from [Test Case](#test-case)
+[OCI generator](tools/bundleValidator/README.md) - generate config.json/runtime.json from `Test Case`.
 
 ###Conversion tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
@@ -86,4 +90,3 @@ If any issues are encountered while using the oct project, several avenues are a
 
 ### Changes
 The `engine` part is now moved to [oct-engine](https://github.com/huawei-openlab/oct-engine)
-The `cases` part is now moved to [oct-engine/cases](https://github.com/huawei-openlab/oct-engine/cases)
