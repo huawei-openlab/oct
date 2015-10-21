@@ -24,21 +24,21 @@ OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a 
 ###Compliant Runtime Test
 OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
 The `Runtime Validator` is composed of three parts:
-#####1. Standard Testing Containers
-Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
-#####2. Runtime Validator Program
-Runtime Validator Program runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
-#####3. Runtime Validator Manager
-Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
+  * Standard Testing Containers  
+    `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
+  * Runtime Validator Program  
+    `Runtime Validator Program` runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
+  * Runtime Validator Manager  
+    `Runtime Validator Manager` loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
-####Runtime Testing Flow
+####Compliant Runtime Testing Flow
 There are two types of runtime, the first type support image with OCI format (Standard Container), the second type only support image with other format.
-Both of them could be 'OCI compliant', only difference is the second type need a 'conversion' phase.
+Both of them could be 'OCI compliant', only difference is the second type need a ['conversion'](#conversion-tools) phase.
 
-The first testing flow is like this:
+#####Flow One            
 ![Compliant Runtime One](docs/static/runtime-validation-oci-standard.png "Compliant Runtime One")
 
-In the second testing flow, there will be an extra ['conversion'](#conversion-tools) phase:
+#####Flow Two - begin with `Standard Testing Containers`
 ![Compliant Runtime Two](docs/static/runtime-validation-oci-standard2.png "Compliant Runtime Two")
 
 ###Generator tools
