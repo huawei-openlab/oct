@@ -24,16 +24,12 @@ OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a 
 ###Compliant Runtime Test
 OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
 The `Runtime Validator` is composed of three parts:
-
-1.    Standard Testing Containers
-
-      Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
-2.    Runtime Validator Program
-
-      Runtime Validator Program runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
-3.    Runtime Validator Manager
-
-      Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
+#####1. Standard Testing Containers
+Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
+#####2. Runtime Validator Program
+Runtime Validator Program runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
+#####3. Runtime Validator Manager
+Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
 ####Runtime Testing Flow
 There are two types of 'compliant runtime', the first one is could runs all the 
