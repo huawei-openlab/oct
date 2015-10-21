@@ -32,21 +32,26 @@ Runtime Validator Program runs inside a runtime to verify if settings mentioned 
 Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
 ####Runtime Testing Flow
-There are two types of 'compliant runtime', the first one is could runs all the 
-![Compliant Runtime](docs/static/runtime-validation-oci-standard.png "Compliant Runtime")
+There are two types of runtime, the first type support image with OCI format (Standard Container), the second type only support image with other format.
+Both of them could be 'OCI compliant', only difference is the second type need a 'conversion' phase.
 
-#### Compliant Runtime Testing Flow
-A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
-![Compliant Runtime](docs/static/runtime-validation-oci-compliant.png "Compliant Runtime")
+The first testing flow is like this:
+![Compliant Runtime One](docs/static/runtime-validation-oci-standard.png "Compliant Runtime One")
+
+In the second testing flow, there will be an extra ['conversion'](#conversion-tools) phase:
+![Compliant Runtime Two](docs/static/runtime-validation-oci-standard2.png "Compliant Runtime Two")
+
+###Generator tools
+[OCI generator](tools/bundleValidator/README.md) - generate config.json/runtime.json from [Test Case](#test-case)
+
+###Conversion tools
+One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
 
 ###Other tools
 To make OCT easier, more tools are required:
 - OCI builder - build a native OCI bundle
-- [OCI generator](tools/bundleValidator/README.md) - generate a minimal config.json/runtime.json
 - [OCI convert](tools/ociConvert) - convert from other images, like rkt.
 
-####Conversion tools
-One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
 
 ## Getting Started
 
