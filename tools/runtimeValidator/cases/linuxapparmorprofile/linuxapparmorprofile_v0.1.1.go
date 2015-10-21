@@ -18,14 +18,16 @@ package linuxapparmorprofile
 
 import (
 	"errors"
+	"io/ioutil"
+	"os/exec"
+	"strings"
+	"time"
+
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/manager"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/utils/configconvert"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/utils/specsinit"
 	"github.com/opencontainers/specs"
-	"os/exec"
-	"strings"
-	"time"
 )
 
 var linuxSpec specs.LinuxSpec = specsinit.SetLinuxspecMinimum()
@@ -65,11 +67,11 @@ func testApparmorProfile(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.Lin
 }
 
 func pretest() (string, error) {
-	out, err := exec.Command("bash", "-c", "cat  /sys/module/apparmor/parameters/enabled").Output()
+	out, err := ioutil.ReadFile("/sys/module/apparmor/parameters/enabled")
 	if err != nil || !strings.EqualFold(strings.TrimSpace(string(out)), "Y") {
 		return manager.UNSPPORTED, errors.New("HOST Machine NOT Support Apparmor")
 	}
-	out, err = exec.Command("bash", "-c", "apparmor_parser -r cases/linuxapparmorprofile/testapporprofile ").Output()
+	out, err = exec.Command("apparmor_parser", "-r", "cases/linuxapparmorprofile/testapporprofile ").Output()
 	if err != nil {
 		return manager.UNKNOWNERR, errors.New("HOST Machine Load Apparmor ERROR")
 	}
@@ -78,7 +80,7 @@ func pretest() (string, error) {
 
 func checkapparmorfilefromhost() (string, error) {
 	time.Sleep(time.Millisecond * 100)
-	out, err := exec.Command("bash", "-c", "apparmor_status").Output()
+	out, err := exec.Command("apparmor_status").Output()
 	outstr := string(out)
 	outstr = strings.TrimLeft(outstr, "processes are in enforce mode")
 	outstr = strings.TrimRight(outstr, "processes are in complain mode")
