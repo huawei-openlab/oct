@@ -40,7 +40,7 @@ func init() {
 
 func setApparmorProfile(profilename string) (specs.LinuxSpec, specs.LinuxRuntimeSpec) {
 	linuxRuntimeSpec.Linux.ApparmorProfile = profilename
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 3s"}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 0.5s"}
 	return linuxSpec, linuxRuntimeSpec
 }
 
@@ -50,9 +50,13 @@ func testApparmorProfile(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.Lin
 	runtimeFile := "./runtime.json"
 	err = configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
-	go adaptor.StartRunc(configFile, runtimeFile)
-	time.Sleep(time.Second * 1)
+	c := make(chan bool)
+	go func() {
+		adaptor.StartRunc(configFile, runtimeFile)
+		close(c)
+	}()
 	out, err = checkapparmorfilefromhost()
+	<-c
 	if err != nil {
 		return manager.UNKNOWNERR, errors.New(out + err.Error())
 	}
@@ -73,6 +77,7 @@ func pretest() (string, error) {
 }
 
 func checkapparmorfilefromhost() (string, error) {
+	time.Sleep(time.Millisecond * 100)
 	out, err := exec.Command("bash", "-c", "apparmor_status").Output()
 	outstr := string(out)
 	outstr = strings.TrimLeft(outstr, "processes are in enforce mode")

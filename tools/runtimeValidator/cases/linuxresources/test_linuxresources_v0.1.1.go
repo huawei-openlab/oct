@@ -20,7 +20,6 @@ import (
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/adaptor"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/manager"
 	"github.com/opencontainers/specs"
-	"time"
 )
 
 func TestMemoryLimit() string {
@@ -40,7 +39,6 @@ func TestMemoryLimit() string {
 		testResources(&linuxspec, &linuxruntimespec)
 		close(c)
 	}()
-	time.Sleep(time.Second * 1)
 	result, err := checkConfigurationFromHost("memory", "memory.limit_in_bytes", "204800", failinfo)
 	<-c
 	var testResult manager.TestResult
@@ -68,7 +66,6 @@ func TestCpuQuota() string {
 		testResources(&linuxspec, &linuxruntimespec)
 		close(c)
 	}()
-	time.Sleep(time.Second * 1)
 	result, err := checkConfigurationFromHost("cpu", "cpu.cfs_quota_us", "20000", failinfo)
 	<-c
 	var testResult manager.TestResult
@@ -95,7 +92,6 @@ func TestBlockIOWeight() string {
 		testResources(&linuxspec, &linuxruntimespec)
 		close(c)
 	}()
-	time.Sleep(time.Second * 1)
 	result, err := checkConfigurationFromHost("blkio", "blkio.weight", "300", failinfo)
 	<-c
 	var testResult manager.TestResult
@@ -120,7 +116,6 @@ func TestHugepageLimit() string {
 		testResources(&linuxspec, &linuxruntimespec)
 		close(c)
 	}()
-	time.Sleep(time.Second * 1)
 	result, err := checkConfigurationFromHost("hugetlb", "hugetlb."+testResourcehugtlb.HugepageLimits[0].Pagesize+".limit_in_bytes", "409600", failinfo)
 	<-c
 	var testResult manager.TestResult
