@@ -26,6 +26,17 @@ OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a
 The `Runtime Validator` has four components:
   * Test Cases  
     The `Test Cases` define a 'target' and a list of 'tests'. The 'target' is a single configuartion, the case developer could fill the 'tests' part with different values to cover more/all testing.
+```
+#rootfs readonly test
+readonly.json
+{
+"Target": "spec.root.readonly",
+"Tests": [ 
+    {"value": true}, 
+    {"value": false"}
+    ]
+}
+```
   * Standard Testing Containers  
     The `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
     The config.json/runtime.json in these containers are coming from `Test Cases` by [OCI generator](#generator-tools). After being verified by the [Bundle Validator](tools/bundleValidator/README.md), all these containers became the `Standard Testing Containers`
