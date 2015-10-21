@@ -13,31 +13,38 @@ regardless of the underlying machine and the contents of the container.
 ```
 
 OCT covers following areas:
-- [Bundle Validator](tools/bundleValidator/README.md) verifies if a bundle was a [Standard OCI Bundle](#standard-bundle).
-- [Runtime Validator](tools/runtimeValidator/README.md) verifies if a runtime runs the bundle [correctly](#standard-or-compliant-runtime).
+- [Standard Container](#standard-container) test
+- [Compliant Runtime](#compliant-runtime) test
 
-To make OCT easier, more tools are required:
-- OCI builder - build a native OCI bundle
-- [OCI generator](tools/bundleValidator/README.md) - generate a minimal config.json/runtime.json
-- [OCI convert](tools/ociConvert) - convert from other images, like rkt.
+###Standard Container
+A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
 
+####Standard Container Testing
+OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a bundle was a standard container.
 
-###Standard Bundle
-A standard OCI bundle should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
-###Standard Testing Bundles
-OCT provides standard bundles with different configuration in order to cover all the OCI testing.
+###Compliant Runtime
+OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
+`Runtime Validator` is composed of three parts.
+- Standard Testing Containers
+  Standard Testing Containers are the standard containers with different configurations in order to cover all the aspects of runtime testing.
+- Runtime Validator Unit
+  Runtime Validator Unit runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
+- Runtime Validator Manager
+  Runtime Validator Manager loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
 
-###Standard or Compliant Runtime
-
-####Standard Runtime Testing Flow
-A standard OCI runtime should be the one which could run all the [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
-`Correctly` means running by a runtime, all the mounts, uid, and other informations should be exactly same with what defined in config.json/runtime.json.
-![Standard Runtime](docs/static/runtime-validation-oci-standard.png "Standard Runtime")
+####Runtime Testing Flow
+There are two types of 'compliant runtime', the first one is could runs all the 
+![Compliant Runtime](docs/static/runtime-validation-oci-standard.png "Compliant Runtime")
 
 #### Compliant Runtime Testing Flow
 A compliant OCI runtime should be the one which could run all its own images [converted](#conversion-tools) from [Standard Testing Bundles](#standard-testing-bundles) `correctly`.
 ![Compliant Runtime](docs/static/runtime-validation-oci-compliant.png "Compliant Runtime")
 
+###Other tools
+To make OCT easier, more tools are required:
+- OCI builder - build a native OCI bundle
+- [OCI generator](tools/bundleValidator/README.md) - generate a minimal config.json/runtime.json
+- [OCI convert](tools/ociConvert) - convert from other images, like rkt.
 
 ####Conversion tools
 One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
