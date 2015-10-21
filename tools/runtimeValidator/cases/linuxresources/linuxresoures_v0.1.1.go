@@ -50,10 +50,9 @@ func setResources(resources specs.Resources) (specs.LinuxSpec, specs.LinuxRuntim
 }
 
 func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRuntimeSpec) (string, error) {
-
 	configFile := "./config.json"
 	runtimeFile := "./runtime.json"
-	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 1.5s"}
+	linuxSpec.Spec.Process.Args = []string{"/bin/bash", "-c", "sleep 0.5s"}
 	err := configconvert.LinuxSpecToConfig(configFile, linuxSpec)
 	err = configconvert.LinuxRuntimeToConfig(runtimeFile, linuxRuntimeSpec)
 	out, err := adaptor.StartRunc(configFile, runtimeFile)
@@ -65,9 +64,9 @@ func testResources(linuxSpec *specs.LinuxSpec, linuxRuntimeSpec *specs.LinuxRunt
 }
 
 func checkConfigurationFromHost(subsys string, filename string, configvalue string, failinfo string) (string, error) {
+	time.Sleep(time.Millisecond * 100)
 	pwd, err := exec.Command("bash", "-c", "find /sys/fs/cgroup/"+subsys+" -name runtimeValidator").Output()
 	cmdouput, err := exec.Command("bash", "-c", "cat "+strings.TrimSpace(string(pwd))+"/"+filename).Output()
-	time.Sleep(time.Second * 1)
 	if err != nil {
 		log.Println("path=" + strings.TrimSpace(string(pwd)) + "/" + filename)
 		log.Fatalf("[runtimeValidator] linux resources test : read the "+filename+" error, %v", err)
