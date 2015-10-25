@@ -15,5 +15,18 @@
 package main
 
 func main() {
+	app := cli.NewApp()
+	app.Name = "oci-runtimeValidator"
+	app.Version = "0.0.1"
+	app.Usage = "Utilities for OCI runtime validation"
+	app.EnableBashCompletion = true
 
+	app.Commands = []cli.Command{
+		generateCommand,
+		validateCommand,
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		logrus.Fatal(err)
+	}
 }
