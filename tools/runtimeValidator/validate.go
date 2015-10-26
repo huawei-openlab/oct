@@ -4,37 +4,15 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
 	"github.com/huawei-openlab/oct/tools/runtimeValidator/factory"
+	"github.com/huawei-openlab/oct/tools/runtimeValidator/utils"
 )
 
-var validateFlags = []cli.Flag{
-	cli.StringFlag{Name: "runtime", Value: "runc", Usage: "path to the OCI runtime"},
-	cli.StringFlag{Name: "validateScope", Valule: "overall", Usage: "test case to the OCI runtime"},
-}
+var c = make(chan int, 10)
 
-var validateCommand = cli.Command{
-	Name:  "validate",
-	Usage: "validate a OCI spec file",
-	Flags: validateFlags,
-	Action: func(context *cli.Context) {
+func validate() error {
 
-		runtime := context.String("runtime")
-		if runtime == "" {
-			logrus.Fatalf("runtime path shouldn't be empty")
-		}
-
-		validateScope := context.String("validateScope")
-		if validateScope == "" {
-			logrus.Fatalf("validateScope shouldn't be empty")
-		}
-
-		validate(validateScope)
-
-	},
-}
-
-func validate(validateScope string) error {
+	prepare()
 
 	rootfs := "./cases/" + validateScope + "input/rootfs"
 	cPath := filepath.Join(rootfs, "config.json")
@@ -44,4 +22,12 @@ func validate(validateScope string) error {
 		logrus.Fatal(err)
 	}
 	logrus.Infof("Test succeeded.")
+}
+
+func prepare() {
+	out, err := utils.ExecCmd("./", "./prepare.sh", "process")
+	if err != nil {
+		logrus.Fatalf(out)
+	}
+
 }
