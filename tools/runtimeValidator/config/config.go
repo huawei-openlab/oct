@@ -2,39 +2,22 @@ package config
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/astaxie/beego/config"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/astaxie/beego/config"
 )
 
-/*var caseConfig config.ConfigContainer
+var CaseArray = make([]string, 1)
+var ConfigPath = "cases.conf"
+var ConfigLen int
 
 func init() {
-	var err error
-
-}*/
-var CaseArray = make([]string, 1)
-
-func GetConfig(caseName string, configPath string) []string {
-	caseConfig, err := config.NewConfig("ini", configPath)
+	f, err := os.Open(ConfigPath)
 	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	data := caseConfig.Strings(caseName)
-	if data == nil {
-		logrus.Fatalf("Get case config err.")
-	}
-	return data
-}
-
-func GetCaseName(file string) []string {
-	f, err := os.Open(file)
-	if err != nil {
-		logrus.Fatalf("Open file %v error %v", file, err)
+		logrus.Fatalf("Open file %v error %v", ConfigPath, err)
 	}
 	defer f.Close()
 
@@ -46,6 +29,7 @@ func GetCaseName(file string) []string {
 		if err != nil || io.EOF == err {
 			break
 		}
+
 		prefix := strings.Split(line, "=")
 		caseName := strings.TrimSpace(prefix[0])
 		if count == 0 {
@@ -54,10 +38,21 @@ func GetCaseName(file string) []string {
 			CaseArray = append(CaseArray, caseName)
 		}
 
-		for _, c := range CaseArray {
-			fmt.Println(c)
-		}
+		count = count + 1
 		continue
 	}
-	return CaseArray
+	ConfigLen = count - 1
+}
+
+func GetConfig(caseName string) []string {
+	caseConfig, err := config.NewConfig("ini", ConfigPath)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	data := caseConfig.Strings(caseName)
+	if data == nil {
+		logrus.Fatalf("Get case config err.")
+	}
+	return data
 }

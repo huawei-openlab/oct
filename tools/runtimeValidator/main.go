@@ -15,6 +15,9 @@
 package main
 
 import (
+	"os"
+
+	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 )
 
@@ -35,7 +38,7 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		Runtime = c.String("runtime")
-		validate()
+		validate("process", "--args=runtimetest --terminal=false")
 	}
 
 	if err := app.Run(os.Args); err != nil {

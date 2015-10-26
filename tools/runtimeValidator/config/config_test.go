@@ -25,17 +25,17 @@ func TestConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 	f.Close()
-	defer os.Remove("cases.conf")
+	// defer os.Remove("cases.conf")
 
-	if data := GetConfig("process", "cases.conf"); len(data) != 3 {
+	if data := GetConfig("process"); len(data) != 3 {
 		t.Fatal("Get process err", data)
 	} else if data[0] != "--args=/bin/bash --cwd=/bin --terminal=true" {
 		t.Fatal("Get first params of process err")
 	}
 
-	caseArray := GetCaseName("cases.conf")
-	fmt.Println("-----------------------------------")
-	for _, c := range caseArray {
+	for _, c := range CaseArray {
 		fmt.Println(c)
 	}
+
+	fmt.Println(ConfigLen)
 }
