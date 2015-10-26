@@ -1,14 +1,5 @@
-ifndef BUILDTAGS
-BUILDTAGS=predraft
-endif
-export BUILDTAGS
 
 all:
-
-	godep go build -tags $(BUILDTAGS) -o runtimeValidator
-
-	$(MAKE) -C containerend
+	$(MAKE) -C plugins
 clean:
-	rm runtimeValidator
-	rm -rf  rootfs ubuntu.tar config.json runtime.json
-	$(MAKE) -C containerend clean
+	$(MAKE) -C plugins clean
