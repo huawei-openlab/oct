@@ -14,16 +14,31 @@
 
 package main
 
+import (
+	"os"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/codegangsta/cli"
+)
+
+var Runtime string
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "oci-runtimeValidator"
 	app.Version = "0.0.1"
 	app.Usage = "Utilities for OCI runtime validation"
 	app.EnableBashCompletion = true
-
-	app.Commands = []cli.Command{
-		generateCommand,
-		validateCommand,
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "runtime",
+			Value: "runc",
+			Usage: "runtime to be validated",
+		},
+	}
+	app.Action = func(c *cli.Context) {
+		Runtime = c.String("runtime")
+		validate("process", "--args=runtimetest --terminal=false")
 	}
 
 	if err := app.Run(os.Args); err != nil {
