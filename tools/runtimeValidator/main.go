@@ -38,7 +38,7 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		Runtime = c.String("runtime")
-		validate("process", "--args=runtimetest --terminal=false")
+		validate("process", "--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false")
 	}
 
 	if err := app.Run(os.Args); err != nil {
