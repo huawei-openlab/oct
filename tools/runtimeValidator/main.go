@@ -15,11 +15,19 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
+	"github.com/huawei-openlab/oct/tools/runtimeValidator/config"
 )
+
+func init() {
+	cpuNum := runtime.NumCPU()
+	runtime.GOMAXPROCS(cpuNum)
+}
 
 var Runtime string
 
@@ -38,7 +46,12 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		Runtime = c.String("runtime")
-		validate("process", "--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false")
+		for key, value := range config.BundleMap {
+			err := validate(key, value)
+			// logrus.Debugln(err)
+			fmt.Println(err)
+		}
+		//validate("process", "--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false")
 	}
 
 	if err := app.Run(os.Args); err != nil {

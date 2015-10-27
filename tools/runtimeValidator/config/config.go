@@ -2,15 +2,19 @@ package config
 
 import (
 	"bufio"
+	// "fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/astaxie/beego/config"
 )
 
-var CaseArray = make([]string, 1)
+var BundleMap = make(map[string]string)
+
+/*var BundleNames = make([]string, 1)*/
 var ConfigPath = "cases.conf"
 var ConfigLen int
 
@@ -25,6 +29,7 @@ func init() {
 	count := 0
 
 	for {
+
 		line, err := rd.ReadString('\n')
 		if err != nil || io.EOF == err {
 			break
@@ -32,16 +37,30 @@ func init() {
 
 		prefix := strings.Split(line, "=")
 		caseName := strings.TrimSpace(prefix[0])
-		if count == 0 {
-			CaseArray[0] = caseName
-		} else {
-			CaseArray = append(CaseArray, caseName)
+		caseArg := strings.TrimPrefix(line, caseName+"=")
+		for i, arg := range splitArgs(caseArg) {
+			BundleMap[caseName+strconv.FormatInt(int64(i), 10)] = arg
+			count = count + 1
 		}
 
-		count = count + 1
-		continue
+		/*if count == 1 {
+			BundleNames[0] = caseName
+		} else {
+			BundleNames = append(BundleNames, caseName)
+		}*/
 	}
-	ConfigLen = count - 1
+	ConfigLen = count
+}
+
+func splitArgs(args string) []string {
+
+	argArray := strings.Split(args, ";")
+	len := len(argArray)
+	resArray := make([]string, len)
+	for count, arg := range argArray {
+		resArray[count] = strings.TrimSpace(arg)
+	}
+	return resArray
 }
 
 func GetConfig(caseName string) []string {
