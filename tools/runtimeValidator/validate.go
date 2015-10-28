@@ -54,14 +54,14 @@ func prepareBundle(validateObj string) {
 		logrus.Fatal(err)
 	}
 
-	err = os.MkdirAll(testRoot, os.ModePerm)
+	err = os.Mkdir(testRoot, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
 	// Create rootfs folder to bundle
 	rootfs := testRoot + "/rootfs"
-	err = os.MkdirAll(rootfs, os.ModePerm)
+	err = os.Mkdir(rootfs, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -74,12 +74,17 @@ func prepareBundle(validateObj string) {
 
 	// Copy runtimtest from plugins to rootfs
 	src := "./plugins/runtimetest"
-	destRootfs := rootfs + "/runtimetest"
-	err = copy(destRootfs, src)
+	dRuntimeTest := rootfs + "/runtimetest"
+	err = copy(dRuntimeTest, src)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	err = os.Chmod(dRuntimeTest, os.ModePerm)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
+	// copy *.json to testroot and rootfs
 	csrc := "./plugins/config.json"
 	rsrc := "./plugins/runtime.json"
 	cdest := rootfs + "/config.json"
@@ -93,6 +98,8 @@ func prepareBundle(validateObj string) {
 		logrus.Fatal(err)
 	}
 
+	csrc = "./plugins/config.json"
+	rsrc = "./plugins/runtime.json"
 	cdest = testRoot + "/config.json"
 	rdest = testRoot + "/runtime.json"
 	err = copy(cdest, csrc)
