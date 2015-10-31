@@ -15,9 +15,10 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"os"
 	"runtime"
+	"time"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
@@ -46,13 +47,28 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		Runtime = c.String("runtime")
+		// for key, value := range config.BundleMap {
+		// 	logrus.Println("--------------------------")
+		// 	logrus.Printf("main key %v, value %v\n", key, value)
+		// 	logrus.Println("--------------------------")
+		// }
 		for key, value := range config.BundleMap {
+			logrus.Debugf("Test bundle name: %v, Test args: %v\n", key, value)
 			err := validate(key, value)
+			if err != nil {
+				logrus.Fatal(err)
+			} else {
+				logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, key, value)
+			}
 			// logrus.Debugln(err)
-			fmt.Println(err)
+			// fmt.Println(err)
+			time.Sleep(1 * time.Second)
 		}
 		//validate("process", "--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false")
 	}
+
+	logrus.SetLevel(logrus.InfoLevel)
+	// logrus.SetLevel(logrus.DebugLevel)
 
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)

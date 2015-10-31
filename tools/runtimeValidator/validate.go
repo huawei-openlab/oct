@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	// "log"
 	"os"
 	"strings"
 
@@ -13,6 +14,7 @@ import (
 /*var c = make(chan int, 10)*/
 
 func validate(validateObj string, configArgs string) error {
+	// logrus.Printf("validate configArgs %v\n", configArgs)
 
 	generateConfigs(configArgs)
 	prepareBundle(validateObj)
@@ -20,13 +22,19 @@ func validate(validateObj string, configArgs string) error {
 	if err := factory.TestRuntime(Runtime, testRoot); err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.Infof("Test succeeded.")
-
 	return nil
 }
 
 func generateConfigs(configArgs string) {
+	// logrus.Printf("configArgs : %v\n", configArgs)
 	args := splitArgs(configArgs)
+
+	// logrus.Println("generateConfigs --------")
+	logrus.Debugf("Args to the ocitools generate: ")
+	for _, a := range args {
+		logrus.Debugln(a)
+	}
+
 	_, err := utils.ExecGenCmd(args)
 	if err != nil {
 		logrus.Fatal(err)
@@ -35,14 +43,36 @@ func generateConfigs(configArgs string) {
 
 func splitArgs(args string) []string {
 
-	argArray := strings.Split(args, "--")
-	len := len(argArray) - 1
-	resArray := make([]string, len)
-	for count, arg := range argArray {
-		if count != 0 {
-			resArray[count-1] = "--" + strings.TrimSpace(arg)
+	argsnew := strings.TrimSpace(args)
+	// logrus.Printf("splitArgs %v\n", argsnew)
+
+	argArray := strings.Split(argsnew, "--")
+
+	// for _, a := range argArray {
+	// 	logrus.Printf("after split %v\n", a)
+	// }
+	// logrus.SetLevel(logrus.WarnLevel)
+	lenth := len(argArray)
+	// logrus.Debugf("len : %v\n", lenth)
+
+	// logrus.Printf("len : %v\n", lenth)
+	resArray := make([]string, lenth-1)
+	for i, arg := range argArray {
+		// resArray[i-1] = "--" + strings.TrimSpace(arg)
+		if i == 0 || i == lenth {
+			continue
+		} else {
+			// logrus.Printf("in append %v, %v", i, arg)
+			resArray[i-1] = "--" + strings.TrimSpace(arg)
+			// resArray = append(resArray, "--"+arg)
 		}
 	}
+	// logrus.Println("+++++++++++++++++++++++")
+
+	// for _, a := range resArray {
+	// 	logrus.Printf("after append  %v\n", a)
+	// }
+
 	return resArray
 }
 
