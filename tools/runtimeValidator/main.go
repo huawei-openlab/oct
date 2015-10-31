@@ -18,6 +18,7 @@ import (
 	// "fmt"
 	"os"
 	"runtime"
+	"sync"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -46,25 +47,21 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) {
+		startTime := time.Now()
 		Runtime = c.String("runtime")
-		// for key, value := range config.BundleMap {
-		// 	logrus.Println("--------------------------")
-		// 	logrus.Printf("main key %v, value %v\n", key, value)
-		// 	logrus.Println("--------------------------")
-		// }
+		wg := new(sync.WaitGroup)
+		wg.Add(config.ConfigLen)
+
 		for key, value := range config.BundleMap {
-			logrus.Debugf("Test bundle name: %v, Test args: %v\n", key, value)
-			err := validate(key, value)
-			if err != nil {
-				logrus.Fatal(err)
-			} else {
-				logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, key, value)
-			}
-			// logrus.Debugln(err)
-			// fmt.Println(err)
-			time.Sleep(1 * time.Second)
+			go validateRoutine(key, value, wg)
+
 		}
-		//validate("process", "--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false")
+		wg.Wait()
+		logrus.Printf("Test runtime: %v, successed\n", Runtime)
+
+		endTime := time.Now()
+		dTime := endTime.Sub(startTime)
+		logrus.Debugf("Cost time: %v\n", dTime.Nanoseconds())
 	}
 
 	logrus.SetLevel(logrus.InfoLevel)
@@ -73,4 +70,16 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
 	}
+}
+
+func validateRoutine(bundleName string, generateArgs string, wg *sync.WaitGroup) {
+	logrus.Debugf("Test bundle name: %v, Test args: %v\n", bundleName, generateArgs)
+	err := validate(bundleName, generateArgs)
+	if err != nil {
+		logrus.Fatal(err)
+	} else {
+		logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, bundleName, generateArgs)
+	}
+	wg.Done()
+	return
 }
