@@ -58,7 +58,8 @@ func main() {
 			if err != nil {
 				logrus.Fatal(err)
 			} else {
-				logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, key, value)
+				logrus.Printf("Test runtime: %v bundle: %v, args: %v", Runtime, key, value)
+				logrus.Printf("Test Result: SUCCESS  \n")
 			}
 			// logrus.Debugln(err)
 			// fmt.Println(err)

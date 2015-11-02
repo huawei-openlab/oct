@@ -13,8 +13,13 @@ func TestRuntime(runtime string, specDir string) error {
 	cmd := exec.Command(runtime, "start")
 	cmd.Dir = specDir
 	cmd.Stdin = os.Stdin
-	_, err := cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	logrus.Infof("Command done")
+	if string(out) != "" {
+		logrus.Infof("container output=%s", out)
+	} else {
+		logrus.Infof("container output= nil")
+	}
 	if err != nil {
 		return err
 	}
