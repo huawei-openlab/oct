@@ -16,7 +16,7 @@ import (
 func validate(validateObj string, configArgs string) error {
 	// logrus.Printf("validate configArgs %v\n", configArgs)
 
-	generateConfigs(configArgs)
+	generateConfigs(validateObj, configArgs)
 	prepareBundle(validateObj)
 	testRoot := "./bundles/" + validateObj
 	if err := factory.TestRuntime(Runtime, testRoot); err != nil {
@@ -25,7 +25,7 @@ func validate(validateObj string, configArgs string) error {
 	return nil
 }
 
-func generateConfigs(configArgs string) {
+func generateConfigs(validateObj string, configArgs string) {
 	// logrus.Printf("configArgs : %v\n", configArgs)
 	args := splitArgs(configArgs)
 
@@ -38,6 +38,16 @@ func generateConfigs(configArgs string) {
 	_, err := utils.ExecGenCmd(args)
 	if err != nil {
 		logrus.Fatal(err)
+	}
+
+	copy("./plugins/runtime.json-"+validateObj, "./plugins/runtime.json")
+	if err != nil {
+		logrus.Fatalf("copy to runtime.json-%v, %v", validateObj, err)
+	}
+
+	copy("./plugins/config.json-"+validateObj, "./plugins/config.json")
+	if err != nil {
+		logrus.Fatalf("copy to config.json-%v, %v", validateObj, err)
 	}
 }
 
@@ -115,8 +125,8 @@ func prepareBundle(validateObj string) {
 	}
 
 	// copy *.json to testroot and rootfs
-	csrc := "./plugins/config.json"
-	rsrc := "./plugins/runtime.json"
+	csrc := "./plugins/config.json-" + validateObj
+	rsrc := "./plugins/runtime.json-" + validateObj
 	cdest := rootfs + "/config.json"
 	rdest := rootfs + "/runtime.json"
 	err = copy(cdest, csrc)
@@ -128,8 +138,6 @@ func prepareBundle(validateObj string) {
 		logrus.Fatal(err)
 	}
 
-	csrc = "./plugins/config.json"
-	rsrc = "./plugins/runtime.json"
 	cdest = testRoot + "/config.json"
 	rdest = testRoot + "/runtime.json"
 	err = copy(cdest, csrc)
