@@ -4,10 +4,9 @@ The runtimeValidator aims to Verify if a runtime containers runs the bundle corr
 
 
 ### Summary for the impatient      
-Just following steps below,
-***Key note***
+***Key note***           
 Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
-  
+
 ``` bash   
 $    go get github.com/huawei-openlab/oct/tools/runtimeValidator                 #get source code       
 $    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/runtimeValidator         #change dir to spcsValidator
@@ -20,14 +19,13 @@ $    ./runtimeValidator                                                         
                 
 - **Using Tools**        
 
-Tools used in runtimeValidator as plugins. plugins used list below:
-      
-runtime.json and config.json generation tool: github.com/zenlinTechnofreak/ocitools     
-container end validation tool: github.com/zenlinTechnofreak/ocitools/cmd/runtimetest  
+Tools used in runtimeValidator as plugins,
 ***Key Notes***   
-github.com/zenlinTechnofreak/ocitools are foked from github.com/mrunalp/ocitools, just adding some adaptor jobs for oct.   
+[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools),         
+adding some adaptor changes for oct.   
 
 See [plugins/Makefile](./plugins/Makefile)     
+       
 ``` Makefile    
 all:    
   echo ${GOPATH}    
@@ -48,11 +46,18 @@ Only Support runc yet, going to support other runtimes in next step, changes sho
 
 - **About Validation Cases**        
 
-Cases are listed in [cases.conf](./cases.conf), It going to be rich, in the fomate of below:     
+Cases are listed in [cases.conf](./cases.conf), It going to be rich, in the fomate of below: 
+    
+```   
+process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false     
+# result to generate two cases in [bundle](./bundle), should be bundle/process1 and bundle/process2   
 
-process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false    
-It means: To validate specs.LinuxSpec.Process, it has 2 cases, releavant to 2 bundle, process1 and process2, the bundles should be found in [bundles](./bundles)    
+```       
 
+### What is good for runtimeValidator
+1. Tools is used as plugins ,feel free to use any tools    
+2. Cases can be free to be added into cases.conf
+3. Uses goroutine, each go routine runs a case bundle to validate
 
 
 ### Next to Do 
