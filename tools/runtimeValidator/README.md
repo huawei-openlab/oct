@@ -20,9 +20,9 @@ $    ./runtimeValidator                                                         
 - **Using Tools**        
 
 Tools used in runtimeValidator as plugins,
-***Key Notes***   
-[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools),         
-adding some adaptor changes for oct.   
+***Key Notes***        
+
+[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
 
 See [plugins/Makefile](./plugins/Makefile)     
        
@@ -62,9 +62,11 @@ process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=
 
 ### Next to Do 
 
-1. Rich cases:
+1. Rich cases:        
+
    Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/cmd/runtimetest)   
    Rich cases in [cases.conf](./cases.conf)    
+
 2. Support other containers
 
 ### Reference
