@@ -68,7 +68,7 @@ func main() {
 	}
 
 	logrus.SetLevel(logrus.InfoLevel)
-	// logrus.SetLevel(logrus.DebugLevel)
+	//logrus.SetLevel(logrus.DebugLevel)
 
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatal(err)
@@ -79,7 +79,8 @@ func validateRoutine(bundleName string, generateArgs string, wg *sync.WaitGroup)
 	logrus.Debugf("Test bundle name: %v, Test args: %v\n", bundleName, generateArgs)
 	err := validate(bundleName, generateArgs)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Printf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", Runtime, bundleName, generateArgs, err)
+		//logrus.Fatal(err)
 	} else {
 		logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, bundleName, generateArgs)
 	}

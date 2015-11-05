@@ -10,5 +10,5 @@ clean:
 	go clean
 	#rm -rf ${GOPATH}/src/github.com/zenlinTechnofreak/ocitools
 	rm -rf ocitools runtimetest 
-	#rm -rf  rootfs ubuntu.tar config.json runtime.json
+	rm -rf config.json* runtime.json*
 	#$(MAKE) -C containerend clean
