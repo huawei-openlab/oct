@@ -16,9 +16,9 @@ func TestRuntime(runtime string, specDir string) error {
 	out, err := cmd.CombinedOutput()
 	logrus.Infof("Command done")
 	if string(out) != "" {
-		logrus.Infof("container output=%s", out)
+		logrus.Debugf("container output=%s\n", out)
 	} else {
-		logrus.Infof("container output= nil")
+		logrus.Debugf("container output= nil\n")
 	}
 	if err != nil {
 		return err
