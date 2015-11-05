@@ -34,7 +34,7 @@ func generateConfigs(validateObj string, configArgs string) {
 	for _, a := range args {
 		logrus.Debugln(a)
 	}
-
+	Mutex.Lock()
 	_, err := utils.ExecGenCmd(args)
 	if err != nil {
 		logrus.Fatal(err)
@@ -49,6 +49,7 @@ func generateConfigs(validateObj string, configArgs string) {
 	if err != nil {
 		logrus.Fatalf("copy to config.json-%v, %v", validateObj, err)
 	}
+	Mutex.Unlock()
 }
 
 func splitArgs(args string) []string {

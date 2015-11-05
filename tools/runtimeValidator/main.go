@@ -33,6 +33,9 @@ func init() {
 
 var Runtime string
 
+//Mutext be used in generate runtime.json & config.json
+var Mutex = &sync.Mutex{}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "oci-runtimeValidator"
