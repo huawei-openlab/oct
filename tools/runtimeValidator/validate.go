@@ -20,7 +20,9 @@ func validate(validateObj string, configArgs string) error {
 	prepareBundle(validateObj)
 	testRoot := "./bundles/" + validateObj
 	if err := factory.TestRuntime(Runtime, testRoot); err != nil {
-		logrus.Fatal(err)
+		logrus.Println(err)
+		return err
+		//logrus.Fatal(err)
 	}
 	return nil
 }
