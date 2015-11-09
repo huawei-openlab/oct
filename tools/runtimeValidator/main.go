@@ -60,7 +60,7 @@ func main() {
 
 		}
 		wg.Wait()
-		logrus.Printf("Test runtime: %v, successed\n", Runtime)
+		//logrus.Printf("Test runtime: %v, successed\n", Runtime)
 
 		endTime := time.Now()
 		dTime := endTime.Sub(startTime)
@@ -71,7 +71,7 @@ func main() {
 	//logrus.SetLevel(logrus.DebugLevel)
 
 	if err := app.Run(os.Args); err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Run App err %v\n", err)
 	}
 }
 

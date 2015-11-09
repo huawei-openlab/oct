@@ -20,7 +20,7 @@ func validate(validateObj string, configArgs string) error {
 	prepareBundle(validateObj)
 	testRoot := "./bundles/" + validateObj
 	if err := factory.TestRuntime(Runtime, testRoot); err != nil {
-		logrus.Println(err)
+		logrus.Printf("Run runtime err: %v\n", err)
 		return err
 		//logrus.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func generateConfigs(validateObj string, configArgs string) {
 	Mutex.Lock()
 	_, err := utils.ExecGenCmd(args)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Generate *.json err: %v\n", err)
 	}
 
 	copy("./plugins/runtime.json-"+validateObj, "./plugins/runtime.json")
@@ -94,25 +94,25 @@ func prepareBundle(validateObj string) {
 	testRoot := "./bundles/" + validateObj
 	err := os.RemoveAll(testRoot)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Remove bundle %v err: %v\n", validateObj, err)
 	}
 
 	err = os.Mkdir(testRoot, os.ModePerm)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Mkdir bundle %v dir err: %v\n", testRoot, err)
 	}
 
 	// Create rootfs folder to bundle
 	rootfs := testRoot + "/rootfs"
 	err = os.Mkdir(rootfs, os.ModePerm)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Mkdir rootfs for bundle %v err: %v\n", validateObj, err)
 	}
 
 	// Tar rootfs.tar.gz to rootfs
 	out, err := utils.ExecCmd("", "tar", "-xf", "rootfs.tar.gz", "-C", rootfs)
 	if err != nil {
-		logrus.Fatalf(out)
+		logrus.Fatalf("Tar roofs err: %v\n", out)
 	}
 
 	// Copy runtimtest from plugins to rootfs
@@ -120,13 +120,14 @@ func prepareBundle(validateObj string) {
 	dRuntimeTest := rootfs + "/runtimetest"
 	err = copy(dRuntimeTest, src)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Copy runtimetest to rootfs err: %v\n", err)
 	}
 	err = os.Chmod(dRuntimeTest, os.ModePerm)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Fatalf("Chmod runtimetest mode err: %v\n", err)
 	}
 
+	Mutex.Lock()
 	// copy *.json to testroot and rootfs
 	csrc := "./plugins/config.json-" + validateObj
 	rsrc := "./plugins/runtime.json-" + validateObj
@@ -151,6 +152,7 @@ func prepareBundle(validateObj string) {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+	Mutex.Unlock()
 }
 
 func copy(dst string, src string) error {
