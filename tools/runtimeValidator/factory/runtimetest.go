@@ -8,15 +8,15 @@ import (
 )
 
 func TestRuntime(runtime string, specDir string) error {
-	logrus.Infof("Launcing runtime")
+	logrus.Debugf("Launcing runtime")
 
 	cmd := exec.Command(runtime, "start")
 	cmd.Dir = specDir
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
-	logrus.Infof("Command done")
+	logrus.Debugf("Command done")
 	if string(out) != "" {
-		logrus.Debugf("container output=%s\n", out)
+		logrus.Printf("container output=%s\n", out)
 	} else {
 		logrus.Debugf("container output= nil\n")
 	}

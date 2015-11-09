@@ -1,2 +1,3 @@
 clean:
-	ls |grep -v README.md |xargs rm -rf
+	ls |grep -v Makefile |xargs rm -rf
+
