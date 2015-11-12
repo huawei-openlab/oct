@@ -23,7 +23,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/huawei-openlab/oct/tools/runtimeValidator/config"
+	"github.com/huawei-openlab/oct/config"
 )
 
 func init() {
