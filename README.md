@@ -1,103 +1,69 @@
-# OCT: Open Container Testing
+## OCI Test        
+      
+The ocitest aims to Verify if a runtime container is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
+It is a light weight testing framework, using ocitools, managing configurable high coverage bundles as cases, supporting verifying different runtimes.     
 
-The OCT project aims to promote the [Open Container Initiative](http://www.opencontainers.org/) by providing a universal open container testing `libs` or `tools`.
 
-## OCT scope
-Following [the OCI Principles](https://github.com/opencontainers/specs): 
+### Summary for the impatient      
+***Key note***           
+Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
+
+``` bash   
+$    go get github.com/huawei-openlab/oct                 #get source code       
+$    cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
+$    make                                                 #build      
+$    ./ocitest                                            #run     
+```     
+      
+
+### OCI Test Quickstart
+                
+- **Using Tools**        
+
+Tools used by ocitest as plugins,
+***Key Notes***        
+
+[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
+
+See [plugins/Makefile](./plugins/Makefile)     
+       
+
+- **Supportted Runtime**    
+    
+Only Support runc yet, going to support other runtimes in next step, such as docker, RKT, etc, changes should be existed in [factory](./factory)      
+
+
+- **About Test Cases**        
+
+Cases are listed in [cases.conf](./cases.conf), as the fomate of bunldes, It is going to be rich, in the fomate of below: 
+    
+```   
+process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false     
+# result to generate two cases in [bundle](./bundle), should be bundle/process0 and bundle/process1,        
+# and '--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false' is params for ocitools generate   
+
 ```
-Define a unit of software delivery called a Standard Container. 
-The goal of a Standard Container is to encapsulate a software component 
-and all its dependencies in a format that is self-describing and portable, 
-so that any compliant runtime can run it without extra dependencies, 
-regardless of the underlying machine and the contents of the container.
-```
 
-OCT covers following areas:
-- [Standard Container Test](#standard-container-test) 
-- [Compliant Runtime Test](#compliant-runtime-test) 
-
-###Standard Container Test
-A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
-
-OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a bundle was a standard container.
-
-###Compliant Runtime Test
-OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
-The `Runtime Validator` has four components:
-  * Test Cases  
-    The `Test Cases` define a 'target' and a list of 'tests'. The 'target' is a single configuartion, the case developer could fill the 'tests' part with different values to cover more/all testing.
-```
-#rootfs readonly test
-readonly.json
-{
-"Target": "spec.root.readonly",
-"Tests": [ 
-    {"value": true}, 
-    {"value": false"}
-    ]
-}
-```
-  * Standard Testing Containers  
-    The `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
-    The config.json/runtime.json in these containers are coming from `Test Cases` by [OCI generator](#generator-tools). After being verified by the [Bundle Validator](tools/bundleValidator/README.md), all these containers became the `Standard Testing Containers`
-  * Runtime Validator Program  
-    The `Runtime Validator Program` runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
-  * Runtime Validator Manager  
-    The `Runtime Validator Manager` loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
-
-####Compliant Runtime Testing Flow
-There are two types of runtime, the first type support image with OCI format (Standard Container), the second type only support image with other format.
-Both of them could be 'OCI compliant', only difference is the second type need a ['conversion'](#conversion-tools) phase.
-
-####Flow Chart One            
-![Compliant Runtime One](docs/static/runtime-validation-oci-standard.png "Compliant Runtime One")
+### What is good for runtimeValidator       
+1. Light weight testing freamwork      
+2. High coverage test cases, configurable, easy to add cases
+3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
+4. Uses goroutine, each go routine runs a case bundle to validate   
+**Note**     
+Now, using generate and validate tools from [github.com/mrunalp](github.com/mrunalp/ocitools),          
+the ocitest will container self-developped tools in [./tools](./tools), such as, bundleValidator, ociConvertor, etc 
 
 
-####Flow Chart Two - begin with `Standard Testing Containers`
-![Compliant Runtime Two](docs/static/runtime-validation-oci-standard2.png "Compliant Runtime Two")
+### Next to Do 
 
-###Generator tools
-[OCI generator](tools/bundleValidator/README.md) - generate config.json/runtime.json from `Test Case`.
+1. Rich cases:        
 
-###Conversion tools
-One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
+   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/cmd/runtimetest)   
+   Rich cases in [cases.conf](./cases.conf)    
 
-###Other tools
-To make OCT easier, more tools are required:
-- OCI builder - build a native OCI bundle
-- [OCI convert](tools/ociConvert) - convert from other images, like rkt.
+2. Support other containers
 
+### Reference
+OCI specs on https://github.com/opencontainers/specs   
 
-## Getting Started
-
-- Fork the repository on GitHub
-- Read the 'build and test instruction' for [Bundle Validator](tools/bundleValidator/README.md) and [Runtime Validator](tools/runtimeValidator/README.md)
-- Play with the project, submit bugs, submit patches!
-
-### How to involve
-If any issues are encountered while using the oct project, several avenues are available for support:
-<table>
-<tr>
-	<th align="left">
-	Issue Tracker
-	</th>
-	<td>
-	https://github.com/huawei-openlab/oct/issues
-	</td>
-</tr>
-<tr>
-	<th align="left">
-	Google Groups
-	</th>
-	<td>
-	https://groups.google.com/forum/#!forum/oci-testing
-	</td>
-</tr>
-</table>
-
-
-## Who should join
-- Open Container project developer/user
-
-### Changes
-The `engine` part is now moved to [oct-engine](https://github.com/huawei-openlab/oct-engine)
+OCI runc on https://github.com/opencontainers/runc
