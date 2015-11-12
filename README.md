@@ -1,6 +1,7 @@
-## Runtime Validator       
+## OCI Test        
       
-The runtimeValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
+The ocitest aims to Verify if a runtime container is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
+It is a light weight testing framework, using ocitools, managing configurable high coverage bundles as cases, supporting verifying different runtimes.     
 
 
 ### Summary for the impatient      
@@ -8,56 +9,49 @@ The runtimeValidator aims to Verify if a runtime containers runs the bundle corr
 Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
 
 ``` bash   
-$    go get github.com/huawei-openlab/oct/tools/runtimeValidator                 #get source code       
-$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/runtimeValidator         #change dir to spcsValidator
-$    make                                                                        #build runtimeValidator      
-$    ./runtimeValidator                                                          #run runtimeValidator     
+$    go get github.com/huawei-openlab/oct                 #get source code       
+$    cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
+$    make                                                 #build      
+$    ./ocitest                                            #run     
 ```     
       
 
-### Runtime Validator Quickstart
+### OCI Test Quickstart
                 
 - **Using Tools**        
 
-Tools used in runtimeValidator as plugins,
+Tools used by ocitest as plugins,
 ***Key Notes***        
 
 [ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
 
 See [plugins/Makefile](./plugins/Makefile)     
        
-``` Makefile    
-all:    
-  echo ${GOPATH}    
-  echo "Installing plugin: github.com/zenlinTechnofreak/ocitools..."    
-  set -e   
-  go get github.com/zenlinTechnofreak/ocitools   
-  go build github.com/zenlinTechnofreak/ocitools    
-  go build github.com/zenlinTechnofreak/ocitools/cmd/runtimetest    
-clean:    
-  go clean    
-  rm -rf ocitools runtimetest      
-```    
 
 - **Supportted Runtime**    
     
-Only Support runc yet, going to support other runtimes in next step, changes should be existed in [factory](./factory)      
+Only Support runc yet, going to support other runtimes in next step, such as docker, RKT, etc, changes should be existed in [factory](./factory)      
 
 
-- **About Validation Cases**        
+- **About Test Cases**        
 
-Cases are listed in [cases.conf](./cases.conf), It going to be rich, in the fomate of below: 
+Cases are listed in [cases.conf](./cases.conf), as the fomate of bunldes, It is going to be rich, in the fomate of below: 
     
 ```   
 process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false     
-# result to generate two cases in [bundle](./bundle), should be bundle/process1 and bundle/process2   
+# result to generate two cases in [bundle](./bundle), should be bundle/process0 and bundle/process1,        
+# and '--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false' is params for ocitools generate   
 
-```       
+```
 
-### What is good for runtimeValidator
-1. Tools is used as plugins ,feel free to use any tools    
-2. Cases can be free to be added into cases.conf
-3. Uses goroutine, each go routine runs a case bundle to validate
+### What is good for runtimeValidator       
+1. Light weight testing freamwork      
+2. High coverage test cases, configurable, easy to add cases
+3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
+4. Uses goroutine, each go routine runs a case bundle to validate   
+**Note**     
+Now, using generate and validate tools from [github.com/mrunalp](github.com/mrunalp/ocitools),          
+the ocitest will container self-developped tools in [./tools](./tools), such as, bundleValidator, ociConvertor, etc 
 
 
 ### Next to Do 
