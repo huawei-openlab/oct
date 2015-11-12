@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/huawei-openlab/oct/tools/runtimeValidator/factory"
-	"github.com/huawei-openlab/oct/tools/runtimeValidator/utils"
+	"github.com/huawei-openlab/oct/factory"
+	"github.com/huawei-openlab/oct/utils"
 )
 
 /*var c = make(chan int, 10)*/
