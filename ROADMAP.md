@@ -1,13 +1,23 @@
 # Roadmap
 
-This document defines the high-level goals of the ocp-testing project. See [Project Planning](#project-planning) for information on Releases.
+This document defines the high-level goals of the ocitest project.     
+    
+## 1.0     
 
-## Long-term Goal
+### High Coverage Cases    
 
+Rich cases to reach the aim of high coverage testing of compliance of runtime    
+       
+### Supporting RKT Runtime    
 
-
-## Short-term Goals
-
+Developing ocicovert tool like oci2aci    
+Using ocicovert to support testing of RKT   
+        
+### Supporint Docker Runtime     
+      
+Developing ocicovert tool like oci2docker    
+Using ociconvert to support testing of docker
+    
 
 
 Project Planning
