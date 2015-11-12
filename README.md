@@ -1,103 +1,75 @@
-# OCT: Open Container Testing
-
-The OCT project aims to promote the [Open Container Initiative](http://www.opencontainers.org/) by providing a universal open container testing `libs` or `tools`.
-
-## OCT scope
-Following [the OCI Principles](https://github.com/opencontainers/specs): 
-```
-Define a unit of software delivery called a Standard Container. 
-The goal of a Standard Container is to encapsulate a software component 
-and all its dependencies in a format that is self-describing and portable, 
-so that any compliant runtime can run it without extra dependencies, 
-regardless of the underlying machine and the contents of the container.
-```
-
-OCT covers following areas:
-- [Standard Container Test](#standard-container-test) 
-- [Compliant Runtime Test](#compliant-runtime-test) 
-
-###Standard Container Test
-A standard container should be a [bundle](https://github.com/opencontainers/specs/blob/master/bundle.md) with one standard 'config.json', one standard 'runtime.json' and one standard 'rootfs'.
-
-OCT provides [Bundle Validator](tools/bundleValidator/README.md) to verify if a bundle was a standard container.
-
-###Compliant Runtime Test
-OCT provides [Runtime Validator](tools/runtimeValidator/REAME.md) to verify if a runtime was a compliant container.
-The `Runtime Validator` has four components:
-  * Test Cases  
-    The `Test Cases` define a 'target' and a list of 'tests'. The 'target' is a single configuartion, the case developer could fill the 'tests' part with different values to cover more/all testing.
-```
-#rootfs readonly test
-readonly.json
-{
-"Target": "spec.root.readonly",
-"Tests": [ 
-    {"value": true}, 
-    {"value": false"}
-    ]
-}
-```
-  * Standard Testing Containers  
-    The `Standard Testing Containers` are the standard containers with different configurations in order to cover all the aspects of runtime test.
-    The config.json/runtime.json in these containers are coming from `Test Cases` by [OCI generator](#generator-tools). After being verified by the [Bundle Validator](tools/bundleValidator/README.md), all these containers became the `Standard Testing Containers`
-  * Runtime Validator Program  
-    The `Runtime Validator Program` runs inside a runtime to verify if settings mentioned in config.json and runtime.json match the relevant system information.
-  * Runtime Validator Manager  
-    The `Runtime Validator Manager` loads all the `Standard Testing Containers`, uses `Runtime Validator Unit` to verify if a runtime runs all the `Standard Testing Containers` correctly.
-
-####Compliant Runtime Testing Flow
-There are two types of runtime, the first type support image with OCI format (Standard Container), the second type only support image with other format.
-Both of them could be 'OCI compliant', only difference is the second type need a ['conversion'](#conversion-tools) phase.
-
-####Flow Chart One            
-![Compliant Runtime One](docs/static/runtime-validation-oci-standard.png "Compliant Runtime One")
+## Runtime Validator       
+      
+The runtimeValidator aims to Verify if a runtime containers runs the bundle correctly, test its compliance to [opencontainers/specs](https://github.com/opencontainers/specs)      
 
 
-####Flow Chart Two - begin with `Standard Testing Containers`
-![Compliant Runtime Two](docs/static/runtime-validation-oci-standard2.png "Compliant Runtime Two")
+### Summary for the impatient      
+***Key note***           
+Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
 
-###Generator tools
-[OCI generator](tools/bundleValidator/README.md) - generate config.json/runtime.json from `Test Case`.
+``` bash   
+$    go get github.com/huawei-openlab/oct/tools/runtimeValidator                 #get source code       
+$    cd $GOPATH/src/github.com/huawei-openlab/oct/tools/runtimeValidator         #change dir to spcsValidator
+$    make                                                                        #build runtimeValidator      
+$    ./runtimeValidator                                                          #run runtimeValidator     
+```     
+      
 
-###Conversion tools
-One implementaion of converting from OCI to ACI is hosted at: [oci2aci](https://github.com/huawei-openlab/oci2aci)
+### Runtime Validator Quickstart
+                
+- **Using Tools**        
 
-###Other tools
-To make OCT easier, more tools are required:
-- OCI builder - build a native OCI bundle
-- [OCI convert](tools/ociConvert) - convert from other images, like rkt.
+Tools used in runtimeValidator as plugins,
+***Key Notes***        
 
+[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
 
-## Getting Started
+See [plugins/Makefile](./plugins/Makefile)     
+       
+``` Makefile    
+all:    
+  echo ${GOPATH}    
+  echo "Installing plugin: github.com/zenlinTechnofreak/ocitools..."    
+  set -e   
+  go get github.com/zenlinTechnofreak/ocitools   
+  go build github.com/zenlinTechnofreak/ocitools    
+  go build github.com/zenlinTechnofreak/ocitools/cmd/runtimetest    
+clean:    
+  go clean    
+  rm -rf ocitools runtimetest      
+```    
 
-- Fork the repository on GitHub
-- Read the 'build and test instruction' for [Bundle Validator](tools/bundleValidator/README.md) and [Runtime Validator](tools/runtimeValidator/README.md)
-- Play with the project, submit bugs, submit patches!
-
-### How to involve
-If any issues are encountered while using the oct project, several avenues are available for support:
-<table>
-<tr>
-	<th align="left">
-	Issue Tracker
-	</th>
-	<td>
-	https://github.com/huawei-openlab/oct/issues
-	</td>
-</tr>
-<tr>
-	<th align="left">
-	Google Groups
-	</th>
-	<td>
-	https://groups.google.com/forum/#!forum/oci-testing
-	</td>
-</tr>
-</table>
+- **Supportted Runtime**    
+    
+Only Support runc yet, going to support other runtimes in next step, changes should be existed in [factory](./factory)      
 
 
-## Who should join
-- Open Container project developer/user
+- **About Validation Cases**        
 
-### Changes
-The `engine` part is now moved to [oct-engine](https://github.com/huawei-openlab/oct-engine)
+Cases are listed in [cases.conf](./cases.conf), It going to be rich, in the fomate of below: 
+    
+```   
+process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false     
+# result to generate two cases in [bundle](./bundle), should be bundle/process1 and bundle/process2   
+
+```       
+
+### What is good for runtimeValidator
+1. Tools is used as plugins ,feel free to use any tools    
+2. Cases can be free to be added into cases.conf
+3. Uses goroutine, each go routine runs a case bundle to validate
+
+
+### Next to Do 
+
+1. Rich cases:        
+
+   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/cmd/runtimetest)   
+   Rich cases in [cases.conf](./cases.conf)    
+
+2. Support other containers
+
+### Reference
+OCI specs on https://github.com/opencontainers/specs   
+
+OCI runc on https://github.com/opencontainers/runc
