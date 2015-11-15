@@ -50,6 +50,9 @@ func main() {
 		},
 	}
 	app.Action = func(c *cli.Context) {
+		if os.Geteuid() != 0 {
+			logrus.Fatal("ocitest should be run as root")
+		}
 		startTime := time.Now()
 		Runtime = c.String("runtime")
 		wg := new(sync.WaitGroup)
