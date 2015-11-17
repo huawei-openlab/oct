@@ -46,9 +46,11 @@ func main() {
 		"\n    managing configurable high coverage bundles as cases, " +
 		"\n    supporting testing different runtimes."
 	app.EnableBashCompletion = true
+	app.BashComplete = cli.DefaultAppComplete
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "runtime",
+			Name: "runtime",
+			//Aliases: []string{"r"},
 			Value: "runc",
 			Usage: "runtime to be tested",
 		},
