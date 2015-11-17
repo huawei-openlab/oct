@@ -34,7 +34,7 @@ func (this *RKT) StartRT(specDir string) error {
 	out, err := cmd.CombinedOutput()
 	logrus.Debugf("Command done")
 	if string(out) != "" {
-		logrus.Printf("container output=%s\n", out)
+		logrus.Debugf("container output=%s\n", out)
 	} else {
 		logrus.Debugf("container output= nil\n")
 	}
