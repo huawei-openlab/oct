@@ -47,9 +47,12 @@ GLOBAL OPTIONS:
 ```    
       
 - **Supportted runtime**     
-     
+      
+Already supportted:       
 runc    
-RKT    
+rkt    
+Going to support:      
+docker       
       
 - **Using Tools**        
 
