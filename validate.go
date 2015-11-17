@@ -11,27 +11,28 @@ import (
 	"github.com/huawei-openlab/oct/utils"
 )
 
-/*var c = make(chan int, 10)*/
-
 func validate(validateObj string, configArgs string) error {
-	// logrus.Printf("validate configArgs %v\n", configArgs)
 
 	generateConfigs(validateObj, configArgs)
 	prepareBundle(validateObj)
+
+	myruntime, err := factory.CreateRuntime(Runtime)
+	if err != nil {
+		logrus.Printf("Create runtime %v err: %v\n", Runtime, err)
+	}
+
 	testRoot := "./bundles/" + validateObj
-	if err := factory.TestRuntime(Runtime, testRoot); err != nil {
+	if err := myruntime.StartRT(testRoot); err != nil {
 		logrus.Printf("Run runtime err: %v\n", err)
 		return err
-		//logrus.Fatal(err)
 	}
+
 	return nil
 }
 
 func generateConfigs(validateObj string, configArgs string) {
-	// logrus.Printf("configArgs : %v\n", configArgs)
 	args := splitArgs(configArgs)
 
-	// logrus.Println("generateConfigs --------")
 	logrus.Debugf("Args to the ocitools generate: ")
 	for _, a := range args {
 		logrus.Debugln(a)
@@ -57,35 +58,18 @@ func generateConfigs(validateObj string, configArgs string) {
 func splitArgs(args string) []string {
 
 	argsnew := strings.TrimSpace(args)
-	// logrus.Printf("splitArgs %v\n", argsnew)
 
 	argArray := strings.Split(argsnew, "--")
 
-	// for _, a := range argArray {
-	// 	logrus.Printf("after split %v\n", a)
-	// }
-	// logrus.SetLevel(logrus.WarnLevel)
 	lenth := len(argArray)
-	// logrus.Debugf("len : %v\n", lenth)
-
-	// logrus.Printf("len : %v\n", lenth)
 	resArray := make([]string, lenth-1)
 	for i, arg := range argArray {
-		// resArray[i-1] = "--" + strings.TrimSpace(arg)
 		if i == 0 || i == lenth {
 			continue
 		} else {
-			// logrus.Printf("in append %v, %v", i, arg)
 			resArray[i-1] = "--" + strings.TrimSpace(arg)
-			// resArray = append(resArray, "--"+arg)
 		}
 	}
-	// logrus.Println("+++++++++++++++++++++++")
-
-	// for _, a := range resArray {
-	// 	logrus.Printf("after append  %v\n", a)
-	// }
-
 	return resArray
 }
 
