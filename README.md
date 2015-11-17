@@ -1,7 +1,7 @@
 ## OCI Test        
       
-The ocitest aims to Verify if a runtime container is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
-It is a light weight testing framework, using ocitools, managing configurable high coverage bundles as cases, supporting verifying different runtimes.     
+The ocitest aims to test if a runtime container is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
+It is a light weight testing framework, using ocitools and 3rd-party tools, managing configurable high coverage bundles as cases, supporting testing different runtimes.     
 
 
 ### Summary for the impatient      
@@ -9,15 +9,43 @@ It is a light weight testing framework, using ocitools, managing configurable hi
 Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
 
 ``` bash   
-$    go get github.com/huawei-openlab/oct                 #get source code       
-$    cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
-$    make                                                 #build      
-$    ./ocitest                                            #run     
+$ go get github.com/huawei-openlab/oct                 #get source code       
+$ cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
+$ make                                                 #build      
+$ ./ocitest                                            #run     
 ```     
       
 
-### OCI Test Quickstart
-                
+### OCI Test Quickstart       
+       
+- **Usage**      
+       
+``` sh      
+$ ./ocitest --help
+NAME:
+   oci-testing - Utilities for OCI Testing,
+
+    It is a light weight testing framework,
+    using ocitools and 3rd-party tools, 
+    managing configurable high coverage bundles as cases, 
+    supporting testing different runtimes.
+
+USAGE:
+   ./ocitest [global options] command [command options] [arguments...]
+   
+VERSION:
+   0.0.1
+   
+COMMANDS:
+   help, h	Shows a list of commands or help for one command
+   
+GLOBAL OPTIONS:
+   --runtime "runc"		runtime to be tested
+   --help, -h			show help
+   --generate-bash-completion	
+   --version, -v		print the version
+```    
+     
 - **Using Tools**        
 
 Tools used by ocitest as plugins,

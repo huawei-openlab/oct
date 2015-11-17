@@ -38,15 +38,19 @@ var Mutex = &sync.Mutex{}
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "oci-runtimeValidator"
+	app.Name = "oci-testing"
 	app.Version = "0.0.1"
-	app.Usage = "Utilities for OCI runtime validation"
+	app.Usage = "Utilities for OCI Testing," + "\n" +
+		"\n    It is a light weight testing framework," +
+		"\n    using ocitools and 3rd-party tools, " +
+		"\n    managing configurable high coverage bundles as cases, " +
+		"\n    supporting testing different runtimes."
 	app.EnableBashCompletion = true
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "runtime",
 			Value: "runc",
-			Usage: "runtime to be validated",
+			Usage: "runtime to be tested",
 		},
 	}
 	app.Action = func(c *cli.Context) {
