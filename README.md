@@ -45,7 +45,12 @@ GLOBAL OPTIONS:
    --generate-bash-completion	
    --version, -v		print the version
 ```    
+      
+- **Supportted runtime**     
      
+runc    
+RKT    
+      
 - **Using Tools**        
 
 Tools used by ocitest as plugins,
