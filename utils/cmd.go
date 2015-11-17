@@ -1,8 +1,10 @@
 package utils
 
 import (
+	// "errors"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 )
 
@@ -73,6 +75,38 @@ func ExecGenCmd(args []string) (string, error) {
 	} else {
 		retb, _ := ioutil.ReadAll(stdout)
 		retStr = string(retb)
+	}
+
+	return retStr, err
+}
+
+func Execoci2aci(arg string) (string, error) {
+
+	var cmd *exec.Cmd
+	aciName := arg + ".aci"
+	cmd = exec.Command("./oci2aci", "--debug", arg, aciName)
+	cmd.Dir = "./plugins"
+	// cmd.stdin = os.Stdin
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatal("stderr err %v", err)
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatalf("stdout err %v", err)
+	}
+
+	var retStr string
+	err = cmd.Start()
+	if err != nil {
+		retb, _ := ioutil.ReadAll(stderr)
+		retStr = string(retb)
+		// stdoutReader.ReadRune()
+	} else {
+		retb, _ := ioutil.ReadAll(stdout)
+		retStr = string(retb)
+		err = os.Rename("./plugins/"+aciName, "./bundles/"+aciName)
 	}
 
 	return retStr, err
