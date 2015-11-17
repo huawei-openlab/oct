@@ -49,10 +49,9 @@ func main() {
 	app.BashComplete = cli.DefaultAppComplete
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name: "runtime",
-			//Aliases: []string{"r"},
+			Name:  "runtime, r",
 			Value: "runc",
-			Usage: "runtime to be tested",
+			Usage: "runtime to be tested, -r=runc or -r=rkt or -r=docker",
 		},
 	}
 	app.Action = func(c *cli.Context) {

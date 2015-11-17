@@ -40,7 +40,7 @@ COMMANDS:
    help, h	Shows a list of commands or help for one command
    
 GLOBAL OPTIONS:
-   --runtime "runc"		runtime to be tested
+   --runtime, -r "runc"         runtime to be tested, -r=runc or -r=rkt or -r=docker
    --help, -h			show help
    --generate-bash-completion	
    --version, -v		print the version
