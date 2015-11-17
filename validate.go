@@ -3,6 +3,8 @@ package main
 import (
 	"io"
 	// "log"
+	"errors"
+	"fmt"
 	"os"
 	"strings"
 
@@ -15,6 +17,11 @@ func validate(validateObj string, configArgs string) error {
 
 	generateConfigs(validateObj, configArgs)
 	prepareBundle(validateObj)
+	if Runtime != "runc" {
+		if err := ociConvert(Runtime, validateObj); err != nil {
+			logrus.Fatalln(err)
+		}
+	}
 
 	myruntime, err := factory.CreateRuntime(Runtime)
 	if err != nil {
@@ -26,8 +33,23 @@ func validate(validateObj string, configArgs string) error {
 		logrus.Printf("Run runtime err: %v\n", err)
 		return err
 	}
-
 	return nil
+}
+
+func ociConvert(runtime string, validateObj string) error {
+
+	switch runtime {
+	case "rkt":
+		_, err := utils.Execoci2aci(validateObj)
+		if err != nil {
+			return err
+		}
+		return nil
+	case "docker":
+		return errors.New("docker is going to be supportted later")
+	default:
+		return fmt.Errorf("Wrong runtime type: %v\n", runtime)
+	}
 }
 
 func generateConfigs(validateObj string, configArgs string) {
