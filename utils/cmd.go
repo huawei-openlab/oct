@@ -4,7 +4,7 @@ import (
 	// "errors"
 	"io/ioutil"
 	"log"
-	"os"
+	//"os"
 	"os/exec"
 )
 
@@ -84,8 +84,8 @@ func Execoci2aci(arg string) (string, error) {
 
 	var cmd *exec.Cmd
 	aciName := arg + ".aci"
-	cmd = exec.Command("./oci2aci", "--debug", arg, aciName)
-	cmd.Dir = "./plugins"
+	cmd = exec.Command("../plugins/oci2aci", "--debug", arg, aciName)
+	cmd.Dir = "./bundles"
 	// cmd.stdin = os.Stdin
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -106,7 +106,7 @@ func Execoci2aci(arg string) (string, error) {
 	} else {
 		retb, _ := ioutil.ReadAll(stdout)
 		retStr = string(retb)
-		err = os.Rename("./plugins/"+aciName, "./bundles/"+aciName)
+		//err = os.Rename("./plugins/"+aciName, "./bundles/"+aciName)
 	}
 
 	return retStr, err

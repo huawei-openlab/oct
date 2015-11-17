@@ -19,8 +19,8 @@ func CreateRuntime(runtime string) (Factory, error) {
 	switch runtime {
 	case "runc":
 		return new(Runc), nil
-	/*case "rkt":
-	return new(RktRuntime), nil*/
+	case "rkt":
+		return new(RKT), nil
 	default:
 		return nil, errors.New("Invalid runtime string")
 	}
