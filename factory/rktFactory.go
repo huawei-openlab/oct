@@ -1,10 +1,12 @@
 package factory
 
 import (
-	"github.com/Sirupsen/logrus"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/huawei-openlab/oct/hostendvalidate"
 )
 
 type RKT struct {
@@ -32,6 +34,9 @@ func (this *RKT) StartRT(specDir string) error {
 	cmd.Dir = aciPath
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
+	if err := hostendvalidate.ContainerOutputHandler(string(out)); err != nil {
+		return err
+	}
 	logrus.Debugf("Command done")
 	if string(out) != "" {
 		logrus.Debugf("container output=%s\n", out)
