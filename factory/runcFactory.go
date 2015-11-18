@@ -5,7 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/huawei-openlab/oct/hostendvalidate"
+	//"github.com/huawei-openlab/oct/hostendvalidate"
 )
 
 type Runc struct {
@@ -27,9 +27,9 @@ func (this *Runc) StartRT(specDir string) error {
 	cmd.Dir = specDir
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
-	if err := hostendvalidate.ContainerOutputHandler(string(out)); err != nil {
+	/*if err := hostendvalidate.ContainerOutputHandler(string(out)); err != nil {
 		return err
-	}
+	}*/
 	logrus.Debugf("Command done")
 	if string(out) != "" {
 		logrus.Printf("container output=%s\n", out)
