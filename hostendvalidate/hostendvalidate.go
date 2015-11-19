@@ -22,7 +22,13 @@ func namespaceHostHandler(output string) error {
 	}
 	for _, ns := range strings.Split(nsout, "\n") {
 		if !strings.EqualFold(ns, "") {
+			if len(strings.Split(ns, ",")) != 2 {
+				break
+			}
 			linkc := strings.Split(ns, ",")[0]
+			if len(strings.Split(linkc, ",")) != 2 {
+				break
+			}
 			nsname := strings.Split(linkc, ":")[0]
 			path := strings.Split(ns, ",")[1]
 			if !strings.EqualFold(path, "") {
