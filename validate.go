@@ -28,9 +28,11 @@ func validate(validateObj string, configArgs string) error {
 		logrus.Printf("Create runtime %v err: %v\n", Runtime, err)
 	}
 
+	//myruntime.registerhook(validateObj, args)
+
 	testRoot := "./bundles/" + validateObj
 	if err := myruntime.StartRT(testRoot); err != nil {
-		logrus.Printf("Run runtime err: %v\n", err)
+		//logrus.Printf("Run runtime err: %v\n", err)
 		return err
 	}
 	return nil
