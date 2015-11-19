@@ -1,6 +1,7 @@
 package factory
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -38,7 +39,12 @@ func (this *RKT) StartRT(specDir string) error {
 		return err
 	}*/
 	logrus.Debugf("Command done")
-	if string(out) != "" {
+
+	if err != nil {
+		return errors.New(string(out) + err.Error())
+	}
+	return nil
+	/*if string(out) != "" {
 		logrus.Infof("container output=%s\n", out)
 	} else {
 		logrus.Debugf("container output= nil\n")
@@ -46,7 +52,7 @@ func (this *RKT) StartRT(specDir string) error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return nil*/
 }
 
 func (this *RKT) StopRT() error {

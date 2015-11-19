@@ -1,10 +1,10 @@
 package factory
 
 import (
+	"errors"
+	"github.com/Sirupsen/logrus"
 	"os"
 	"os/exec"
-
-	"github.com/Sirupsen/logrus"
 	//"github.com/huawei-openlab/oct/hostendvalidate"
 )
 
@@ -31,7 +31,14 @@ func (this *Runc) StartRT(specDir string) error {
 		return err
 	}*/
 	logrus.Debugf("Command done")
-	if string(out) != "" {
+	if err != nil {
+		return errors.New(string(out) + err.Error())
+	}
+
+	return nil
+
+	/*if string(out) != "" {
+
 		logrus.Printf("container output=%s\n", out)
 	} else {
 		logrus.Debugf("container output= nil\n")
@@ -39,7 +46,7 @@ func (this *Runc) StartRT(specDir string) error {
 	if err != nil {
 		return err
 	}
-	return nil
+	return nil*/
 }
 
 func (this *Runc) StopRT() error {
