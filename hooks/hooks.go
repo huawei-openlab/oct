@@ -1,4 +1,4 @@
-package hostendvalidate
+package hooks
 
 import (
 	"fmt"
@@ -8,14 +8,7 @@ import (
 	"github.com/huawei-openlab/oct/utils"
 )
 
-func ContainerOutputHandler(output string) error {
-	if err := namespaceHostHandler(output); err != nil {
-		return err
-	}
-	return nil
-}
-
-func namespaceHostHandler(output string) error {
+func NamespacePostStart(output string) error {
 	nsout := utils.GetBetweenStr(output, "[namespace_output_start]", "[namespace_output_end]")
 	if strings.EqualFold(nsout, "") {
 		return nil

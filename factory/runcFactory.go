@@ -2,10 +2,12 @@ package factory
 
 import (
 	"errors"
-	"github.com/Sirupsen/logrus"
 	"os"
 	"os/exec"
-	//"github.com/huawei-openlab/oct/hostendvalidate"
+	"strings"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/huawei-openlab/oct/hooks"
 )
 
 type Runc struct {
@@ -20,7 +22,11 @@ func (this *Runc) GetRT() string {
 	return "runc"
 }
 
-func (this *Runc) StartRT(specDir string) error {
+func (this *Runc) PreStart(configArgs string) error {
+	return nil
+}
+
+func (this *Runc) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 
 	cmd := exec.Command("runc", "start")
@@ -32,10 +38,10 @@ func (this *Runc) StartRT(specDir string) error {
 	}*/
 	logrus.Debugf("Command done")
 	if err != nil {
-		return errors.New(string(out) + err.Error())
+		return string(out), errors.New(string(out) + err.Error())
 	}
 
-	return nil
+	return string(out), nil
 
 	/*if string(out) != "" {
 
@@ -47,6 +53,15 @@ func (this *Runc) StartRT(specDir string) error {
 		return err
 	}
 	return nil*/
+}
+
+func (this *Runc) PostStart(configArgs string, containerout string) error {
+	if strings.Contains(configArgs, "-args=./runtimetest --args=vna") {
+		if err := hooks.NamespacePostStart(containerout); err != nil {
+			return nil
+		}
+	}
+	return nil
 }
 
 func (this *Runc) StopRT() error {

@@ -28,13 +28,20 @@ func validate(validateObj string, configArgs string) error {
 		logrus.Printf("Create runtime %v err: %v\n", Runtime, err)
 	}
 
-	//myruntime.registerhook(validateObj, args)
+	if err = myruntime.PreStart(configArgs); err != nil {
+		return fmt.Errorf("Prestart hook err: %v\n", err)
+	}
 
 	testRoot := "./bundles/" + validateObj
-	if err := myruntime.StartRT(testRoot); err != nil {
+	out, err := myruntime.StartRT(testRoot)
+	if err != nil {
 		//logrus.Printf("Run runtime err: %v\n", err)
 		return err
 	}
+	if err = myruntime.PostStart(configArgs, out); err != nil {
+		return fmt.Errorf("Prestart hook err: %v\n", err)
+	}
+
 	return nil
 }
 
