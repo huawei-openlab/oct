@@ -10,6 +10,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/huawei-openlab/oct/factory"
+	"github.com/huawei-openlab/oct/hooks"
 	"github.com/huawei-openlab/oct/utils"
 )
 
@@ -28,18 +29,17 @@ func validate(validateObj string, configArgs string) error {
 		logrus.Printf("Create runtime %v err: %v\n", Runtime, err)
 	}
 
-	if err = myruntime.PreStart(configArgs); err != nil {
-		return fmt.Errorf("Prestart hook err: %v\n", err)
-	}
-
+	testopt := utils.GetAfterNStr(configArgs, "--args=./runtimetest --args=", 3)
 	testRoot := "./bundles/" + validateObj
 	out, err := myruntime.StartRT(testRoot)
 	if err != nil {
 		//logrus.Printf("Run runtime err: %v\n", err)
 		return err
 	}
-	if err = myruntime.PostStart(configArgs, out); err != nil {
-		return fmt.Errorf("Prestart hook err: %v\n", err)
+	switch testopt {
+	case "vna":
+		err = hooks.SetPostStartHooks(out, hooks.NamespacePostStart)
+	default:
 	}
 
 	return nil

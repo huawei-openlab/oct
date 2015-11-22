@@ -5,10 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/huawei-openlab/oct/hooks"
 )
 
 type RKT struct {
@@ -21,10 +19,6 @@ func (this *RKT) SetRT(runtime string) {
 
 func (this *RKT) GetRT() string {
 	return "rkt"
-}
-
-func (this *RKT) PreStart(configArgs string) error {
-	return nil
 }
 
 func (this *RKT) StartRT(specDir string) (string, error) {
@@ -55,15 +49,6 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 		return err
 	}
 	return nil*/
-}
-
-func (this *RKT) PostStart(configArgs string, containerout string) error {
-	if strings.Contains(configArgs, "-args=./runtimetest --args=vna") {
-		if err := hooks.NamespacePostStart(containerout); err != nil {
-			return nil
-		}
-	}
-	return nil
 }
 
 func (this *RKT) StopRT() error {

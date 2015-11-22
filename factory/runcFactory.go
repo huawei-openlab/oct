@@ -4,10 +4,8 @@ import (
 	"errors"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/huawei-openlab/oct/hooks"
 )
 
 type Runc struct {
@@ -20,10 +18,6 @@ func (this *Runc) SetRT(runtime string) {
 
 func (this *Runc) GetRT() string {
 	return "runc"
-}
-
-func (this *Runc) PreStart(configArgs string) error {
-	return nil
 }
 
 func (this *Runc) StartRT(specDir string) (string, error) {
@@ -53,15 +47,6 @@ func (this *Runc) StartRT(specDir string) (string, error) {
 		return err
 	}
 	return nil*/
-}
-
-func (this *Runc) PostStart(configArgs string, containerout string) error {
-	if strings.Contains(configArgs, "-args=./runtimetest --args=vna") {
-		if err := hooks.NamespacePostStart(containerout); err != nil {
-			return nil
-		}
-	}
-	return nil
 }
 
 func (this *Runc) StopRT() error {
