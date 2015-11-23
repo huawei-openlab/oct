@@ -18,6 +18,15 @@ func GetBetweenStr(str, start, end string) string {
 	return str
 }
 
+func GetAfterNStr(str, start string, m int) string {
+	n := strings.Index(str, start)
+	if n == -1 || n+len(start)+m > len(str) {
+		return ""
+	}
+	str = string([]byte(str)[n+len(start) : n+len(start)+m])
+	return str
+}
+
 func Substr(str string, start, length int) string {
 	rs := []rune(str)
 	rl := len(rs)

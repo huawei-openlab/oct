@@ -11,7 +11,7 @@ import (
 type Factory interface {
 	SetRT(runtime string)
 	GetRT() string
-	StartRT(specDir string) error
+	StartRT(specDir string) (string, error)
 	StopRT() error
 }
 

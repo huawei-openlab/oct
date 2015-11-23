@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
-	//"github.com/huawei-openlab/oct/hostendvalidate"
 )
 
 type RKT struct {
@@ -22,7 +21,7 @@ func (this *RKT) GetRT() string {
 	return "rkt"
 }
 
-func (this *RKT) StartRT(specDir string) error {
+func (this *RKT) StartRT(specDir string) (string, error) {
 
 	logrus.Debugf("Launcing runtime")
 	/*rkt run 3.aci --interactive --insecure-skip-verify --mds-register=false --volume proc,kind=host,source=/bin --volume dev,kind=host,source=/bin --volume devpts,kind=host,source=/bin --volume shm,kind=host,source=/bin --volume mqueue,kind=host,source=/bin --volume sysfs,kind=host,source=/bin --volume cgroup,kind=host,source=/bin*/
@@ -35,15 +34,12 @@ func (this *RKT) StartRT(specDir string) error {
 	cmd.Dir = aciPath
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
-	/*if err := hostendvalidate.ContainerOutputHandler(string(out)); err != nil {
-		return err
-	}*/
 	logrus.Debugf("Command done")
 
 	if err != nil {
-		return errors.New(string(out) + err.Error())
+		return string(out), errors.New(string(out) + err.Error())
 	}
-	return nil
+	return string(out), nil
 	/*if string(out) != "" {
 		logrus.Infof("container output=%s\n", out)
 	} else {

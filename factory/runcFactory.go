@@ -2,10 +2,10 @@ package factory
 
 import (
 	"errors"
-	"github.com/Sirupsen/logrus"
 	"os"
 	"os/exec"
-	//"github.com/huawei-openlab/oct/hostendvalidate"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type Runc struct {
@@ -20,7 +20,7 @@ func (this *Runc) GetRT() string {
 	return "runc"
 }
 
-func (this *Runc) StartRT(specDir string) error {
+func (this *Runc) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 
 	cmd := exec.Command("runc", "start")
@@ -32,10 +32,10 @@ func (this *Runc) StartRT(specDir string) error {
 	}*/
 	logrus.Debugf("Command done")
 	if err != nil {
-		return errors.New(string(out) + err.Error())
+		return string(out), errors.New(string(out) + err.Error())
 	}
 
-	return nil
+	return string(out), nil
 
 	/*if string(out) != "" {
 
