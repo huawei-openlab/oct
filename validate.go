@@ -3,9 +3,8 @@ package main
 import (
 	"io"
 	// "log"
-	"errors"
-	"fmt"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
@@ -14,23 +13,24 @@ import (
 	"github.com/huawei-openlab/oct/utils"
 )
 
-func validate(validateObj string, configArgs string) error {
+const TestCacheDir = "./bundles/"
 
+func validate(validateObj string, configArgs string) error {
 	generateConfigs(validateObj, configArgs)
 	prepareBundle(validateObj)
-	if Runtime != "runc" {
-		if err := ociConvert(Runtime, validateObj); err != nil {
-			logrus.Fatalln(err)
-		}
-	}
 
 	myruntime, err := factory.CreateRuntime(Runtime)
 	if err != nil {
 		logrus.Printf("Create runtime %v err: %v\n", Runtime, err)
 	}
+	if myruntime.NeedConvert() {
+		if _, err := myruntime.Convert(validateObj, TestCacheDir); err != nil {
+			logrus.Fatalln(err)
+		}
+	}
 
 	testopt := utils.GetAfterNStr(configArgs, "--args=./runtimetest --args=", 3)
-	testRoot := "./bundles/" + validateObj
+	testRoot := path.Join(TestCacheDir, validateObj)
 	out, err := myruntime.StartRT(testRoot)
 	if err != nil {
 		//logrus.Printf("Run runtime err: %v\n", err)
@@ -43,22 +43,6 @@ func validate(validateObj string, configArgs string) error {
 	}
 
 	return nil
-}
-
-func ociConvert(runtime string, validateObj string) error {
-
-	switch runtime {
-	case "rkt":
-		_, err := utils.Execoci2aci(validateObj)
-		if err != nil {
-			return err
-		}
-		return nil
-	case "docker":
-		return errors.New("docker is going to be supportted later")
-	default:
-		return fmt.Errorf("Wrong runtime type: %v\n", runtime)
-	}
 }
 
 func generateConfigs(validateObj string, configArgs string) {
@@ -106,7 +90,7 @@ func splitArgs(args string) []string {
 
 func prepareBundle(validateObj string) {
 	// Create bundle follder
-	testRoot := "./bundles/" + validateObj
+	testRoot := path.Join(TestCacheDir, validateObj)
 	err := os.RemoveAll(testRoot)
 	if err != nil {
 		logrus.Fatalf("Remove bundle %v err: %v\n", validateObj, err)

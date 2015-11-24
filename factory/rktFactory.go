@@ -2,6 +2,8 @@ package factory
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,6 +21,39 @@ func (this *RKT) SetRT(runtime string) {
 
 func (this *RKT) GetRT() string {
 	return "rkt"
+}
+
+func (this *RKT) NeedConvert() bool {
+	return true
+}
+
+func (this *RKT) Convert(arg string, workingDir string) (string, error) {
+	var cmd *exec.Cmd
+	aciName := arg + ".aci"
+	cmd = exec.Command("../plugins/oci2aci", "--debug", arg, aciName)
+	cmd.Dir = workingDir //"./bundles"
+	// cmd.stdin = os.Stdin
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatal("stderr err %v", err)
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatalf("stdout err %v", err)
+	}
+
+	var retStr string
+	err = cmd.Start()
+	if err != nil {
+		retb, _ := ioutil.ReadAll(stderr)
+		retStr = string(retb)
+	} else {
+		retb, _ := ioutil.ReadAll(stdout)
+		retStr = string(retb)
+	}
+
+	return retStr, err
 }
 
 func (this *RKT) StartRT(specDir string) (string, error) {
