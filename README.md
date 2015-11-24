@@ -48,11 +48,11 @@ GLOBAL OPTIONS:
       
 - **Supportted runtime**     
       
-Already supportted:       
-runc    
-rkt    
-Going to support:      
-docker       
+|Name|Status|Testing Flow|
+|------|----|------| ----- |
+| runc | Supported| [Test bundles & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard.png) |
+| rkt | Supported | [Test bundles converted by oci2aci & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard2.png) |
+| docker | Not currently being worked|[Test bundles converted by oci2docker & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard2.png) |
       
 - **Using Tools**        
 
@@ -64,9 +64,6 @@ Tools used by ocitest as plugins,
 See [plugins/Makefile](./plugins/Makefile)     
        
 
-- **Supportted Runtime**    
-    
-Only Support runc yet, going to support other runtimes in next step, such as docker, RKT, etc, changes should be existed in [factory](./factory)      
 
 
 - **About Test Cases**        
