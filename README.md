@@ -91,7 +91,7 @@ the ocitest will container self-developped tools in [./tools](./tools), such as,
 
 1. Rich cases:        
 
-   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/cmd/runtimetest)   
+   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/tree/master/cmd/runtimetest)   
    Rich cases in [cases.conf](./cases.conf)    
 
 2. Support other containers
