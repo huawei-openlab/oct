@@ -1,1 +1,0 @@
-sv: specs validator
