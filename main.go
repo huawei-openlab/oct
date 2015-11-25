@@ -88,7 +88,7 @@ func validateRoutine(bundleName string, generateArgs string, wg *sync.WaitGroup)
 	logrus.Debugf("Test bundle name: %v, Test args: %v\n", bundleName, generateArgs)
 	err := validate(bundleName, generateArgs)
 	if err != nil {
-		logrus.Printf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", Runtime, bundleName, generateArgs, err)
+		logrus.Warnf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", Runtime, bundleName, generateArgs, err)
 		//logrus.Fatal(err)
 	} else {
 		logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, bundleName, generateArgs)
