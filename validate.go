@@ -39,6 +39,8 @@ func validate(validateObj string, configArgs string) error {
 	switch testopt {
 	case "vna":
 		err = hooks.SetPostStartHooks(out, hooks.NamespacePostStart)
+	case "vho":
+		err = hooks.SetPostStartHooks(out, hooks.HooksValidatePostStart)
 	default:
 	}
 
