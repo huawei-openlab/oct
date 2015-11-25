@@ -9,8 +9,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/huawei-openlab/oct/factory"
-	"github.com/huawei-openlab/oct/hooks"
 	"github.com/huawei-openlab/oct/utils"
+	"github.com/huawei-openlab/oct/utils/hooks"
 )
 
 const TestCacheDir = "./bundles/"

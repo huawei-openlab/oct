@@ -23,7 +23,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/huawei-openlab/oct/config"
+	"github.com/huawei-openlab/oct/utils/config"
 )
 
 func init() {
@@ -54,6 +54,7 @@ func main() {
 			Usage: "runtime to be tested, -r=runc or -r=rkt or -r=docker",
 		},
 	}
+
 	app.Action = func(c *cli.Context) {
 		if os.Geteuid() != 0 {
 			logrus.Fatal("ocitest should be run as root")
