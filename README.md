@@ -62,9 +62,6 @@ Tools used by ocitest as plugins,
 [ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
 
 See [plugins/Makefile](./plugins/Makefile)     
-       
-
-
 
 - **About Test Cases**        
 
@@ -83,9 +80,7 @@ process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=
 3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
 4. Uses goroutine, each go routine runs a case bundle to validate   
 **Note**     
-Now, using generate and validate tools from [github.com/mrunalp](github.com/mrunalp/ocitools),          
-the ocitest will container self-developped tools in [./tools](./tools), such as, bundleValidator, ociConvertor, etc 
-
+The ocitools are developed in [github.com/mrunalp](github.com/mrunalp/ocitools).  
 
 ### Next to Do 
 
