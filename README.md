@@ -48,11 +48,11 @@ GLOBAL OPTIONS:
       
 - **Supportted runtime**     
       
-Already supportted:       
-runc    
-rkt    
-Going to support:      
-docker       
+|Name|Status|Testing Flow|
+|------|----|------| ----- |
+| runc | Supported| [Test bundles & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard.png) |
+| rkt | Supported | [Test bundles converted by oci2aci & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard2.png) |
+| docker | Not currently being worked|[Test bundles converted by oci2docker & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/runtime-validation-oci-standard2.png) |
       
 - **Using Tools**        
 
@@ -62,12 +62,6 @@ Tools used by ocitest as plugins,
 [ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
 
 See [plugins/Makefile](./plugins/Makefile)     
-       
-
-- **Supportted Runtime**    
-    
-Only Support runc yet, going to support other runtimes in next step, such as docker, RKT, etc, changes should be existed in [factory](./factory)      
-
 
 - **About Test Cases**        
 
@@ -86,15 +80,13 @@ process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=
 3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
 4. Uses goroutine, each go routine runs a case bundle to validate   
 **Note**     
-Now, using generate and validate tools from [github.com/mrunalp](github.com/mrunalp/ocitools),          
-the ocitest will container self-developped tools in [./tools](./tools), such as, bundleValidator, ociConvertor, etc 
-
+The ocitools are developed in [github.com/mrunalp](github.com/mrunalp/ocitools).  
 
 ### Next to Do 
 
 1. Rich cases:        
 
-   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/cmd/runtimetest)   
+   Encrease the functionality of ocitools in [cmd/runtimetest](https://github.com/zenlinTechnofreak/ocitools/tree/master/cmd/runtimetest)   
    Rich cases in [cases.conf](./cases.conf)    
 
 2. Support other containers
