@@ -41,3 +41,18 @@ func NamespacePostStart(output string) error {
 	}
 	return nil
 }
+
+func HooksValidatePostStart(output string) error {
+	// Poststart Hook Validate
+	hout := utils.GetBetweenStr(output, "[poststop_hookvalidate_output_start]", "[poststop_hookvalidate_output_end]")
+	if !strings.EqualFold(hout, "folder poststophook is not exsist inside container") {
+		return nil
+	}
+	if !utils.DirExist("./rootfs/poststophook") {
+		return fmt.Errorf("Poststop  Hook validation failed")
+	}
+	// remove extra folders
+	utils.RemoveFileIfExist("./rootfs/prestarthook")
+	utils.RemoveFileIfExist("./rootfs/poststophook")
+	return nil
+}

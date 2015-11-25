@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -15,11 +14,8 @@ func DirExist(path string) bool {
 	return err == nil || os.IsExist(err) || stat.IsDir()
 }
 
-func RemoveFile(path string) error {
+func RemoveFileIfExist(path string) {
 	if _, err := os.Stat(path); err == nil {
 		os.Remove(path)
-	} else {
-		return fmt.Errorf("File/Dir %v NOT exist, cannot be removed", path)
 	}
-	return nil
 }
