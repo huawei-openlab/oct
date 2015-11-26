@@ -23,15 +23,12 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	"github.com/huawei-openlab/oct/utils/config"
 )
 
 func init() {
 	cpuNum := runtime.NumCPU()
 	runtime.GOMAXPROCS(cpuNum)
 }
-
-var Runtime string
 
 //Mutext be used in generate runtime.json & config.json
 var Mutex = &sync.Mutex{}
@@ -60,12 +57,13 @@ func main() {
 			logrus.Fatal("ocitest should be run as root")
 		}
 		startTime := time.Now()
-		Runtime = c.String("runtime")
+		runtime := c.String("runtime")
 		wg := new(sync.WaitGroup)
-		wg.Add(config.ConfigLen)
+		units := LoadTestUnits("./cases.conf")
+		wg.Add(len(units))
 
-		for key, value := range config.BundleMap {
-			go validateRoutine(key, value, wg)
+		for index := 0; index < len(units); index++ {
+			go testRoutine(units[index], runtime, wg)
 
 		}
 		wg.Wait()
@@ -84,14 +82,16 @@ func main() {
 	}
 }
 
-func validateRoutine(bundleName string, generateArgs string, wg *sync.WaitGroup) {
-	logrus.Debugf("Test bundle name: %v, Test args: %v\n", bundleName, generateArgs)
-	err := validate(bundleName, generateArgs)
-	if err != nil {
-		logrus.Warnf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", Runtime, bundleName, generateArgs, err)
-		//logrus.Fatal(err)
+func testRoutine(unit TestUnit, runtime string, wg *sync.WaitGroup) {
+	logrus.Debugf("Test bundle name: %v, Test args: %v\n", unit.Name, unit.Args)
+	if err := unit.SetRuntime(runtime); err != nil {
+		logrus.Fatalf("Test runtime: failed to setup runtime %s , error: %v\n", runtime, err)
 	} else {
-		logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", Runtime, bundleName, generateArgs)
+		if err := unit.Run(); err != nil {
+			logrus.Warnf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", unit.Runtime.GetRT(), unit.Name, unit.Args, err)
+		} else {
+			logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", unit.Runtime.GetRT(), unit.Name, unit.Args)
+		}
 	}
 	wg.Done()
 	return
