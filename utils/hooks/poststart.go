@@ -52,7 +52,11 @@ func HooksValidatePostStart(output string) error {
 		return fmt.Errorf("Poststop Hook validation failed")
 	}
 	// remove extra folders
-	utils.RemoveFileIfExist("./rootfs/prestarthook")
-	utils.RemoveFileIfExist("./rootfs/poststophook")
+	if _, err := os.Stat("./rootfs/prestarthook"); err == nil {
+		os.Remove("./rootfs/prestarthook")
+	}
+	if _, err := os.Stat("./rootfs/poststophook"); err == nil {
+		os.Remove("./rootfs/poststophook")
+	}
 	return nil
 }
