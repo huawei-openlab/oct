@@ -20,14 +20,6 @@ func (this *Runc) GetRT() string {
 	return "runc"
 }
 
-func (this *Runc) NeedConvert() bool {
-	return false
-}
-
-func (this *Runc) Convert(arg string, workingDir string) (string, error) {
-	return "", nil
-}
-
 func (this *Runc) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 

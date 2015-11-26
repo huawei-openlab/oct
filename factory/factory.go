@@ -11,8 +11,6 @@ import (
 type Factory interface {
 	SetRT(runtime string)
 	GetRT() string
-	NeedConvert() bool
-	Convert(arg string, workingDir string) (string, error)
 	StartRT(specDir string) (string, error)
 	StopRT() error
 }
