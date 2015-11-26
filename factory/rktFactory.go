@@ -140,23 +140,6 @@ func getUuid(listOut string, appName string) (string, error) {
 	line, err := getLine(listOut, appName)
 	if err != nil {
 		logrus.Debugln(err)
-	}
-	a := strings.SplitAfter(line, "=")
-	logrus.Printf("getAppStatus %v\n", a[1])
-
-	res, err := strconv.ParseInt(a[1], 10, 32)
-	if err != nil {
-		logrus.Debugln(err)
-		return 1, err
-	}
-	return res, nil
-}
-
-func getUuid(listOut string, appName string) (string, error) {
-
-	line, err := getLine(listOut, appName)
-	if err != nil {
-		logrus.Debugln(err)
 		return "", err
 	}
 
