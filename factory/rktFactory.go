@@ -23,15 +23,11 @@ func (this *RKT) GetRT() string {
 	return "rkt"
 }
 
-func (this *RKT) NeedConvert() bool {
-	return true
-}
-
-func (this *RKT) Convert(arg string, workingDir string) (string, error) {
+func (this *RKT) Convert(bundleName string, workingDir string) (string, error) {
 	var cmd *exec.Cmd
-	aciName := arg + ".aci"
-	cmd = exec.Command("../plugins/oci2aci", "--debug", arg, aciName)
-	cmd.Dir = workingDir //"./bundles"
+	aciName := bundleName + ".aci"
+	cmd = exec.Command("../plugins/oci2aci", "--debug", bundleName, aciName)
+	cmd.Dir = workingDir
 	// cmd.stdin = os.Stdin
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -57,11 +53,15 @@ func (this *RKT) Convert(arg string, workingDir string) (string, error) {
 }
 
 func (this *RKT) StartRT(specDir string) (string, error) {
-
 	logrus.Debugf("Launcing runtime")
 	/*rkt run 3.aci --interactive --insecure-skip-verify --mds-register=false --volume proc,kind=host,source=/bin --volume dev,kind=host,source=/bin --volume devpts,kind=host,source=/bin --volume shm,kind=host,source=/bin --volume mqueue,kind=host,source=/bin --volume sysfs,kind=host,source=/bin --volume cgroup,kind=host,source=/bin*/
 	aciName := filepath.Base(specDir) + ".aci"
 	aciPath := filepath.Dir(specDir)
+
+	if retStr, err := this.Convert(aciName, aciPath); err != nil {
+		return retStr, err
+	}
+
 	cmd := exec.Command("rkt", "run", aciName, "--interactive", "--insecure-skip-verify", "--mds-register=false",
 		"--volume", "proc,kind=host,source=/bin", "--volume", "dev,kind=host,source=/bin", "--volume", "devpts,kind=host,source=/bin",
 		"--volume", "shm,kind=host,source=/bin", "--volume", "mqueue,kind=host,source=/bin",
