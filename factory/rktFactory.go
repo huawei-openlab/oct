@@ -28,6 +28,7 @@ func (this *RKT) GetRT() string {
 func (this *RKT) Convert(appName string, workingDir string) (string, error) {
 	var cmd *exec.Cmd
 	aciName := appName + ".aci"
+	//set appName to rkt appname, set rkt aciName to image name
 	cmd = exec.Command("../plugins/oci2aci", "--debug", "--name", appName, appName, aciName)
 	cmd.Dir = workingDir
 	// cmd.stdin = os.Stdin
@@ -122,6 +123,23 @@ func getAppStatus(Out string, appName string) (int64, error) {
 	if err != nil {
 		logrus.Debugln(err)
 		return 1, err
+	}
+	a := strings.SplitAfter(line, "=")
+	logrus.Printf("getAppStatus %v\n", a[1])
+
+	res, err := strconv.ParseInt(a[1], 10, 32)
+	if err != nil {
+		logrus.Debugln(err)
+		return 1, err
+	}
+	return res, nil
+}
+
+func getUuid(listOut string, appName string) (string, error) {
+
+	line, err := getLine(listOut, appName)
+	if err != nil {
+		logrus.Debugln(err)
 	}
 	a := strings.SplitAfter(line, "=")
 	logrus.Printf("getAppStatus %v\n", a[1])
