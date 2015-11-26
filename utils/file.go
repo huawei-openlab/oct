@@ -14,8 +14,3 @@ func DirExist(path string) bool {
 	return err == nil || os.IsExist(err) || stat.IsDir()
 }
 
-func RemoveFileIfExist(path string) {
-	if _, err := os.Stat(path); err == nil {
-		os.Remove(path)
-	}
-}
