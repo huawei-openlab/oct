@@ -27,6 +27,10 @@ type TestUnit struct {
 
 	BundleDir string
 	Runtime   factory.Factory
+	//success or failed
+	Result string
+	//when result == failed, ErrInfo containers err info, or, ErrInfo is empty string
+	ErrInfo string
 }
 
 func LoadTestUnits(filename string) (units []TestUnit) {
