@@ -69,6 +69,7 @@ func (unit *TestUnit) Run() error {
 
 	unit.GenerateConfigs()
 	unit.PrepareBundle()
+
 	out, err := unit.Runtime.StartRT(unit.BundleDir)
 	if err != nil {
 		return err
@@ -76,6 +77,7 @@ func (unit *TestUnit) Run() error {
 	if err = unit.PostStartHooks(unit.Testopt, out); err != nil {
 		return err
 	}
+	_ = unit.Runtime.StopRT(unit.Runtime.GetRTID())
 	return nil
 }
 
