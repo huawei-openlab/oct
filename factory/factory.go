@@ -12,7 +12,8 @@ type Factory interface {
 	SetRT(runtime string)
 	GetRT() string
 	StartRT(specDir string) (string, error)
-	StopRT() error
+	StopRT(id string) error
+	GetRTID() string
 }
 
 func CreateRuntime(runtime string) (Factory, error) {
