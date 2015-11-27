@@ -110,7 +110,7 @@ func checkResult(appName string) (bool, error) {
 	/*if err != nil {
 		logrus.Fatalf("rkt status err %v\n", err)
 	}*/
-	logrus.Printf("stautsOut %v\n", string(statusOut))
+	logrus.Debugf("rkt stauts %v\n,%v\n", uuid, string(statusOut))
 	s, err := getAppStatus(string(statusOut), appName)
 	if s != 0 || err != nil {
 		return false, err
@@ -125,7 +125,6 @@ func getAppStatus(Out string, appName string) (int64, error) {
 		return 1, err
 	}
 	a := strings.SplitAfter(line, "=")
-	logrus.Printf("getAppStatus %v\n", a[1])
 
 	res, err := strconv.ParseInt(a[1], 10, 32)
 	if err != nil {
