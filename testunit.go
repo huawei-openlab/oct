@@ -62,6 +62,9 @@ func (unit *TestUnit) Run() error {
 	unit.GenerateConfigs()
 	unit.PrepareBundle()
 	_, err := unit.Runtime.StartRT(unit.BundleDir)
+
+	_ = unit.Runtime.StopRT(unit.Runtime.GetRTID())
+
 	return err
 	/* TODO: what is testopt used for ?
 	testopt := utils.GetAfterNStr(configArgs, "--args=./runtimetest --args=", 3)

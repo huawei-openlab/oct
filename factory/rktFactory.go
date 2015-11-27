@@ -186,5 +186,10 @@ func getLine(Out string, objName string) (string, error) {
 }
 
 func (this *RKT) StopRT(id string) error {
+
+	cmd := exec.Command("rkt", "rm", id)
+	cmd.Stdin = os.Stdin
+	_, _ = cmd.CombinedOutput()
+
 	return nil
 }
