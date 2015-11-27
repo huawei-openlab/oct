@@ -18,6 +18,11 @@ type RKT struct {
 	ID   string
 }
 
+func (this *RKT) init() {
+	this.name = ""
+	this.ID = ""
+}
+
 func (this *RKT) SetRT(runtime string) {
 	this.name = "rkt"
 }

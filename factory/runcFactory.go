@@ -13,6 +13,11 @@ type Runc struct {
 	ID   string
 }
 
+func (this *Runc) init() {
+	this.name = ""
+	this.ID = ""
+}
+
 func (this *Runc) SetRT(runtime string) {
 	this.name = "runc"
 }
