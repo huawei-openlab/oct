@@ -10,6 +10,7 @@ import (
 	"github.com/huawei-openlab/oct/factory"
 	"github.com/huawei-openlab/oct/utils"
 	"github.com/huawei-openlab/oct/utils/config"
+	"github.com/huawei-openlab/oct/utils/hooks"
 )
 
 const TestCacheDir = "./bundles/"
@@ -21,6 +22,8 @@ type TestUnit struct {
 	Args string
 	//Describle what does this unit test for. It is optional.
 	Description string
+	//Testopt is the term of OCI specs to be validate, it can be split from Args
+	Testopt string
 
 	BundleDir string
 	Runtime   factory.Factory
@@ -39,7 +42,12 @@ func TestUnitNew(name string, args string, desc string) (unit TestUnit) {
 	unit.Name = name
 	unit.Args = args
 	unit.Description = desc
-
+	argsslice := strings.Fields(args)
+	for i, arg := range argsslice {
+		if strings.EqualFold(arg, "--args=./runtimetest") {
+			unit.Testopt = strings.TrimPrefix(argsslice[i+1], "--args=")
+		}
+	}
 	return unit
 }
 
@@ -61,19 +69,26 @@ func (unit *TestUnit) Run() error {
 
 	unit.GenerateConfigs()
 	unit.PrepareBundle()
-	_, err := unit.Runtime.StartRT(unit.BundleDir)
 
+	out, err := unit.Runtime.StartRT(unit.BundleDir)
+	if err != nil {
+		return err
+	}
+	if err = unit.PostStartHooks(unit.Testopt, out); err != nil {
+		return err
+	}
 	_ = unit.Runtime.StopRT(unit.Runtime.GetRTID())
+	return nil
+}
 
-	return err
-	/* TODO: what is testopt used for ?
-	testopt := utils.GetAfterNStr(configArgs, "--args=./runtimetest --args=", 3)
+func (unit *TestUnit) PostStartHooks(testopt string, out string) error {
+	var err error
 	switch testopt {
 	case "vna":
 		err = hooks.SetPostStartHooks(out, hooks.NamespacePostStart)
 	default:
 	}
-	*/
+	return err
 }
 
 func (unit *TestUnit) PrepareBundle() {
