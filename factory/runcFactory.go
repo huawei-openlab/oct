@@ -10,6 +10,7 @@ import (
 
 type Runc struct {
 	name string
+	ID   string
 }
 
 func (this *Runc) SetRT(runtime string) {
@@ -18,6 +19,10 @@ func (this *Runc) SetRT(runtime string) {
 
 func (this *Runc) GetRT() string {
 	return "runc"
+}
+
+func (this *Runc) GetRTID() string {
+	return this.ID
 }
 
 func (this *Runc) StartRT(specDir string) (string, error) {
@@ -49,6 +54,6 @@ func (this *Runc) StartRT(specDir string) (string, error) {
 	return nil*/
 }
 
-func (this *Runc) StopRT() error {
+func (this *Runc) StopRT(id string) error {
 	return nil
 }

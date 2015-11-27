@@ -15,6 +15,7 @@ import (
 
 type RKT struct {
 	name string
+	ID   string
 }
 
 func (this *RKT) SetRT(runtime string) {
@@ -23,6 +24,10 @@ func (this *RKT) SetRT(runtime string) {
 
 func (this *RKT) GetRT() string {
 	return "rkt"
+}
+
+func (this *RKT) GetRTID() string {
+	return this.ID
 }
 
 func (this *RKT) Convert(appName string, workingDir string) (string, error) {
@@ -78,7 +83,8 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 	}
 	logrus.Debugf("Command done")
 
-	bv, ev := checkResult(appName)
+	id, bv, ev := checkResult(appName)
+	this.ID = id
 	if ev != nil {
 		return "", ev
 	} else if !bv {
@@ -87,7 +93,7 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 	return string(out), nil
 }
 
-func checkResult(appName string) (bool, error) {
+func checkResult(appName string) (string, bool, error) {
 
 	//use rkt list to get uuid of rkt contianer
 	cmd := exec.Command("rkt", "list")
@@ -98,7 +104,7 @@ func checkResult(appName string) (bool, error) {
 	}
 	uuid, err := getUuid(string(listOut), appName)
 	if err != nil {
-		return false, errors.New("can not get uuid of rkt app" + appName)
+		return "", false, errors.New("can not get uuid of rkt app" + appName)
 	}
 	logrus.Debugf("uuid: %v\n", uuid)
 	//use rkt status to get status of app running in rkt container
@@ -113,9 +119,9 @@ func checkResult(appName string) (bool, error) {
 	logrus.Debugf("rkt stauts %v\n,%v\n", uuid, string(statusOut))
 	s, err := getAppStatus(string(statusOut), appName)
 	if s != 0 || err != nil {
-		return false, err
+		return uuid, false, err
 	}
-	return true, nil
+	return uuid, true, nil
 }
 
 func getAppStatus(Out string, appName string) (int64, error) {
@@ -174,6 +180,6 @@ func getLine(Out string, objName string) (string, error) {
 	return wantLine, nil
 }
 
-func (this *RKT) StopRT() error {
+func (this *RKT) StopRT(id string) error {
 	return nil
 }
