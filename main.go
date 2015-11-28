@@ -59,14 +59,15 @@ func main() {
 		startTime := time.Now()
 		runtime := c.String("runtime")
 		wg := new(sync.WaitGroup)
-		units := LoadTestUnits("./cases.conf")
-		wg.Add(len(units))
+		units.LoadTestUnits("./cases.conf")
+		wg.Add(len(units.TestUnits))
 
-		for index := 0; index < len(units); index++ {
-			go testRoutine(units[index], runtime, wg)
-
+		for _, tu := range units.TestUnits {
+			go testRoutine(tu, runtime, wg)
 		}
+
 		wg.Wait()
+		units.OutputResult()
 		//logrus.Printf("Test runtime: %v, successed\n", Runtime)
 
 		endTime := time.Now()
@@ -82,16 +83,12 @@ func main() {
 	}
 }
 
-func testRoutine(unit TestUnit, runtime string, wg *sync.WaitGroup) {
+func testRoutine(unit *TestUnit, runtime string, wg *sync.WaitGroup) {
 	logrus.Debugf("Test bundle name: %v, Test args: %v\n", unit.Name, unit.Args)
 	if err := unit.SetRuntime(runtime); err != nil {
 		logrus.Fatalf("Test runtime: failed to setup runtime %s , error: %v\n", runtime, err)
 	} else {
-		if err := unit.Run(); err != nil {
-			logrus.Warnf("Test runtime: %v bundle: %v, args: %v, failed, error: %v\n", unit.Runtime.GetRT(), unit.Name, unit.Args, err)
-		} else {
-			logrus.Printf("Test runtime: %v bundle: %v, args: %v, successed\n", unit.Runtime.GetRT(), unit.Name, unit.Args)
-		}
+		unit.Run()
 	}
 	wg.Done()
 	return
