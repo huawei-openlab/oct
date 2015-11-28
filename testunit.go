@@ -14,6 +14,10 @@ import (
 )
 
 const TestCacheDir = "./bundles/"
+const (
+	PASS = "SUCESSFUL"
+	FAIL = "FAILED"
+)
 
 type TestUnit struct {
 	//Case name
@@ -29,30 +33,85 @@ type TestUnit struct {
 	Runtime   factory.Factory
 	//success or failed
 	Result string
-	//when result == failed, ErrInfo containers err info, or, ErrInfo is empty string
-	ErrInfo string
+	//when result == failed, ErrInfo is err code, or, ErrInfo is nil
+	ErrInfo error
 }
 
-func LoadTestUnits(filename string) (units []TestUnit) {
+type UnitsManager struct {
+	TestUnits []*TestUnit
+}
+
+var units *UnitsManager = new(UnitsManager)
+
+func (this *UnitsManager) LoadTestUnits(filename string) {
+
 	for key, value := range config.BundleMap {
 		//TODO: config.BundleMap should support 'Description'
-		unit := TestUnitNew(key, value, "")
-		units = append(units, unit)
+		// unit := this.N(key, value, "")
+		unit := NewTestUnit(key, value, "")
+		//uts := new(TestUnit)
+
+		//var units []TestUnit
+		this.TestUnits = append(this.TestUnits, unit)
 	}
-	return units
 }
 
-func TestUnitNew(name string, args string, desc string) (unit TestUnit) {
-	unit.Name = name
-	unit.Args = args
-	unit.Description = desc
+func NewTestUnit(name string, args string, desc string) *TestUnit {
+
+	tu := new(TestUnit)
+	tu.Name = name
+	tu.Args = args
+	tu.Description = desc
 	argsslice := strings.Fields(args)
 	for i, arg := range argsslice {
 		if strings.EqualFold(arg, "--args=./runtimetest") {
-			unit.Testopt = strings.TrimPrefix(argsslice[i+1], "--args=")
+			tu.Testopt = strings.TrimPrefix(argsslice[i+1], "--args=")
 		}
 	}
-	return unit
+	return tu
+}
+
+func (this *UnitsManager) OutputPResult() {
+	logrus.Println("========================================================================================================")
+	logrus.Println("Result(PASS):")
+	for _, tu := range this.TestUnits {
+		//if tu.Result == PASS {
+		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\n", tu.Name, tu.BundleDir, tu.Args, tu.Runtime)
+		//}
+	}
+}
+
+func (this *UnitsManager) OutputFResult() {
+	logrus.Println("========================================================================================================")
+	logrus.Println("Result(FAIL):")
+	for _, tu := range this.TestUnits {
+		//if tu.Result == FAIL {
+		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nErrInfo:\n  %v\n", tu.Name, tu.BundleDir, tu.Args, tu.Runtime, tu.ErrInfo)
+		//}
+	}
+}
+
+func (this *UnitsManager) OutputResult() {
+	logrus.Println("========================================================================================================")
+	logrus.Println("Result(ALL):")
+	for _, tu := range this.TestUnits {
+		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
+			tu.Name, tu.BundleDir, tu.Args, tu.Runtime, tu.Result, tu.ErrInfo)
+	}
+}
+
+func (unit *TestUnit) EchoUnit() {
+	logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
+		unit.Name, unit.BundleDir, unit.Args, unit.Runtime, unit.Result, unit.ErrInfo)
+}
+
+func (unit *TestUnit) SetResult(result string, err error) {
+	unit.Result = result
+	if result == PASS {
+		unit.ErrInfo = nil
+	} else {
+		unit.ErrInfo = err
+	}
 }
 
 //Set runtime
@@ -66,7 +125,7 @@ func (unit *TestUnit) SetRuntime(runtime string) error {
 	return nil
 }
 
-func (unit *TestUnit) Run() error {
+func (unit *TestUnit) Run() {
 	if unit.Runtime == nil {
 		logrus.Fatalf("Set the runtime before run the test")
 	}
@@ -76,13 +135,15 @@ func (unit *TestUnit) Run() error {
 
 	out, err := unit.Runtime.StartRT(unit.BundleDir)
 	if err != nil {
-		return err
+		unit.SetResult(FAIL, err)
 	}
+
 	if err = unit.PostStartHooks(unit.Testopt, out); err != nil {
-		return err
+		unit.SetResult(FAIL, err)
 	}
+
 	_ = unit.Runtime.StopRT(unit.Runtime.GetRTID())
-	return nil
+	unit.SetResult(PASS, nil)
 }
 
 func (unit *TestUnit) PostStartHooks(testopt string, out string) error {
