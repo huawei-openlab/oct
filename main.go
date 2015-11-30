@@ -55,6 +55,10 @@ func main() {
 			Value: "all",
 			Usage: "format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics",
 		},
+		cli.BoolFlag{
+			Name:  "debug, d",
+			Usage: "switch of debug mode, defaults to false, with '--debug' to enable debug mode",
+		},
 	}
 
 	app.Action = func(c *cli.Context) {
@@ -65,6 +69,7 @@ func main() {
 		startTime := time.Now()
 		runtime := c.String("runtime")
 		output := c.String("output")
+		setDebugMode(c.Bool("debug"))
 
 		wg := new(sync.WaitGroup)
 		units.LoadTestUnits("./cases.conf")
@@ -76,18 +81,22 @@ func main() {
 
 		wg.Wait()
 		units.OutputResult(output)
-		//logrus.Printf("Test runtime: %v, successed\n", Runtime)
 
 		endTime := time.Now()
 		dTime := endTime.Sub(startTime)
 		logrus.Debugf("Cost time: %v\n", dTime.Nanoseconds())
 	}
 
-	logrus.SetLevel(logrus.InfoLevel)
-	//logrus.SetLevel(logrus.DebugLevel)
-
 	if err := app.Run(os.Args); err != nil {
 		logrus.Fatalf("Run App err %v\n", err)
+	}
+}
+
+func setDebugMode(debug bool) {
+	if !debug {
+		logrus.SetLevel(logrus.InfoLevel)
+	} else {
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 }
 
