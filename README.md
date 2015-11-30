@@ -41,7 +41,8 @@ COMMANDS:
    
 GLOBAL OPTIONS:
    --runtime, -r "runc"    runtime to be tested, -r=runc or -r=rkt or -r=docker     
-   --output, -o "all"   format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics      
+   --output, -o "all"   format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics           
+   --debug, -d     switch of debug mode, defaults to false, with '--debug' to enable debug mode     
    --help, -h     show help     
    --generate-bash-completion           
    --version, -v    print the version     
