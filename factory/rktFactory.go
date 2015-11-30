@@ -53,7 +53,7 @@ func (this *RKT) Convert(appName string, workingDir string) (string, error) {
 
 func (this *RKT) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
-	/*rkt run 3.aci --interactive --insecure-skip-verify --mds-register=false --volume proc,kind=host,source=/bin --volume dev,kind=host,source=/bin --volume devpts,kind=host,source=/bin --volume shm,kind=host,source=/bin --volume mqueue,kind=host,source=/bin --volume sysfs,kind=host,source=/bin --volume cgroup,kind=host,source=/bin*/
+
 	appName := filepath.Base(specDir)
 	aciName := appName + ".aci"
 	aciPath := filepath.Dir(specDir)
@@ -93,25 +93,26 @@ func checkResult(appName string) (string, bool, error) {
 	if err != nil {
 		logrus.Fatalf("rkt list err %v\n", err)
 	}
+
 	uuid, err := getUuid(string(listOut), appName)
 	if err != nil {
 		return "", false, errors.New("can not get uuid of rkt app" + appName)
 	}
 	logrus.Debugf("uuid: %v\n", uuid)
+
 	//use rkt status to get status of app running in rkt container
 	cmd = exec.Command("rkt", "status", uuid)
 	statusOut, err := cmd.CombinedOutput()
-	/*err occurs here, because of the bug from oci2aci
-	  so we just deal with the ouput directly until the bug is fixed
-	*/
-	/*if err != nil {
+	if err != nil {
 		logrus.Fatalf("rkt status err %v\n", err)
-	}*/
+	}
 	logrus.Debugf("rkt stauts %v\n,%v\n", uuid, string(statusOut))
+
 	s, err := getAppStatus(string(statusOut), appName)
 	if s != 0 || err != nil {
 		return uuid, false, err
 	}
+
 	return uuid, true, nil
 }
 
@@ -144,11 +145,7 @@ func getUuid(listOut string, appName string) (string, error) {
 
 func splitUuid(line string) string {
 
-	//strings.Fields(s)
 	a := strings.Fields(line)
-	/*for _, aa := range a {
-		logrus.Printf("aaa %v\n", aa)
-	}*/
 	return strings.TrimSpace(a[0])
 }
 

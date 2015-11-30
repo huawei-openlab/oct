@@ -47,11 +47,7 @@ func (this *UnitsManager) LoadTestUnits(filename string) {
 
 	for key, value := range config.BundleMap {
 		//TODO: config.BundleMap should support 'Description'
-		// unit := this.N(key, value, "")
 		unit := NewTestUnit(key, value, "")
-		//uts := new(TestUnit)
-
-		//var units []TestUnit
 		this.TestUnits = append(this.TestUnits, unit)
 	}
 }
@@ -77,8 +73,6 @@ func (this *UnitsManager) OutputResult(output string) {
 	SuccessCount := 0
 	failCount := 0
 
-	// logrus.Println("Results(Statics and FailedDetails):")
-	// echoDividing()
 	//Can not merge into on range, because output should be devided into two parts, successful and failure
 	if output == "all" {
 		logrus.Println("Sucessful Details:")

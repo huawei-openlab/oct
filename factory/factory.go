@@ -4,10 +4,6 @@ import (
 	"errors"
 )
 
-/*type Runtime struct {
-	runtime string
-}*/
-
 type Factory interface {
 	SetRT(runtime string)
 	GetRT() string
