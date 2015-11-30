@@ -2,8 +2,6 @@ package factory
 
 import (
 	"errors"
-	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -41,28 +39,16 @@ func (this *RKT) Convert(appName string, workingDir string) (string, error) {
 	//set appName to rkt appname, set rkt aciName to image name
 	cmd = exec.Command("../plugins/oci2aci", "--debug", "--name", appName, appName, aciName)
 	cmd.Dir = workingDir
-	// cmd.stdin = os.Stdin
-	stderr, err := cmd.StderrPipe()
+	cmd.Stdin = os.Stdin
+
+	out, err := cmd.CombinedOutput()
+
+	logrus.Debugf("Command done")
 	if err != nil {
-		log.Fatal("stderr err %v", err)
+		return string(out), errors.New(string(out) + err.Error())
 	}
 
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		log.Fatalf("stdout err %v", err)
-	}
-
-	var retStr string
-	err = cmd.Start()
-	if err != nil {
-		retb, _ := ioutil.ReadAll(stderr)
-		retStr = string(retb)
-	} else {
-		retb, _ := ioutil.ReadAll(stdout)
-		retStr = string(retb)
-	}
-
-	return retStr, err
+	return string(out), nil
 }
 
 func (this *RKT) StartRT(specDir string) (string, error) {
