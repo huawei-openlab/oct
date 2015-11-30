@@ -67,7 +67,7 @@ func main() {
 		}
 
 		wg.Wait()
-		units.OutputResult()
+		units.OutputDResult()
 		//logrus.Printf("Test runtime: %v, successed\n", Runtime)
 
 		endTime := time.Now()

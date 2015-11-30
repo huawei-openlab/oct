@@ -91,18 +91,40 @@ func (this *UnitsManager) OutputFResult() {
 	}
 }
 
-func (this *UnitsManager) OutputResult() {
-	logrus.Println("========================================================================================================")
-	logrus.Println("Result(ALL):")
+func (this *UnitsManager) OutputDResult() {
+
+	SuccessCount := 0
+	failCount := 0
+
+	logrus.Println("All Detail Results:")
+	echoDividing()
 	for _, tu := range this.TestUnits {
-		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
-			tu.Name, tu.BundleDir, tu.Args, tu.Runtime, tu.Result, tu.ErrInfo)
+		if tu.Result == PASS {
+			SuccessCount++
+			tu.EchoSUnit()
+		} else {
+			failCount++
+			tu.EchoFUit()
+		}
 	}
+
+	echoDividing()
+	logrus.Printf("Statistics:  %v bundles success, %v bundles failed\n", SuccessCount, failCount)
 }
 
-func (unit *TestUnit) EchoUnit() {
-	logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
-		unit.Name, unit.BundleDir, unit.Args, unit.Runtime, unit.Result, unit.ErrInfo)
+func (unit *TestUnit) EchoSUnit() {
+
+	logrus.Printf("\nBundleName:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nTestResult:\n  %v\n",
+		unit.Name, unit.BundleDir, unit.Args, unit.Result)
+}
+
+func (unit *TestUnit) EchoFUit() {
+	logrus.Printf("\nBundleName:\n  %v\n:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
+		unit.Name, unit.BundleDir, unit.Args, unit.Args, unit.Result, unit.ErrInfo)
+}
+
+func echoDividing() {
+	logrus.Println("============================================================")
 }
 
 func (unit *TestUnit) SetResult(result string, err error) {
@@ -136,14 +158,17 @@ func (unit *TestUnit) Run() {
 	out, err := unit.Runtime.StartRT(unit.BundleDir)
 	if err != nil {
 		unit.SetResult(FAIL, err)
+		return
 	}
 
 	if err = unit.PostStartHooks(unit.Testopt, out); err != nil {
 		unit.SetResult(FAIL, err)
+		return
 	}
 
 	_ = unit.Runtime.StopRT(unit.Runtime.GetRTID())
 	unit.SetResult(PASS, nil)
+	return
 }
 
 func (unit *TestUnit) PostStartHooks(testopt string, out string) error {
