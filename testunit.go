@@ -115,8 +115,8 @@ func (unit *TestUnit) EchoSUnit() {
 }
 
 func (unit *TestUnit) EchoFUit() {
-	logrus.Printf("\nBundleName:\n  %v\n:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
-		unit.Name, unit.BundleDir, unit.BundleDir, unit.Args, unit.Result, unit.ErrInfo)
+	logrus.Printf("\nBundleName:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
+		unit.Name, unit.BundleDir, unit.Args, unit.Result, unit.ErrInfo)
 }
 
 func echoDividing() {

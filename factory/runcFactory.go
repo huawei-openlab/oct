@@ -37,25 +37,13 @@ func (this *Runc) StartRT(specDir string) (string, error) {
 	cmd.Dir = specDir
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
-	/*if err := hostendvalidate.ContainerOutputHandler(string(out)); err != nil {
-		return err
-	}*/
+
 	logrus.Debugf("Command done")
 	if err != nil {
 		return string(out), errors.New(string(out) + err.Error())
 	}
+
 	return string(out), nil
-
-	/*if string(out) != "" {
-
-		logrus.Printf("container output=%s\n", out)
-	} else {
-		logrus.Debugf("container output= nil\n")
-	}
-	if err != nil {
-		return err
-	}
-	return nil*/
 }
 
 func (this *Runc) StopRT(id string) error {
