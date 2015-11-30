@@ -44,7 +44,6 @@ func (this *Runc) StartRT(specDir string) (string, error) {
 	if err != nil {
 		return string(out), errors.New(string(out) + err.Error())
 	}
-
 	return string(out), nil
 
 	/*if string(out) != "" {
