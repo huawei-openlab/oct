@@ -71,38 +71,34 @@ func NewTestUnit(name string, args string, desc string) *TestUnit {
 	return tu
 }
 
-func (this *UnitsManager) OutputPResult() {
-	logrus.Println("========================================================================================================")
-	logrus.Println("Result(PASS):")
-	for _, tu := range this.TestUnits {
-		//if tu.Result == PASS {
-		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\n", tu.Name, tu.BundleDir, tu.Args, tu.Runtime)
-		//}
-	}
-}
-
-func (this *UnitsManager) OutputFResult() {
-	logrus.Println("========================================================================================================")
-	logrus.Println("Result(FAIL):")
-	for _, tu := range this.TestUnits {
-		//if tu.Result == FAIL {
-		logrus.Printf("CaseName:\n  %v\nCaseBundle:\n  %v\nCaseArgs:\n  %v\nCaseRuntime:\n  %v\nErrInfo:\n  %v\n", tu.Name, tu.BundleDir, tu.Args, tu.Runtime, tu.ErrInfo)
-		//}
-	}
-}
-
-func (this *UnitsManager) OutputDResult() {
+//Ouput method, ouput value: err-only or all
+func (this *UnitsManager) OutputResult(output string) {
 
 	SuccessCount := 0
 	failCount := 0
 
-	logrus.Println("All Detail Results:")
-	echoDividing()
+	// logrus.Println("Results(Statics and FailedDetails):")
+	// echoDividing()
+	//Can not merge into on range, because output should be devided into two parts, successful and failure
+	if output == "all" {
+		logrus.Println("Sucessful Details:")
+		echoDividing()
+	}
+
 	for _, tu := range this.TestUnits {
 		if tu.Result == PASS {
 			SuccessCount++
-			tu.EchoSUnit()
-		} else {
+			if output == "all" {
+				tu.EchoSUnit()
+			}
+		}
+	}
+
+	logrus.Println("Failure Details:")
+	echoDividing()
+
+	for _, tu := range this.TestUnits {
+		if tu.Result == FAIL {
 			failCount++
 			tu.EchoFUit()
 		}
@@ -124,7 +120,7 @@ func (unit *TestUnit) EchoFUit() {
 }
 
 func echoDividing() {
-	logrus.Println("============================================================")
+	logrus.Println("===============================================================================================")
 }
 
 func (unit *TestUnit) SetResult(result string, err error) {

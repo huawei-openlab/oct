@@ -50,14 +50,22 @@ func main() {
 			Value: "runc",
 			Usage: "runtime to be tested, -r=runc or -r=rkt or -r=docker",
 		},
+		cli.StringFlag{
+			Name:  "output, o",
+			Value: "all",
+			Usage: "format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics",
+		},
 	}
 
 	app.Action = func(c *cli.Context) {
 		if os.Geteuid() != 0 {
 			logrus.Fatal("ocitest should be run as root")
 		}
+
 		startTime := time.Now()
 		runtime := c.String("runtime")
+		output := c.String("output")
+
 		wg := new(sync.WaitGroup)
 		units.LoadTestUnits("./cases.conf")
 		wg.Add(len(units.TestUnits))
@@ -67,7 +75,7 @@ func main() {
 		}
 
 		wg.Wait()
-		units.OutputDResult()
+		units.OutputResult(output)
 		//logrus.Printf("Test runtime: %v, successed\n", Runtime)
 
 		endTime := time.Now()
