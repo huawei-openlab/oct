@@ -27,14 +27,16 @@ func NamespacePostStart(output string) error {
 			if !strings.EqualFold(path, "") {
 				linkh, _ := os.Readlink(path)
 				if !strings.EqualFold(linkh, linkc) {
-					return fmt.Errorf("%v namespace expected: %v, actual: %v ", nsname, linkh, linkc)
+					return fmt.Errorf("%v namespace expected: %v, actual: %v ",
+						nsname, linkh, linkc)
 
 				}
 			}
 			if strings.EqualFold(path, "") {
 				linkh, _ := os.Readlink("/proc/1/ns/" + nsname)
 				if strings.EqualFold(linkh, linkc) {
-					return fmt.Errorf("namespace %v path is empty, but namespace inside and outside container is the same", nsname)
+					return fmt.Errorf("namespace %v path is empty, but namespace inside and "+
+						"outside container is the same", nsname)
 				}
 			}
 		}
@@ -44,7 +46,8 @@ func NamespacePostStart(output string) error {
 
 func HooksValidatePostStart(output string) error {
 	// Poststart Hook Validate
-	hout := utils.GetBetweenStr(output, "[poststop_hookvalidate_output_start]", "[poststop_hookvalidate_output_end]")
+	hout := utils.GetBetweenStr(output, "[poststop_hookvalidate_output_start]",
+		"[poststop_hookvalidate_output_end]")
 	if !strings.EqualFold(hout, "folder poststophook is not exsist inside container") {
 		return nil
 	}

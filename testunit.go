@@ -77,7 +77,8 @@ func (this *UnitsManager) OutputResult(output string) {
 	SuccessCount := 0
 	failCount := 0
 
-	//Can not merge into on range, because output should be devided into two parts, successful and failure
+	//Can not merge into on range, because output should be devided into two parts, successful and
+	//failure
 	if output == "all" {
 		logrus.Println("Sucessful Details:")
 		echoDividing()
@@ -113,12 +114,13 @@ func (unit *TestUnit) EchoSUnit() {
 }
 
 func (unit *TestUnit) EchoFUit() {
-	logrus.Printf("\nBundleName:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nResult:\n  %v\nErrInfo:\n  %v\n",
-		unit.Name, unit.BundleDir, unit.Args, unit.Result, unit.ErrInfo)
+	logrus.Printf("\nBundleName:\n  %v\nBundleDir:\n  %v\nCaseArgs:\n  %v\nResult:\n  %v\n"+
+		"ErrInfo:\n  %v\n", unit.Name, unit.BundleDir, unit.Args, unit.Result, unit.ErrInfo)
 }
 
 func echoDividing() {
-	logrus.Println("===============================================================================================")
+	logrus.Println("============================================================================" +
+		"===================")
 }
 
 func (unit *TestUnit) SetResult(result string, err error) {

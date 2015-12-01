@@ -53,7 +53,8 @@ func main() {
 		cli.StringFlag{
 			Name:  "output, o",
 			Value: "all",
-			Usage: "format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics",
+			Usage: "format and content to be ouputed, -o=all: ouput sucessful details and " +
+				"statics, -o=err-only: ouput failure details and statics",
 		},
 		cli.BoolFlag{
 			Name:  "debug, d",
