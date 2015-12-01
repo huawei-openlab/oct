@@ -70,6 +70,10 @@ func NewTestUnit(name string, args string, desc string) *TestUnit {
 //Ouput method, ouput value: err-only or all
 func (this *UnitsManager) OutputResult(output string) {
 
+	if output != "err-only" && output != "all" {
+		logrus.Fatalf("Error output cmd, output=%v\n", output)
+	}
+
 	SuccessCount := 0
 	failCount := 0
 
