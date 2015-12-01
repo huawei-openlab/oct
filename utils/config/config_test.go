@@ -6,7 +6,8 @@ import (
 	"testing"
 )
 
-var initCasesContext = `process= --args=/bin/bash --cwd=/bin --terminal=true;--args=/bin/bash;--cwd=/bin
+var initCasesContext = `process= --args=/bin/bash --cwd=/bin --terminal=true;--args=/bin/bash;` +
+	`--cwd=/bin
 args= --args=xxxx
 capablitis= --cwd=xxx
 mount= --mountpoint=bbbb

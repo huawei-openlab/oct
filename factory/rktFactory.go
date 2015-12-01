@@ -62,10 +62,11 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 		return retStr, err
 	}
 
-	cmd := exec.Command("rkt", "run", aciName, "--interactive", "--insecure-skip-verify", "--mds-register=false",
-		"--volume", "proc,kind=host,source=/bin", "--volume", "dev,kind=host,source=/bin", "--volume", "devpts,kind=host,source=/bin",
-		"--volume", "shm,kind=host,source=/bin", "--volume", "mqueue,kind=host,source=/bin",
-		"--volume", "sysfs,kind=host,source=/bin", "--volume", "cgroup,kind=host,source=/bin", "--net=host")
+	cmd := exec.Command("rkt", "run", aciName, "--interactive", "--insecure-skip-verify", "--mds"+
+		"-register=false", "--volume", "proc,kind=host,source=/bin", "--volume", "dev,kind=host,"+
+		"source=/bin", "--volume", "devpts,kind=host,source=/bin", "--volume", "shm,kind=host,"+
+		"source=/bin", "--volume", "mqueue,kind=host,source=/bin", "--volume", "sysfs,kind=host,"+
+		"source=/bin", "--volume", "cgroup,kind=host,source=/bin", "--net=host")
 	cmd.Dir = aciPath
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
