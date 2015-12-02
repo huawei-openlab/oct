@@ -15,7 +15,7 @@ import (
 
 const TestCacheDir = "./bundles/"
 const (
-	PASS = "SUCESSFUL"
+	PASS = "SUCCESS"
 	FAIL = "FAILED"
 )
 
@@ -80,7 +80,7 @@ func (this *UnitsManager) OutputResult(output string) {
 	//Can not merge into on range, because output should be devided into two parts, successful and
 	//failure
 	if output == "all" {
-		logrus.Println("Sucessful Details:")
+		logrus.Println("Successful Details:")
 		echoDividing()
 	}
 
