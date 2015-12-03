@@ -52,9 +52,9 @@ GLOBAL OPTIONS:
       
 |Name|Status|Testing Flow|
 |------|----|------| ----- |
-| runc | Supported| [Test bundles & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpeg) |
-| rkt | Supported | [Test bundles converted by oci2aci & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpeg) |
-| docker | Not currently being worked|[Test bundles converted by oci2docker & runtime Validate] (https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpeg) |
+| runc | Supported| [Test bundles & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
+| rkt | Supported | [Test bundles converted by oci2aci & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
+| docker | Not currently being worked|[Test bundles converted by oci2docker & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
       
 - **Using Tools**        
 
