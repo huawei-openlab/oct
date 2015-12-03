@@ -135,7 +135,7 @@ func (unit *TestUnit) SetResult(result string, err error) {
 //Set runtime
 func (unit *TestUnit) SetRuntime(runtime string) error {
 	if r, err := factory.CreateRuntime(runtime); err != nil {
-		logrus.Printf("Create runtime %v err: %v\n", runtime, err)
+		logrus.Fatalf("Create runtime %v err: %v\n", runtime, err)
 		return err
 	} else {
 		unit.Runtime = r
