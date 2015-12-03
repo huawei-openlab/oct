@@ -53,12 +53,13 @@ func main() {
 		cli.StringFlag{
 			Name:  "output, o",
 			Value: "all",
-			Usage: "format and content to be ouputed, -o=all: ouput sucessful details and " +
+			Usage: "output format, -o=all: ouput sucessful details and \n" +
 				"statics, -o=err-only: ouput failure details and statics",
 		},
 		cli.BoolFlag{
-			Name:  "debug, d",
-			Usage: "switch of debug mode, defaults to false, with '--debug' to enable debug mode",
+			Name: "debug, d",
+			Usage: "switch of debug mode, defaults to false,\n" +
+				" with '--debug' to enable debug mode",
 		},
 	}
 
