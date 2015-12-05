@@ -6,10 +6,10 @@ It is a light weight testing framework, using ocitools and 3rd-party plugin tool
 
 ### Summary for the impatient      
 ***Key note***           
-Be sure you have already installed  [golang](http://golang.org/), and the container runtime to be test, such as [runc](https://github.com/opencontainers/runc)  and [rkt](https://github.com/coreos/rkt) .
+Be sure you have already installed  [golang](http://golang.org/) and the container runtime to be test, such as [runc](https://github.com/opencontainers/runc)  and [rkt](https://github.com/coreos/rkt) .
 
 ``` bash   
-$ go get github.com/opencontainers/specs              #downland specs of OCI
+$ go get github.com/opencontainers/specs               #downland specs of OCI
 $ go get github.com/huawei-openlab/oct                 #get source code       
 $ cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
 $ make                                                 #build      
@@ -41,15 +41,15 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
    
 GLOBAL OPTIONS:
-   --runtime, -r "runc"    runtime to be tested, -r=runc or -r=rkt or -r=docker     
-   --output, -o "all"   format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics           
-   --debug, -d     switch of debug mode, defaults to false, with '--debug' to enable debug mode     
-   --help, -h     show help     
+   --runtime,  -r   "runc"    runtime to be tested, -r=runc or -r=rkt or -r=docker     
+   --output,    -o   "all"       format and content to be ouputed, -o=all: ouput sucessful details and statics, -o=err-only: ouput failure details and statics           
+   --debug,    -d                  switch of debug mode, defaults to false, with '--debug' to enable debug mode     
+   --help,       -h                  show help     
    --generate-bash-completion           
-   --version, -v    print the version     
+   --version,  -v                  print the version     
 ```    
       
-####Supportted runtime
+####Supported runtime
       
 |Name|Status|
 |------|----|------|
@@ -66,7 +66,8 @@ GLOBAL OPTIONS:
 Tools used by ocitest as plugins, including:
 
 * [ocitools](github.com/zenlinTechnofreak/ocitools)
- NOTE:ocitools are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), added some adaptor changes for oct.
+
+ NOTE: ocitools are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), added some adaptor changes for oct.
 
 * [oci2aci](github.com/huawei-openlab/oci2aci) 
 
