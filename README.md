@@ -19,7 +19,7 @@ $ ./ocitest                                            #run
 
 ### OCI Test Quickstart       
        
-- **Usage**      
+####Usage 
        
 ``` sh      
 $ ./ocitest --help
@@ -38,7 +38,7 @@ VERSION:
    0.0.1
    
 COMMANDS:
-   help, h	Shows a list of commands or help for one command
+   help, h  Shows a list of commands or help for one command
    
 GLOBAL OPTIONS:
    --runtime, -r "runc"    runtime to be tested, -r=runc or -r=rkt or -r=docker     
@@ -49,7 +49,7 @@ GLOBAL OPTIONS:
    --version, -v    print the version     
 ```    
       
-- **Supportted runtime**     
+####Supportted runtime
       
 |Name|Status|
 |------|----|------|
@@ -57,24 +57,22 @@ GLOBAL OPTIONS:
 | rkt | Supported |
 | docker | Planning|
       
-- **Test Flow**  
+####Test Flow 
 ![testflow](docs/static/testflowchart.jpg "testflow")
 
 
-- **Using Tools**        
+####Using Tools     
 
 Tools used by ocitest as plugins, including:
 
-***Notes**        
-
-*[ocitools](github.com/zenlinTechnofreak/ocitools)
+* [ocitools](github.com/zenlinTechnofreak/ocitools)
  NOTE:ocitools are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), added some adaptor changes for oct.
 
-*[oci2aci](github.com/huawei-openlab/oci2aci) 
+* [oci2aci](github.com/huawei-openlab/oci2aci) 
 
 See [plugins/Makefile](./plugins/Makefile)     
 
-- **About Test Cases**        
+####About Test Cases       
 
 Cases are listed in [cases.conf](./cases.conf), as the fomate of bunldes, It is going to be rich, in the fomate of below: 
     
