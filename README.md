@@ -1,14 +1,15 @@
-## OCI Test        
+## OCT - OCI Test 
       
-The ocitest aims to test if a runtime container is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
-It is a light weight testing framework, using ocitools and 3rd-party tools, managing configurable high coverage bundles as cases, supporting testing different runtimes.     
+The ocitest aims to test if a  container runtime is compliant with [opencontainers/specs](https://github.com/opencontainers/specs),     
+It is a light weight testing framework, using ocitools and 3rd-party plugin tools, managing configurable high coverage bundles as cases, supporting testing different runtimes.     
 
 
 ### Summary for the impatient      
 ***Key note***           
-Be sure to download [specs](htttps://github.com/opencontainers/specs) source code and install [runc](https://github.com/opencontainers/runc) first     
+Be sure you have already installed  [golang](http://golang.org/), and the container runtime to be test, such as [runc](https://github.com/opencontainers/runc)  and [rkt](https://github.com/coreos/rkt) .
 
 ``` bash   
+$ go get github.com/opencontainers/specs              #downland specs of OCI
 $ go get github.com/huawei-openlab/oct                 #get source code       
 $ cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
 $ make                                                 #build      
@@ -50,18 +51,26 @@ GLOBAL OPTIONS:
       
 - **Supportted runtime**     
       
-|Name|Status|Testing Flow|
-|------|----|------| ----- |
-| runc | Supported| [Test bundles & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
-| rkt | Supported | [Test bundles converted by oci2aci & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
-| docker | Not currently being worked|[Test bundles converted by oci2docker & runtime Validate](https://github.com/huawei-openlab/oct/blob/master/docs/static/testflowchart.jpg) |
+|Name|Status|
+|------|----|------|
+| runc | Supported| 
+| rkt | Supported |
+| docker | Planning|
       
+- **Test Flow**  
+![testflow](docs/static/testflowchart.jpg "testflow")
+
+
 - **Using Tools**        
 
-Tools used by ocitest as plugins,
-***Key Notes***        
+Tools used by ocitest as plugins, including:
 
-[ocitools](github.com/zenlinTechnofreak/ocitools) are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), adding some adaptor changes for oct.   
+***Notes**        
+
+*[ocitools](github.com/zenlinTechnofreak/ocitools)
+ NOTE:ocitools are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), added some adaptor changes for oct.
+
+*[oci2aci](github.com/huawei-openlab/oci2aci) 
 
 See [plugins/Makefile](./plugins/Makefile)     
 
@@ -73,16 +82,13 @@ Cases are listed in [cases.conf](./cases.conf), as the fomate of bunldes, It is 
 process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false     
 # result to generate two cases in [bundle](./bundle), should be bundle/process0 and bundle/process1,        
 # and '--args=./runtimetest --args=vp --rootfs=rootfs --terminal=false' is params for ocitools generate   
-
 ```
 
-### What is good for runtimeValidator       
+### Advantages of OCI Test       
 1. Light weight testing freamwork      
 2. High coverage test cases, configurable, easy to add cases
 3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
 4. Uses goroutine, each go routine runs a case bundle to validate   
-**Note**     
-The ocitools are developed in [github.com/mrunalp](github.com/mrunalp/ocitools).  
 
 ### Next to Do 
 
