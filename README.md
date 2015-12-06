@@ -65,11 +65,11 @@ GLOBAL OPTIONS:
 
 Tools used by ocitest as plugins, including:
 
-* [ocitools](github.com/zenlinTechnofreak/ocitools)
+* [ocitools](http://github.com/zenlinTechnofreak/ocitools)
 
- NOTE: ocitools are foked from [github.com/mrunalp](github.com/mrunalp/ocitools), added some adaptor changes for oct.
+ NOTE: ocitools are foked from [github.com/mrunalp](http://github.com/mrunalp/ocitools), added some adaptor changes for oct.
 
-* [oci2aci](github.com/huawei-openlab/oci2aci) 
+* [oci2aci](http://github.com/huawei-openlab/oci2aci) 
 
 See [plugins/Makefile](./plugins/Makefile)     
 
@@ -86,7 +86,7 @@ process= --args=./runtimetest --args=vp --rootfs=rootfs --terminal=false;--args=
 ### Advantages of OCI Test       
 1. Light weight testing freamwork      
 2. High coverage test cases, configurable, easy to add cases
-3. Tools is used as plugins ,feel free to use any 3rd-paty tools        
+3. Tools are used as plugins ,feel free to use any 3rd-paty tools        
 4. Uses goroutine, each go routine runs a case bundle to validate   
 
 ### Next to Do 
