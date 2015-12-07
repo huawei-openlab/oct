@@ -9,8 +9,8 @@ It is a light weight testing framework, using ocitools and 3rd-party plugin tool
 Be sure you have already installed  [golang](http://golang.org/) and the container runtime to be test, such as [runc](https://github.com/opencontainers/runc)  and [rkt](https://github.com/coreos/rkt) .
 
 ``` bash   
-$ go get github.com/opencontainers/specs               #downland specs of OCI
-$ go get github.com/huawei-openlab/oct                 #get source code       
+$ go get github.com/opencontainers/specs               #download specs of OCI
+$ go get github.com/huawei-openlab/oct                 #get oct source code       
 $ cd $GOPATH/src/github.com/huawei-openlab/oct         #change dir to workspace 
 $ make                                                 #build      
 $ ./ocitest                                            #run     
