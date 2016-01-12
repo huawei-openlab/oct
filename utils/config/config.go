@@ -55,8 +55,7 @@ func init() {
 func splitArgs(args string) []string {
 
 	argArray := strings.Split(args, ";")
-	len := len(argArray)
-	resArray := make([]string, len)
+	resArray := make([]string, len(argArray))
 	for count, arg := range argArray {
 		resArray[count] = strings.TrimSpace(arg)
 	}
