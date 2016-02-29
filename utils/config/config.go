@@ -15,13 +15,14 @@ import (
 var BundleMap = make(map[string]string)
 
 /*var BundleNames = make([]string, 1)*/
-var ConfigPath = "cases.conf"
+var ConfigPath string
 var ConfigLen int
 
-func init() {
-	f, err := os.Open(ConfigPath)
+func ReadConfig(filepath string) {
+	ConfigPath = filepath
+	f, err := os.Open(filepath)
 	if err != nil {
-		logrus.Fatalf("Open file %v error %v", ConfigPath, err)
+		logrus.Fatalf("Open file %v error %v", filepath, err)
 	}
 	defer f.Close()
 

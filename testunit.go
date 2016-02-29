@@ -45,6 +45,7 @@ var units *UnitsManager = new(UnitsManager)
 
 func (this *UnitsManager) LoadTestUnits(filename string) {
 
+	config.ReadConfig(filename)
 	for key, value := range config.BundleMap {
 		//TODO: config.BundleMap should support 'Description'
 		unit := NewTestUnit(key, value, "")
