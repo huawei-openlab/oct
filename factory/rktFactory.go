@@ -87,7 +87,7 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 
 func checkResult(appName string) (string, bool, error) {
 
-	//use rkt list to get uuid of rkt contianer
+	//use rkt list to get uuid of rkt container
 	cmd := exec.Command("rkt", "list")
 	cmd.Stdin = os.Stdin
 	listOut, err := cmd.CombinedOutput()
