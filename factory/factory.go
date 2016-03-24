@@ -18,6 +18,8 @@ func CreateRuntime(runtime string) (Factory, error) {
 		return new(Runc), nil
 	case "rkt":
 		return new(RKT), nil
+	case "docker":
+		return new(Docker), nil
 	default:
 		return nil, errors.New("Invalid runtime string")
 	}
