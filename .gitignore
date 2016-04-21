@@ -35,3 +35,7 @@ engine/tcserver/tcserver
 engine/testserver/testserver
 engine/tools/casevalidator/casevalidator
 engine/tools/report/report
+bundles/
+plugins/
+ocitest
+!Makefile
