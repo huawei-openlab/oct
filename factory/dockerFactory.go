@@ -5,8 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
-	"strings"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -17,16 +15,12 @@ type Docker struct {
 }
 
 func (this *Docker) init() {
-	this.name = ""
+	this.name = "docker"
 	this.ID = ""
 }
 
-func (this *Docker) SetRT(runtime string) {
-	this.name = "docker"
-}
-
 func (this *Docker) GetRT() string {
-	return "docker"
+	return this.name
 }
 
 func (this *Docker) GetRTID() string {
@@ -54,7 +48,7 @@ func (this *Docker) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 
 	caseName := filepath.Base(specDir)
-	imageName := appName + "_docker"
+	imageName := caseName + "_docker"
 	casePath := filepath.Dir(specDir)
 
 	if retStr, err := this.Convert(caseName, casePath); err != nil {
@@ -62,7 +56,7 @@ func (this *Docker) StartRT(specDir string) (string, error) {
 	}
 
 	cmd := exec.Command("docker", "run", imageName)
-	cmd.Dir = dockerPath
+	cmd.Dir = casePath
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -70,7 +64,7 @@ func (this *Docker) StartRT(specDir string) (string, error) {
 	}
 	logrus.Debugf("Command done")
 
-	id, bv, ev := checkResult(appName)
+	id, bv, ev := this.checkResult(caseName)
 	this.ID = id
 	if ev != nil {
 		return "", ev
@@ -80,7 +74,7 @@ func (this *Docker) StartRT(specDir string) (string, error) {
 	return string(out), nil
 }
 
-func checkResult(appName string) (string, bool, error) {
+func (this *Docker) checkResult (caseName string) (string, bool, error) {
 
 	//use docker ps to get uuid of docker containerr
 	cmd := exec.Command("docker", "ps -a")
@@ -90,50 +84,14 @@ func checkResult(appName string) (string, bool, error) {
 		logrus.Fatalf("docker ps err %v\n", err)
 	}
 
-	uuid, err := getUuid(string(listOut), appName)
+	uuid, err := getUuid(string(listOut), caseName)
 	if err != nil {
-		return "", false, errors.New("can not get uuid of docker container" + appName)
+		return "", false, errors.New("can not get uuid of docker container" + caseName)
 	}
 	logrus.Debugf("uuid: %v\n", uuid)
 	//TODO Based on the purpose of case to analyse the result
 
 	return uuid, true, nil
-}
-
-func getUuid(listOut string, appName string) (string, error) {
-
-	line, err := getLine(listOut, appName)
-	if err != nil {
-		logrus.Debugln(err)
-		return "", err
-	}
-
-	return splitUuid(line), nil
-}
-
-func splitUuid(line string) string {
-
-	a := strings.Fields(line)
-	return strings.TrimSpace(a[0])
-}
-
-func getLine(Out string, objName string) (string, error) {
-
-	outArray := strings.Split(Out, "\n")
-	flag := false
-	var wantLine string
-	for _, o := range outArray {
-		if strings.Contains(o, objName) {
-			wantLine = o
-			flag = true
-			break
-		}
-	}
-
-	if !flag {
-		return wantLine, errors.New("no line containers " + objName)
-	}
-	return wantLine, nil
 }
 
 func (this *Docker) StopRT(id string) error {
