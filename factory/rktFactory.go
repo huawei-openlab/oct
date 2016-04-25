@@ -17,27 +17,23 @@ type RKT struct {
 }
 
 func (this *RKT) init() {
-	this.name = ""
+	this.name = "rkt"
 	this.ID = ""
 }
 
-func (this *RKT) SetRT(runtime string) {
-	this.name = "rkt"
-}
-
 func (this *RKT) GetRT() string {
-	return "rkt"
+	return this.name
 }
 
 func (this *RKT) GetRTID() string {
 	return this.ID
 }
 
-func (this *RKT) Convert(appName string, workingDir string) (string, error) {
+func (this *RKT) Convert(caseName string, workingDir string) (string, error) {
 	var cmd *exec.Cmd
-	aciName := appName + ".aci"
-	//set appName to rkt appname, set rkt aciName to image name
-	cmd = exec.Command("../plugins/oci2aci", "--debug", "--name", appName, appName, aciName)
+	aciName := caseName + ".aci"
+	//set caseName to rkt appname, set rkt aciName to image name
+	cmd = exec.Command("../plugins/oci2aci", "--debug", "--name", caseName, caseName, aciName)
 	cmd.Dir = workingDir
 	cmd.Stdin = os.Stdin
 
@@ -54,11 +50,11 @@ func (this *RKT) Convert(appName string, workingDir string) (string, error) {
 func (this *RKT) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 
-	appName := filepath.Base(specDir)
-	aciName := appName + ".aci"
+	caseName := filepath.Base(specDir)
+	aciName := caseName + ".aci"
 	aciPath := filepath.Dir(specDir)
 
-	if retStr, err := this.Convert(appName, aciPath); err != nil {
+	if retStr, err := this.Convert(caseName, aciPath); err != nil {
 		return retStr, err
 	}
 
@@ -75,7 +71,7 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 	}
 	logrus.Debugf("Command done")
 
-	id, bv, ev := checkResult(appName)
+	id, bv, ev := this.checkResult(caseName)
 	this.ID = id
 	if ev != nil {
 		return "", ev
@@ -85,7 +81,7 @@ func (this *RKT) StartRT(specDir string) (string, error) {
 	return string(out), nil
 }
 
-func checkResult(appName string) (string, bool, error) {
+func (this *RKT) checkResult (caseName string) (string, bool, error) {
 
 	//use rkt list to get uuid of rkt container
 	cmd := exec.Command("rkt", "list")
@@ -95,9 +91,9 @@ func checkResult(appName string) (string, bool, error) {
 		logrus.Fatalf("rkt list err %v\n", err)
 	}
 
-	uuid, err := getUuid(string(listOut), appName)
+	uuid, err := getUuid(string(listOut), caseName)
 	if err != nil {
-		return "", false, errors.New("can not get uuid of rkt app" + appName)
+		return "", false, errors.New("can not get uuid of rkt app" + caseName)
 	}
 	logrus.Debugf("uuid: %v\n", uuid)
 
@@ -109,7 +105,7 @@ func checkResult(appName string) (string, bool, error) {
 	}
 	logrus.Debugf("rkt stauts %v\n,%v\n", uuid, string(statusOut))
 
-	s, err := getAppStatus(string(statusOut), appName)
+	s, err := getAppStatus(string(statusOut), caseName)
 	if s != 0 || err != nil {
 		return uuid, false, err
 	}
@@ -117,8 +113,8 @@ func checkResult(appName string) (string, bool, error) {
 	return uuid, true, nil
 }
 
-func getAppStatus(Out string, appName string) (int64, error) {
-	line, err := getLine(Out, appName)
+func getAppStatus(Out string, caseName string) (int64, error) {
+	line, err := getLine(Out, caseName)
 	if err != nil {
 		logrus.Debugln(err)
 		return 1, err
@@ -131,42 +127,6 @@ func getAppStatus(Out string, appName string) (int64, error) {
 		return 1, err
 	}
 	return res, nil
-}
-
-func getUuid(listOut string, appName string) (string, error) {
-
-	line, err := getLine(listOut, appName)
-	if err != nil {
-		logrus.Debugln(err)
-		return "", err
-	}
-
-	return splitUuid(line), nil
-}
-
-func splitUuid(line string) string {
-
-	a := strings.Fields(line)
-	return strings.TrimSpace(a[0])
-}
-
-func getLine(Out string, objName string) (string, error) {
-
-	outArray := strings.Split(Out, "\n")
-	flag := false
-	var wantLine string
-	for _, o := range outArray {
-		if strings.Contains(o, objName) {
-			wantLine = o
-			flag = true
-			break
-		}
-	}
-
-	if !flag {
-		return wantLine, errors.New("no line containers " + objName)
-	}
-	return wantLine, nil
 }
 
 func (this *RKT) StopRT(id string) error {

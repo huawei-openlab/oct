@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -14,16 +15,12 @@ type Runc struct {
 }
 
 func (this *Runc) init() {
-	this.name = ""
+	this.name = "runc"
 	this.ID = ""
 }
 
-func (this *Runc) SetRT(runtime string) {
-	this.name = "runc"
-}
-
 func (this *Runc) GetRT() string {
-	return "runc"
+	return this.name
 }
 
 func (this *Runc) GetRTID() string {
@@ -33,7 +30,8 @@ func (this *Runc) GetRTID() string {
 func (this *Runc) StartRT(specDir string) (string, error) {
 	logrus.Debugf("Launcing runtime")
 
-	cmd := exec.Command("runc", "start")
+	caseName := filepath.Base(specDir)
+	cmd := exec.Command("runc", "start", caseName)
 	cmd.Dir = specDir
 	cmd.Stdin = os.Stdin
 	out, err := cmd.CombinedOutput()
